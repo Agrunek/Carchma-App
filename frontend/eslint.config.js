@@ -11,7 +11,7 @@ export default tseslint.config({
   extends: [
     js.configs.recommended,
     ...tseslint.configs.recommended,
-    ...tailwind.configs["flat/recommended"],
+    ...tailwind.configs['flat/recommended'],
     ...pluginQuery.configs['flat/recommended'],
   ],
   files: ['**/*.{ts,tsx}'],
