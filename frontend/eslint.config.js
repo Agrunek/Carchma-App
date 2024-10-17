@@ -31,4 +31,9 @@ export default tseslint.config({
       { allowConstantExport: true },
     ],
   },
+  settings: {
+    tailwindcss: {
+      tags: ['tw'],
+    },
+  },
 }, eslintConfigPrettier)
