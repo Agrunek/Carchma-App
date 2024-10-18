@@ -1,6 +1,7 @@
 import type { ButtonProps as HeadlessButtonProps } from '@headlessui/react';
 import type { ClassNameDictionary } from '@/types/utils';
 
+import clsx from 'clsx';
 import { Button as HeadlessButton } from '@headlessui/react';
 import { tw } from '@/utils/string';
 
@@ -10,14 +11,18 @@ interface ButtonProps extends HeadlessButtonProps {
   variant?: ButtonVariant;
 }
 
-const classNames: ClassNameDictionary<ButtonVariant> = {
-  primary: tw`inline-flex items-center gap-2 rounded-md bg-emerald-700 px-3.5 py-2 font-semibold text-white`,
-  secondary: tw`inline-flex items-center gap-2 rounded-md border-2 border-emerald-700 bg-gray-100 px-3 py-1.5 font-semibold text-emerald-700`,
-  tertiary: tw`inline-flex items-center gap-2 px-3.5 py-2 font-semibold text-emerald-700`,
+const baseClassName = tw`inline-flex items-center justify-center gap-2 font-semibold`;
+
+const variantClassNames: ClassNameDictionary<ButtonVariant> = {
+  primary: tw`rounded-md bg-emerald-700 px-3.5 py-2 text-white`,
+  secondary: tw`rounded-md border-2 border-emerald-700 bg-gray-100 px-3 py-1.5 text-emerald-700`,
+  tertiary: tw`px-3.5 py-2 text-emerald-700`,
 };
 
-const Button = ({ variant = 'primary', ...props }: ButtonProps) => {
-  return <HeadlessButton className={classNames[variant]} {...props} />;
+const Button = ({ className, variant = 'primary', ...props }: ButtonProps) => {
+  const style = clsx(baseClassName, variantClassNames[variant], className);
+
+  return <HeadlessButton className={style} {...props} />;
 };
 
 export default Button;
