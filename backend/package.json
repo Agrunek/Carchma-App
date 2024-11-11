@@ -1,0 +1,14 @@
+{
+  "name": "backend",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "start": "node --env-file=config.env server"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.21.1",
+    "mongodb": "^6.10.0"
+  }
+}
