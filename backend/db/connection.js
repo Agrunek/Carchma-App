@@ -1,8 +1,7 @@
-import { MongoClient, ServerApiVersion } from "mongodb";
+import { MongoClient, ServerApiVersion } from 'mongodb';
+import { ATLAS_URI } from '../constants/env.js';
 
-const uri = process.env.ATLAS_URI || "";
-
-const client = new MongoClient(uri, {
+const client = new MongoClient(ATLAS_URI, {
   serverApi: {
     version: ServerApiVersion.v1,
     strict: true,
@@ -12,12 +11,13 @@ const client = new MongoClient(uri, {
 
 try {
   await client.connect();
-  await client.db("admin").command({ ping: 1 });
-  console.log("Pinged your deployment. You successfully connected to MongoDB!");
+  await client.db('admin').command({ ping: 1 });
+  console.log('Pinged your deployment. You successfully connected to MongoDB!');
 } catch (err) {
   console.error(err);
+  process.exit(1);
 }
 
-const db = client.db("dev");
+const db = client.db('dev');
 
 export default db;
