@@ -1,4 +1,5 @@
 import { NODE_ENV } from '../constants/env.js';
+import { ACCESS_TOKEN, REFRESH_TOKEN } from '../constants/jwt.js';
 import { FIFTEEN_MINUTES, ONE_MONTH } from '../constants/time.js';
 
 export const REFRESH_PATH = '/auth/refresh';
@@ -17,6 +18,10 @@ export const setAuthCookies = (res, accessToken, refreshToken) => {
   const refreshTokenCookieOptions = { ...defaultCookieOptions, expires: refreshTokenTimeout, path: REFRESH_PATH };
 
   return res
-    .cookie('accessToken', accessToken, accessTokenCookieOptions)
-    .cookie('refreshToken', refreshToken, refreshTokenCookieOptions);
+    .cookie(ACCESS_TOKEN, accessToken, accessTokenCookieOptions)
+    .cookie(REFRESH_TOKEN, refreshToken, refreshTokenCookieOptions);
+};
+
+export const clearAuthCookies = (res) => {
+  return res.clearCookie(ACCESS_TOKEN).clearCookie(REFRESH_TOKEN, { path: REFRESH_PATH });
 };

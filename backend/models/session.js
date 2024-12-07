@@ -1,3 +1,4 @@
+import { ObjectId } from 'mongodb';
 import db from '../db/connection.js';
 import { ONE_MONTH } from '../constants/time.js';
 
@@ -16,4 +17,13 @@ export const createSession = async (userId, agent) => {
   const result = await collection.insertOne(newDocument);
 
   return { _id: result.insertedId, ...newDocument };
+};
+
+export const deleteSessionById = async (id) => {
+  const query = { _id: new ObjectId(id) };
+
+  const collection = db.collection('sessions');
+  const result = await collection.deleteOne(query);
+
+  return { deleted: result.deletedCount === 1 };
 };
