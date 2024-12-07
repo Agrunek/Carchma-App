@@ -19,5 +19,7 @@ export const createVerificationCode = async (userId, type) => {
   };
 
   const collection = await db.collection('verifications');
-  return await collection.insertOne(newDocument);
+  const result = await collection.insertOne(newDocument);
+
+  return { _id: result.insertedId, ...newDocument };
 };

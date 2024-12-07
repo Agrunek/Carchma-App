@@ -11,13 +11,13 @@ export const createAccount = async (email, password, agent) => {
   }
 
   const user = await createUser(email, password);
-  const userId = user.insertedId;
+  const userId = user._id;
 
   await createVerificationCode(userId, EMAIL_VERIFICATION);
 
   // Send email
 
-  const { insertedId: sessionId } = await createSession(userId, agent);
+  const { _id: sessionId } = await createSession(userId, agent);
 
   const accessToken = jwt.sign({ userId, sessionId }, JWT_SECRET, { audience: ['user'], expiresIn: '15m' });
   const refreshToken = jwt.sign({ sessionId }, JWT_REFRESH_SECRET, { audience: ['user'], expiresIn: '30d' });
