@@ -25,5 +25,8 @@ export const createUser = async (email, password) => {
   const collection = await db.collection('users');
   const result = await collection.insertOne(newDocument);
 
+  /* Prevent return of the generated password: */
+  delete newDocument.password;
+
   return { _id: result.insertedId, ...newDocument };
 };
