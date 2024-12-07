@@ -2,6 +2,9 @@ import db from '../db/connection.js';
 import { EMAIL_VERIFICATION, PASSWORD_RESET } from '../constants/verificationType.js';
 import { ONE_HOUR, ONE_YEAR } from '../constants/time.js';
 
+const collection = db.collection('verifications');
+await collection.createIndex({ expiresAt: 1 }, { expireAfterSeconds: 0 });
+
 const delay = {
   [EMAIL_VERIFICATION]: ONE_YEAR,
   [PASSWORD_RESET]: ONE_HOUR,
@@ -18,7 +21,6 @@ export const createVerificationCode = async (userId, type) => {
     expiresAt: verificationCodeTimeout,
   };
 
-  const collection = await db.collection('verifications');
   const result = await collection.insertOne(newDocument);
 
   return { _id: result.insertedId, ...newDocument };

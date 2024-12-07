@@ -1,10 +1,11 @@
 import db from '../db/connection.js';
 import { hashValue } from '../utils/bcrypt.js';
 
+const collection = db.collection('users');
+
 export const getUserByEmail = async (email) => {
   const query = { email: email };
 
-  const collection = await db.collection('users');
   return await collection.findOne(query);
 };
 
@@ -20,7 +21,6 @@ export const createUser = async (email, password) => {
     updatedAt: timestamp,
   };
 
-  const collection = await db.collection('users');
   const result = await collection.insertOne(newDocument);
 
   return { _id: result.insertedId, ...newDocument };
