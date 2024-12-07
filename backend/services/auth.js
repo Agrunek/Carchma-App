@@ -1,11 +1,11 @@
-import jwt from 'jsonwebtoken';
 import appAssert from '../utils/appAssert.js';
 import { createSession } from '../models/session.js';
 import { createUser, getUserByEmail } from '../models/user.js';
 import { createVerificationCode } from '../models/verificationCode.js';
+import { signToken } from '../utils/jwt.js';
 import { compareValues } from '../utils/bcrypt.js';
 import { CONFLICT, UNAUTHORIZED } from '../constants/http.js';
-import { JWT_REFRESH_SECRET, JWT_SECRET } from '../constants/env.js';
+import { ACCESS_TOKEN, REFRESH_TOKEN } from '../constants/jwt.js';
 import { EMAIL_VERIFICATION } from '../constants/verificationType.js';
 
 export const createAccount = async (email, password, agent) => {
@@ -24,8 +24,8 @@ export const createAccount = async (email, password, agent) => {
 
   const { _id: sessionId } = await createSession(userId, agent);
 
-  const accessToken = jwt.sign({ userId, sessionId }, JWT_SECRET, { audience: ['user'], expiresIn: '15m' });
-  const refreshToken = jwt.sign({ sessionId }, JWT_REFRESH_SECRET, { audience: ['user'], expiresIn: '30d' });
+  const accessToken = signToken({ userId, sessionId }, ACCESS_TOKEN);
+  const refreshToken = signToken({ sessionId }, REFRESH_TOKEN);
 
   return { user, accessToken, refreshToken };
 };
@@ -44,8 +44,8 @@ export const loginUser = async (email, password, agent) => {
 
   const { _id: sessionId } = await createSession(userId, agent);
 
-  const accessToken = jwt.sign({ userId, sessionId }, JWT_SECRET, { audience: ['user'], expiresIn: '15m' });
-  const refreshToken = jwt.sign({ sessionId }, JWT_REFRESH_SECRET, { audience: ['user'], expiresIn: '30d' });
+  const accessToken = signToken({ userId, sessionId }, ACCESS_TOKEN);
+  const refreshToken = signToken({ sessionId }, REFRESH_TOKEN);
 
   return { user, accessToken, refreshToken };
 };
