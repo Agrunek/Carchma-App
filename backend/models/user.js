@@ -1,13 +1,11 @@
 import db from '../db/connection.js';
 import { hashValue } from '../utils/bcrypt.js';
 
-export const userEmailExists = async (email) => {
+export const getUserByEmail = async (email) => {
   const query = { email: email };
 
   const collection = await db.collection('users');
-  const result = await collection.findOne(query);
-
-  return !!result;
+  return await collection.findOne(query);
 };
 
 export const createUser = async (email, password) => {
@@ -24,9 +22,6 @@ export const createUser = async (email, password) => {
 
   const collection = await db.collection('users');
   const result = await collection.insertOne(newDocument);
-
-  /* Prevent return of the generated password: */
-  delete newDocument.password;
 
   return { _id: result.insertedId, ...newDocument };
 };
