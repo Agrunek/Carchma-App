@@ -11,15 +11,19 @@ const defaultCookieOptions = {
 };
 
 export const setAuthCookies = (res, accessToken, refreshToken) => {
-  const accessTokenTimeout = new Date(Date.now() + FIFTEEN_MINUTES);
-  const refreshTokenTimeout = new Date(Date.now() + ONE_MONTH);
+  if (accessToken) {
+    const accessTokenTimeout = new Date(Date.now() + FIFTEEN_MINUTES);
+    const accessTokenCookieOptions = { ...defaultCookieOptions, expires: accessTokenTimeout };
+    res.cookie(ACCESS_TOKEN, accessToken, accessTokenCookieOptions);
+  }
 
-  const accessTokenCookieOptions = { ...defaultCookieOptions, expires: accessTokenTimeout };
-  const refreshTokenCookieOptions = { ...defaultCookieOptions, expires: refreshTokenTimeout, path: REFRESH_PATH };
+  if (refreshToken) {
+    const refreshTokenTimeout = new Date(Date.now() + ONE_MONTH);
+    const refreshTokenCookieOptions = { ...defaultCookieOptions, expires: refreshTokenTimeout, path: REFRESH_PATH };
+    res.cookie(REFRESH_TOKEN, refreshToken, refreshTokenCookieOptions);
+  }
 
-  return res
-    .cookie(ACCESS_TOKEN, accessToken, accessTokenCookieOptions)
-    .cookie(REFRESH_TOKEN, refreshToken, refreshTokenCookieOptions);
+  return res;
 };
 
 export const clearAuthCookies = (res) => {
