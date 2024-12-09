@@ -56,6 +56,8 @@ export const loginUser = async (email, password, agent) => {
 };
 
 export const refreshAccessToken = async (currentRefreshToken) => {
+  appAssert(currentRefreshToken, UNAUTHORIZED, 'Missing refresh token');
+
   const { payload } = verifyToken(currentRefreshToken, REFRESH_TOKEN);
   appAssert(payload, UNAUTHORIZED, 'Invalid refresh token');
 

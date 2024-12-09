@@ -16,7 +16,7 @@ export const createSession = async (userId, agent) => {
   const sessionTimeout = new Date(Date.now() + ONE_MONTH);
 
   const newDocument = {
-    userId: userId,
+    userId: ObjectId(userId),
     userAgent: agent,
     createdAt: timestamp,
     expiresAt: sessionTimeout,

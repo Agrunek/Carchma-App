@@ -1,8 +1,7 @@
-import appAssert from '../utils/appAssert.js';
 import { loginSchema, registerSchema, verificationCodeSchema } from '../schemas/auth.js';
 import { createAccount, killSession, loginUser, refreshAccessToken, verifyEmail } from '../services/auth.js';
 import { clearAuthCookies, setAuthCookies } from '../utils/cookies.js';
-import { CREATED, OK, UNAUTHORIZED } from '../constants/http.js';
+import { CREATED, OK } from '../constants/http.js';
 import { ACCESS_TOKEN, REFRESH_TOKEN } from '../constants/jwt.js';
 
 export const registerHandler = async (req, res) => {
@@ -23,7 +22,6 @@ export const loginHandler = async (req, res) => {
 
 export const refreshHandler = async (req, res) => {
   const currentRefreshToken = req.cookies[REFRESH_TOKEN];
-  appAssert(currentRefreshToken, UNAUTHORIZED, 'Missing refresh token');
 
   const { accessToken, refreshToken } = await refreshAccessToken(currentRefreshToken);
 

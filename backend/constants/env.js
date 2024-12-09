@@ -1,6 +1,17 @@
-export const NODE_ENV = process.env.NODE_ENV || 'development';
-export const APP_ORIGIN = process.env.APP_ORIGIN || '*';
-export const ATLAS_URI = process.env.ATLAS_URI || '';
-export const PORT = process.env.PORT || 5050;
-export const JWT_SECRET = process.env.JWT_SECRET;
-export const JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET;
+const readEnv = (key, fallback) => {
+  const variable = process.env[key] || fallback;
+
+  if (variable === undefined) {
+    console.error(`Cannot proceed without ${key} variable`);
+    process.exit(1);
+  }
+
+  return variable;
+};
+
+export const NODE_ENV = readEnv('NODE_ENV', 'development');
+export const APP_ORIGIN = readEnv('APP_ORIGIN');
+export const ATLAS_URI = readEnv('ATLAS_URI');
+export const PORT = readEnv('PORT', '5050');
+export const JWT_SECRET = readEnv('JWT_SECRET');
+export const JWT_REFRESH_SECRET = readEnv('JWT_REFRESH_SECRET');

@@ -25,7 +25,7 @@ export const createVerificationCode = async (userId, type) => {
   const verificationCodeTimeout = new Date(Date.now() + delay[type]);
 
   const newDocument = {
-    userId: userId,
+    userId: ObjectId(userId),
     signature: signature,
     type: type,
     createdAt: timestamp,
