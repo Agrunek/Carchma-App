@@ -1,6 +1,6 @@
 import appAssert from '../utils/appAssert.js';
-import { loginSchema, registerSchema } from '../schemas/auth.js';
-import { createAccount, killSession, loginUser, refreshAccessToken } from '../services/auth.js';
+import { loginSchema, registerSchema, verificationCodeSchema } from '../schemas/auth.js';
+import { createAccount, killSession, loginUser, refreshAccessToken, verifyEmail } from '../services/auth.js';
 import { clearAuthCookies, setAuthCookies } from '../utils/cookies.js';
 import { CREATED, OK, UNAUTHORIZED } from '../constants/http.js';
 import { ACCESS_TOKEN, REFRESH_TOKEN } from '../constants/jwt.js';
@@ -36,4 +36,12 @@ export const logoutHandler = async (req, res) => {
   await killSession(currentAccessToken);
 
   return clearAuthCookies(res).status(OK).json({ message: 'Logout successful' });
+};
+
+export const emailVerificationHandler = async (req, res) => {
+  const verificationCode = verificationCodeSchema.parse(req.params.code);
+
+  await verifyEmail(verificationCode);
+
+  return res.status(OK).json({ message: 'Email verified successfully' });
 };

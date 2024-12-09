@@ -3,6 +3,7 @@ import { z } from 'zod';
 const emailPattern = z.string().email().min(1).max(255);
 const passwordPattern = z.string().min(8).max(255);
 const agentPattern = z.string().optional();
+const verificationCodePattern = z.string().length(128);
 
 const registerPattern = z.object({
   email: emailPattern,
@@ -23,3 +24,5 @@ export const registerSchema = registerPattern.refine((data) => data.password ===
 });
 
 export const loginSchema = loginPattern;
+
+export const verificationCodeSchema = verificationCodePattern;
