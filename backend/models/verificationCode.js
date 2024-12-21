@@ -25,7 +25,7 @@ export const createVerificationCode = async (userId, type) => {
   const verificationCodeTimeout = new Date(Date.now() + delay[type]);
 
   const newDocument = {
-    userId: ObjectId(userId),
+    userId: new ObjectId(userId),
     signature: signature,
     type: type,
     createdAt: timestamp,
@@ -43,4 +43,11 @@ export const deleteVerificationCodeById = async (id) => {
   const result = await collection.deleteOne(query);
 
   return { deleted: result.deletedCount === 1 };
+};
+
+export const countVerificationCodesByUserIdAndTypeAndOffset = async (userId, type, offset) => {
+  const timestampGate = new Date(Date.now() - offset);
+  const query = { userId: new ObjectId(userId), type: type, createdAt: { $gt: timestampGate } };
+
+  return await collection.countDocuments(query);
 };

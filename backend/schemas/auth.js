@@ -18,6 +18,12 @@ const loginPattern = z.object({
   agent: agentPattern,
 });
 
+const resetPasswordPattern = z.object({
+  password: passwordPattern,
+  confirm: passwordPattern,
+  verificationCode: verificationCodePattern,
+});
+
 export const registerSchema = registerPattern.refine((data) => data.password === data.confirm, {
   message: 'Passwords are not the same',
   path: ['confirm'],
@@ -26,3 +32,10 @@ export const registerSchema = registerPattern.refine((data) => data.password ===
 export const loginSchema = loginPattern;
 
 export const verificationCodeSchema = verificationCodePattern;
+
+export const emailSchema = emailPattern;
+
+export const resetPasswordSchema = resetPasswordPattern.refine((data) => data.password === data.confirm, {
+  message: 'Passwords are not the same',
+  path: ['confirm'],
+});

@@ -36,3 +36,13 @@ export const verifyUserById = async (id) => {
 
   return { updated: result.modifiedCount === 1 };
 };
+
+export const resetUserPasswordById = async (id, password) => {
+  const hashedPassword = await hashValue(password);
+  const query = { _id: new ObjectId(id) };
+  const updates = { $set: { password: hashedPassword } };
+
+  const result = await collection.updateOne(query, updates);
+
+  return { updated: result.modifiedCount === 1 };
+};

@@ -16,7 +16,7 @@ export const createSession = async (userId, agent) => {
   const sessionTimeout = new Date(Date.now() + ONE_MONTH);
 
   const newDocument = {
-    userId: ObjectId(userId),
+    userId: new ObjectId(userId),
     userAgent: agent,
     createdAt: timestamp,
     expiresAt: sessionTimeout,
@@ -44,4 +44,12 @@ export const deleteSessionById = async (id) => {
   const result = await collection.deleteOne(query);
 
   return { deleted: result.deletedCount === 1 };
+};
+
+export const deleteAllSessionsByUserId = async (userId) => {
+  const query = { userId: new ObjectId(userId) };
+
+  const result = await collection.deleteMany(query);
+
+  return { deleted: result.deletedCount > 0 };
 };

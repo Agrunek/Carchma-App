@@ -15,3 +15,5 @@ export const ATLAS_URI = readEnv('ATLAS_URI');
 export const PORT = readEnv('PORT', '5050');
 export const JWT_SECRET = readEnv('JWT_SECRET');
 export const JWT_REFRESH_SECRET = readEnv('JWT_REFRESH_SECRET');
+export const RESEND_API_KEY = readEnv('RESEND_API_KEY');
+export const EMAIL_FROM = readEnv('EMAIL_FROM');

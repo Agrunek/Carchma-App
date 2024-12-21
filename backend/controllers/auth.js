@@ -1,5 +1,19 @@
-import { loginSchema, registerSchema, verificationCodeSchema } from '../schemas/auth.js';
-import { createAccount, killSession, loginUser, refreshAccessToken, verifyEmail } from '../services/auth.js';
+import {
+  emailSchema,
+  loginSchema,
+  registerSchema,
+  resetPasswordSchema,
+  verificationCodeSchema,
+} from '../schemas/auth.js';
+import {
+  createAccount,
+  killSession,
+  loginUser,
+  refreshAccessToken,
+  resetPassword,
+  sendPasswordResetMail,
+  verifyEmail,
+} from '../services/auth.js';
 import { clearAuthCookies, setAuthCookies } from '../utils/cookies.js';
 import { CREATED, OK } from '../constants/http.js';
 import { ACCESS_TOKEN, REFRESH_TOKEN } from '../constants/jwt.js';
@@ -42,4 +56,20 @@ export const emailVerificationHandler = async (req, res) => {
   await verifyEmail(verificationCode);
 
   return res.status(OK).json({ message: 'Email verified successfully' });
+};
+
+export const forgotPasswordHandler = async (req, res) => {
+  const email = emailSchema.parse(req.body.email);
+
+  await sendPasswordResetMail(email);
+
+  return res.status(OK).json({ message: 'Password reset email sent' });
+};
+
+export const resetPasswordHandler = async (req, res) => {
+  const { password, verificationCode } = resetPasswordSchema.parse(req.body);
+
+  await resetPassword(password, verificationCode);
+
+  return clearAuthCookies(res).status(OK).json({ message: 'Password reset successful' });
 };
