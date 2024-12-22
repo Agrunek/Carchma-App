@@ -67,7 +67,7 @@ export const forgotPasswordHandler = async (req, res) => {
 };
 
 export const resetPasswordHandler = async (req, res) => {
-  const { password, verificationCode } = resetPasswordSchema.parse(req.body);
+  const { password, verificationCode } = resetPasswordSchema.parse({ ...req.body, verificationCode: req.params.code });
 
   await resetPassword(password, verificationCode);
 
