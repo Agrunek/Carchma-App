@@ -29,6 +29,6 @@ export const verifyToken = (token, type) => {
   try {
     return { payload: jwt.verify(token, secret, { audience: audience }) };
   } catch (error) {
-    return { error: error.message };
+    return { error: error instanceof jwt.TokenExpiredError ? 'Token expired' : 'Invalid token' };
   }
 };

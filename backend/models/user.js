@@ -5,6 +5,12 @@ import { hashValue } from '../utils/bcrypt.js';
 const collection = db.collection('users');
 await collection.createIndex({ email: 1 }, { unique: true });
 
+export const getUserById = async (id) => {
+  const query = { _id: new ObjectId(id) };
+
+  return await collection.findOne(query);
+};
+
 export const getUserByEmail = async (email) => {
   const query = { email: email };
 
