@@ -1,9 +1,9 @@
 import {
-  emailSchema,
+  emailVerificationSchema,
+  forgotPasswordSchema,
   loginSchema,
   registerSchema,
   resetPasswordSchema,
-  verificationCodeSchema,
 } from '../schemas/auth.js';
 import {
   createAccount,
@@ -51,7 +51,7 @@ export const logoutHandler = async (req, res) => {
 };
 
 export const emailVerificationHandler = async (req, res) => {
-  const verificationCode = verificationCodeSchema.parse(req.params.code);
+  const { verificationCode } = emailVerificationSchema.parse({ verificationCode: req.params.code });
 
   await verifyEmail(verificationCode);
 
@@ -59,7 +59,7 @@ export const emailVerificationHandler = async (req, res) => {
 };
 
 export const forgotPasswordHandler = async (req, res) => {
-  const email = emailSchema.parse(req.body.email);
+  const { email } = forgotPasswordSchema.parse(req.body);
 
   await sendPasswordResetMail(email);
 
