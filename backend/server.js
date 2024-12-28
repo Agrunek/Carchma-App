@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
+import advert from './routes/advert.js';
 import auth from './routes/auth.js';
 import user from './routes/user.js';
 import errorHandler from './middleware/errorHandler.js';
@@ -12,6 +13,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors({ origin: APP_ORIGIN, credentials: true }));
 app.use(cookieParser());
+app.use('/advert', advert);
 app.use('/auth', auth);
 app.use('/user', user);
 app.use(errorHandler);
