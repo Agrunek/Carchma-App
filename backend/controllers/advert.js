@@ -1,10 +1,11 @@
 import { advertSchema } from '../schemas/advert.js';
+import { initializeAdvert } from '../services/advert.js';
 import { CREATED } from '../constants/http.js';
 
 export const postAdvertHandler = async (req, res) => {
-  const data = advertSchema.parse({ ...req.body, userId: req.userId });
+  const { userId, ...data } = advertSchema.parse({ ...req.body, userId: req.userId });
 
-  // Process request...
+  const { advert } = await initializeAdvert(userId, data);
 
-  return res.status(CREATED).json(data);
+  return res.status(CREATED).json(advert);
 };
