@@ -35,8 +35,9 @@ export const createUser = async (email, password) => {
 };
 
 export const verifyUserById = async (id) => {
+  const timestamp = new Date();
   const query = { _id: new ObjectId(id) };
-  const updates = { $set: { verified: true } };
+  const updates = { $set: { verified: true, updatedAt: timestamp } };
 
   const result = await collection.updateOne(query, updates);
 
@@ -45,8 +46,9 @@ export const verifyUserById = async (id) => {
 
 export const resetUserPasswordById = async (id, password) => {
   const hashedPassword = await hashValue(password);
+  const timestamp = new Date();
   const query = { _id: new ObjectId(id) };
-  const updates = { $set: { password: hashedPassword } };
+  const updates = { $set: { password: hashedPassword, updatedAt: timestamp } };
 
   const result = await collection.updateOne(query, updates);
 
