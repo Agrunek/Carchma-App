@@ -1,18 +1,20 @@
 import { z } from 'zod';
 import {
-  BODY_TYPE_IDS,
-  CAR_MAKE_IDS,
-  CAR_MODEL_IDS,
-  CAR_TYPE_IDS,
+  BODY_TYPES,
+  CAR_MAKES,
+  CAR_MODELS,
   CAR_TYPES,
-  COLOR_IDS,
-  FUEL_TYPE_IDS,
-  GEARBOX_TYPE_IDS,
-} from '../constants/car.js';
+  COLORS,
+  FUEL_TYPES,
+  GEARBOX_TYPES,
+  extractCarItemById,
+  mapCarItemsIds,
+} from '../utils/car.js';
+import { BODY_TYPES_KEY, CAR_MAKES_KEY, CAR_MODELS_KEY } from '../constants/car.js';
 
 /* Configuration */
 const mongoIdPattern = z.string().length(24);
-const typePattern = z.enum(CAR_TYPE_IDS);
+const typePattern = z.enum(mapCarItemsIds(CAR_TYPES));
 
 /* General information */
 const vinPattern = z.string().min(1).max(17).toUpperCase();
@@ -22,16 +24,16 @@ const mileagePattern = z.number().int().nonnegative();
 const damagedPattern = z.boolean();
 
 /* Technical information */
-const makePattern = z.enum(CAR_MAKE_IDS);
-const modelPattern = z.enum(CAR_MODEL_IDS);
+const makePattern = z.enum(mapCarItemsIds(CAR_MAKES));
+const modelPattern = z.enum(mapCarItemsIds(CAR_MODELS));
 const yearPattern = z.number().int().min(1900);
-const fuelPattern = z.enum(FUEL_TYPE_IDS);
+const fuelPattern = z.enum(mapCarItemsIds(FUEL_TYPES));
 const powerPattern = z.number().int().positive();
 const displacementPattern = z.number().int().positive();
 const doorsPattern = z.number().int().positive();
-const gearboxPattern = z.enum(GEARBOX_TYPE_IDS);
-const bodyPattern = z.enum(BODY_TYPE_IDS);
-const colorPattern = z.enum(COLOR_IDS);
+const gearboxPattern = z.enum(mapCarItemsIds(GEARBOX_TYPES));
+const bodyPattern = z.enum(mapCarItemsIds(BODY_TYPES));
+const colorPattern = z.enum(mapCarItemsIds(COLORS));
 
 const advertPattern = z.object({
   userId: mongoIdPattern,
@@ -54,20 +56,20 @@ const advertPattern = z.object({
 });
 
 export const advertSchema = advertPattern.superRefine((data, context) => {
-  const carType = CAR_TYPES.find((type) => type.id === data.type);
+  const carType = extractCarItemById(CAR_TYPES, data.type);
 
-  const bodyType = carType?.body_types.find((body) => body.id === data.body);
+  const bodyType = extractCarItemById(carType[BODY_TYPES_KEY], data.body);
   if (!bodyType) {
     context.addIssue({ message: 'Car body does not match the car type', path: ['body'] });
   }
 
-  const carMake = carType?.car_makes.find((make) => make.id === data.make);
+  const carMake = extractCarItemById(carType[CAR_MAKES_KEY], data.make);
   if (!carMake) {
     context.addIssue({ message: 'Car make does not match the car type', path: ['make'] });
     return;
   }
 
-  const carModel = carMake.car_models.find((model) => model.id === data.model);
+  const carModel = extractCarItemById(carMake[CAR_MODELS_KEY], data.model);
   if (!carModel) {
     context.addIssue({ message: 'Car model does not match the car make', path: ['model'] });
   }
