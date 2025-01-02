@@ -1,23 +1,23 @@
-import { createFirstStepSchema, createSecondStepSchema } from '../schemas/advert.js';
-import { prepareAdvertFirstStep, prepareAdvertSecondStep } from '../services/advert.js';
-import { CREATED } from '../constants/http.js';
+import { createSchema, updateSchema } from '../schemas/advert.js';
+import { initializeAdvert, modifyAdvert } from '../services/advert.js';
+import { CREATED, OK } from '../constants/http.js';
 
-export const postAdvertFirstStepHandler = async (req, res) => {
-  const { userId, ...data } = createFirstStepSchema.parse({ ...req.body, userId: req.userId });
+export const postAdvertHandler = async (req, res) => {
+  const { userId, ...data } = createSchema.parse({ ...req.body, userId: req.userId });
 
-  const { advert } = await prepareAdvertFirstStep(userId, data);
+  const { advert } = await initializeAdvert(userId, data);
 
   return res.status(CREATED).json(advert);
 };
 
-export const postAdvertSecondStepHandler = async (req, res) => {
-  const { advertId, userId, ...data } = createSecondStepSchema.parse({
+export const patchAdvertHandler = async (req, res) => {
+  const { advertId, userId, ...data } = updateSchema.parse({
     ...req.body,
     userId: req.userId,
     advertId: req.params.id,
   });
 
-  const { advert } = await prepareAdvertSecondStep(advertId, userId, data);
+  await modifyAdvert(advertId, userId, data);
 
-  return res.status(CREATED).json(advert);
+  return res.status(OK).json({ message: 'Advertisement update successful' });
 };

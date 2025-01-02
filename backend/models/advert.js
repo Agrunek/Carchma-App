@@ -9,7 +9,7 @@ export const getAdvertByIdAndUserId = async (id, userId) => {
   return await collection.findOne(query);
 };
 
-export const createAdvertFirstStep = async (userId, advert) => {
+export const createAdvert = async (userId, advert) => {
   const timestamp = new Date();
 
   const newDocument = {
@@ -30,11 +30,10 @@ export const createAdvertFirstStep = async (userId, advert) => {
     gearbox: advert.gearbox,
     body: advert.body,
     color: advert.color,
-    title: null,
-    price: null,
-    description: null,
+    title: '',
+    price: 1000,
+    description: '',
     images: [],
-    step: 1,
     published: false,
     verified: false,
     closed: false,
@@ -47,20 +46,12 @@ export const createAdvertFirstStep = async (userId, advert) => {
   return { _id: result.insertedId, ...newDocument };
 };
 
-export const createAdvertSecondStep = async (id, advert) => {
+export const updateAdvertById = async (id, advert) => {
   const timestamp = new Date();
   const query = { _id: new ObjectId(id) };
-  const updates = {
-    $set: {
-      title: advert.title,
-      price: advert.price,
-      description: advert.description,
-      step: 2,
-      updatedAt: timestamp,
-    },
-  };
+  const updates = { $set: { ...advert, updatedAt: timestamp } };
 
-  const result = await collection.updateOne(query, updates);
+  const result = await collection.updateOne(query, updates, { ignoreUndefined: true });
 
   return { updated: result.modifiedCount === 1 };
 };
