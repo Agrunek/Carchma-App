@@ -35,7 +35,12 @@ const gearboxPattern = z.enum(mapCarItemsIds(GEARBOX_TYPES));
 const bodyPattern = z.enum(mapCarItemsIds(BODY_TYPES));
 const colorPattern = z.enum(mapCarItemsIds(COLORS));
 
-const advertPattern = z.object({
+/* Additional information */
+const titlePattern = z.string().min(1).max(100);
+const pricePattern = z.number().positive().multipleOf(0.01);
+const descriptionPattern = z.string().min(1).max(5000);
+
+const createFirstStepPattern = z.object({
   userId: mongoIdPattern,
   type: typePattern,
   vin: vinPattern,
@@ -55,7 +60,15 @@ const advertPattern = z.object({
   color: colorPattern,
 });
 
-export const advertSchema = advertPattern.superRefine((data, context) => {
+const createSecondStepPattern = z.object({
+  userId: mongoIdPattern,
+  advertId: mongoIdPattern,
+  title: titlePattern,
+  price: pricePattern,
+  description: descriptionPattern,
+});
+
+export const createFirstStepSchema = createFirstStepPattern.superRefine((data, context) => {
   const carType = extractCarItemById(CAR_TYPES, data.type);
 
   const bodyType = extractCarItemById(carType[BODY_TYPES_KEY], data.body);
@@ -74,3 +87,5 @@ export const advertSchema = advertPattern.superRefine((data, context) => {
     context.addIssue({ message: 'Car model does not match the car make', path: ['model'] });
   }
 });
+
+export const createSecondStepSchema = createSecondStepPattern;

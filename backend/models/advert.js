@@ -3,20 +3,41 @@ import db from '../db/connection.js';
 
 const collection = db.collection('adverts');
 
-export const getAdvertById = async (id) => {
-  const query = { _id: new ObjectId(id) };
+export const getAdvertByIdAndUserId = async (id, userId) => {
+  const query = { _id: new ObjectId(id), userId: new ObjectId(userId) };
 
   return await collection.findOne(query);
 };
 
-export const createAdvert = async (userId, advert) => {
+export const createAdvertFirstStep = async (userId, advert) => {
   const timestamp = new Date();
 
   const newDocument = {
     userId: new ObjectId(userId),
-    ...advert,
-    verified: false,
+    type: advert.type,
+    vin: advert.vin,
+    registrationNumber: advert.registrationNumber,
+    dateOfFirstRegistration: advert.dateOfFirstRegistration,
+    mileage: advert.mileage,
+    damaged: advert.damaged,
+    make: advert.make,
+    model: advert.model,
+    year: advert.year,
+    fuel: advert.fuel,
+    power: advert.power,
+    displacement: advert.displacement,
+    doors: advert.doors,
+    gearbox: advert.gearbox,
+    body: advert.body,
+    color: advert.color,
+    title: null,
+    price: null,
+    description: null,
+    images: [],
+    step: 1,
     published: false,
+    verified: false,
+    closed: false,
     createdAt: timestamp,
     updatedAt: timestamp,
   };
@@ -26,30 +47,18 @@ export const createAdvert = async (userId, advert) => {
   return { _id: result.insertedId, ...newDocument };
 };
 
-export const verifyAdvertById = async (id) => {
+export const createAdvertSecondStep = async (id, advert) => {
   const timestamp = new Date();
   const query = { _id: new ObjectId(id) };
-  const updates = { $set: { verified: true, updatedAt: timestamp } };
-
-  const result = await collection.updateOne(query, updates);
-
-  return { updated: result.modifiedCount === 1 };
-};
-
-export const publishAdvertById = async (id) => {
-  const timestamp = new Date();
-  const query = { _id: new ObjectId(id) };
-  const updates = { $set: { published: true, updatedAt: timestamp } };
-
-  const result = await collection.updateOne(query, updates);
-
-  return { updated: result.modifiedCount === 1 };
-};
-
-export const updateAdvertById = async (id, advert) => {
-  const timestamp = new Date();
-  const query = { _id: new ObjectId(id) };
-  const updates = { $set: { ...advert, updatedAt: timestamp } };
+  const updates = {
+    $set: {
+      title: advert.title,
+      price: advert.price,
+      description: advert.description,
+      step: 2,
+      updatedAt: timestamp,
+    },
+  };
 
   const result = await collection.updateOne(query, updates);
 
