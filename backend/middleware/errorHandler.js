@@ -1,3 +1,4 @@
+import { MulterError } from 'multer';
 import { ZodError } from 'zod';
 import AppError from '../utils/AppError.js';
 import { clearAuthCookies, REFRESH_PATH } from '../utils/cookies.js';
@@ -8,6 +9,13 @@ const errorHandler = (error, req, res, next) => {
 
   if (req.path === REFRESH_PATH) {
     clearAuthCookies(res);
+  }
+
+  if (error instanceof MulterError) {
+    return res.status(BAD_REQUEST).json({
+      message: error.message,
+      type: error.code,
+    });
   }
 
   if (error instanceof ZodError) {

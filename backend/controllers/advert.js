@@ -1,5 +1,5 @@
-import { createSchema, updateSchema } from '../schemas/advert.js';
-import { initializeAdvert, modifyAdvert } from '../services/advert.js';
+import { advertSchema, createSchema, updateSchema } from '../schemas/advert.js';
+import { initializeAdvert, modifyAdvert, showAdvert } from '../services/advert.js';
 import { CREATED, OK } from '../constants/http.js';
 
 export const postAdvertHandler = async (req, res) => {
@@ -20,4 +20,12 @@ export const patchAdvertHandler = async (req, res) => {
   await modifyAdvert(advertId, userId, data);
 
   return res.status(OK).json({ message: 'Advertisement update successful' });
+};
+
+export const getAdvertHandler = async (req, res) => {
+  const { advertId } = advertSchema.parse({ advertId: req.params.id });
+
+  const { advert } = await showAdvert(advertId);
+
+  return res.status(OK).json(advert);
 };

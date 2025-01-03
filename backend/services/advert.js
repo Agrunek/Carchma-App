@@ -1,5 +1,5 @@
 import appAssert from '../utils/appAssert.js';
-import { createAdvert, getAdvertByIdAndUserId, updateAdvertById } from '../models/advert.js';
+import { createAdvert, getAdvertById, getAdvertByIdAndUserId, updateAdvertById } from '../models/advert.js';
 import { INTERNAL_SERVER_ERROR, NOT_FOUND } from '../constants/http.js';
 
 export const initializeAdvert = async (userId, data) => {
@@ -18,4 +18,11 @@ export const modifyAdvert = async (advertId, userId, data) => {
 
   const { updated } = await updateAdvertById(advertId, data);
   appAssert(updated, INTERNAL_SERVER_ERROR, 'Failed to modify advertisement');
+};
+
+export const showAdvert = async (advertId) => {
+  const advert = await getAdvertById(advertId);
+  appAssert(advert, NOT_FOUND, 'Advertisement not found');
+
+  return { advert };
 };

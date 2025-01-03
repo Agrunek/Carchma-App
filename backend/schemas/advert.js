@@ -82,6 +82,10 @@ const updatePattern = z.union([
   updateMetaPattern.merge(customPattern).strict(),
 ]);
 
+const advertPattern = z.object({
+  advertId: mongoIdPattern,
+});
+
 const carRefine = (data, context) => {
   if (!data.type && !data.body && !data.make && !data.model) {
     return;
@@ -109,3 +113,5 @@ const carRefine = (data, context) => {
 export const createSchema = createPattern.superRefine(carRefine);
 
 export const updateSchema = updatePattern.superRefine(carRefine);
+
+export const advertSchema = advertPattern;

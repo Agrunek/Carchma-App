@@ -3,6 +3,12 @@ import db from '../db/connection.js';
 
 const collection = db.collection('adverts');
 
+export const getAdvertById = async (id) => {
+  const query = { _id: new ObjectId(id) };
+
+  return await collection.findOne(query);
+};
+
 export const getAdvertByIdAndUserId = async (id, userId) => {
   const query = { _id: new ObjectId(id), userId: new ObjectId(userId) };
 
@@ -33,7 +39,6 @@ export const createAdvert = async (userId, advert) => {
     title: '',
     price: 1000,
     description: '',
-    images: [],
     published: false,
     verified: false,
     closed: false,
