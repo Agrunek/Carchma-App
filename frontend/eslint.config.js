@@ -6,6 +6,7 @@ import tseslint from 'typescript-eslint'
 import tailwind from 'eslint-plugin-tailwindcss'
 import eslintConfigPrettier from 'eslint-config-prettier'
 import pluginQuery from '@tanstack/eslint-plugin-query'
+import pluginRouter from '@tanstack/eslint-plugin-router'
 
 export default tseslint.config({
   extends: [
@@ -13,6 +14,7 @@ export default tseslint.config({
     ...tseslint.configs.recommended,
     ...tailwind.configs['flat/recommended'],
     ...pluginQuery.configs['flat/recommended'],
+    ...pluginRouter.configs['flat/recommended'],
   ],
   files: ['**/*.{ts,tsx}'],
   ignores: ['dist'],
