@@ -6,13 +6,7 @@ const collection = db.collection('adverts');
 export const getAdvertById = async (id) => {
   const query = { _id: new ObjectId(id) };
 
-  return await collection.findOne(query);
-};
-
-export const getAdvertByIdAndUserId = async (id, userId) => {
-  const query = { _id: new ObjectId(id), userId: new ObjectId(userId) };
-
-  return await collection.findOne(query);
+  return collection.findOne(query);
 };
 
 export const createAdvert = async (userId, advert) => {

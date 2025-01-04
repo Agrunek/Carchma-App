@@ -8,7 +8,7 @@ await collection.createIndex({ expiresAt: 1 }, { expireAfterSeconds: 0 });
 export const getSessionById = async (id) => {
   const query = { _id: new ObjectId(id) };
 
-  return await collection.findOne(query);
+  return collection.findOne(query);
 };
 
 export const createSession = async (userId, agent) => {

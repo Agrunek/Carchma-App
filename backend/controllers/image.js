@@ -1,5 +1,5 @@
-import { createSchema, downloadSchema } from '../schemas/image.js';
-import { downloadImage, uploadImages } from '../services/image.js';
+import { createSchema, deleteSchema, downloadSchema } from '../schemas/image.js';
+import { downloadImage, removeImage, uploadImages } from '../services/image.js';
 import { OK } from '../constants/http.js';
 
 export const postImagesHandler = async (req, res) => {
@@ -20,4 +20,12 @@ export const getImageHandler = async (req, res) => {
   const { mimetype, downloadStream } = await downloadImage(imageId);
 
   downloadStream.pipe(res.set('Content-Type', mimetype));
+};
+
+export const deleteImageHandler = async (req, res) => {
+  const { imageId, userId } = deleteSchema.parse({ imageId: req.params.id, userId: req.userId });
+
+  await removeImage(imageId, userId);
+
+  return res.status(OK).json({ message: 'Image deleted successfully' });
 };

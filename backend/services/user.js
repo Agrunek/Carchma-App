@@ -6,8 +6,9 @@ export const showPrivateUserAccount = async (userId) => {
   const user = await getUserById(userId);
   appAssert(user, NOT_FOUND, 'User not found');
 
-  /* Prevent return of the generated password: */
   delete user.password;
+  delete user.createdAt;
+  delete user.updatedAt;
 
   return { user };
 };
@@ -16,10 +17,9 @@ export const showPublicUserAccount = async (userId) => {
   const user = await getUserById(userId);
   appAssert(user, NOT_FOUND, 'User not found');
 
-  /* Prevent return of the generated password: */
   delete user.password;
-
-  /* Prevent return of the private account information: */
+  delete user.createdAt;
+  delete user.updatedAt;
   delete user.email;
 
   return { user };

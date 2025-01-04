@@ -16,7 +16,7 @@ const delay = {
 export const getVerificationCodeBySignature = async (signature) => {
   const query = { signature: signature };
 
-  return await collection.findOne(query);
+  return collection.findOne(query);
 };
 
 export const createVerificationCode = async (userId, type) => {
@@ -49,5 +49,5 @@ export const countVerificationCodesByUserIdAndTypeAndOffset = async (userId, typ
   const timestampGate = new Date(Date.now() - offset);
   const query = { userId: new ObjectId(userId), type: type, createdAt: { $gt: timestampGate } };
 
-  return await collection.countDocuments(query);
+  return collection.countDocuments(query);
 };

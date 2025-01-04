@@ -8,13 +8,7 @@ const FILES_FIELDNAME = 'images';
 const upload = multer({
   storage: multer.memoryStorage(),
   limits: { fileSize: MAX_FILE_SIZE, files: MAX_NUMBER_OF_FILES },
-  fileFilter: (req, file, cb) => {
-    if (!ALLOWED_MIME_TYPES.includes(file.mimetype)) {
-      return cb(null, false);
-    }
-
-    cb(null, true);
-  },
+  fileFilter: (req, file, cb) => cb(null, ALLOWED_MIME_TYPES.includes(file.mimetype)),
 });
 
 const imagesUploadHandler = upload.array(FILES_FIELDNAME, MAX_NUMBER_OF_FILES);

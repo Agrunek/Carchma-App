@@ -13,6 +13,13 @@ const downloadPattern = z.object({
   imageId: mongoIdPattern,
 });
 
+const deletePattern = z.object({
+  imageId: mongoIdPattern,
+  userId: mongoIdPattern,
+});
+
 export const createSchema = createPattern;
 
 export const downloadSchema = downloadPattern;
+
+export const deleteSchema = deletePattern;

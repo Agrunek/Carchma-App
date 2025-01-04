@@ -8,6 +8,12 @@ export const getImageCursorArrayById = async (id) => {
   return bucket.find(query).toArray();
 };
 
+export const getImageCursorArrayByAdvertId = async (advertId) => {
+  const query = { 'metadata.advertId': new ObjectId(advertId) };
+
+  return bucket.find(query).toArray();
+};
+
 export const getImageDownloadStreamById = async (id) => {
   return bucket.openDownloadStream(new ObjectId(id));
 };
@@ -29,4 +35,8 @@ export const createImage = async (advertId, image) => {
 
     bufferStream.pipe(uploadStream).on('finish', resolve).on('error', reject);
   });
+};
+
+export const deleteImageById = async (id) => {
+  await bucket.delete(new ObjectId(id));
 };

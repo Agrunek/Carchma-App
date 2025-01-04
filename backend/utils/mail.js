@@ -26,7 +26,7 @@ const getVerificationPayload = {
 };
 
 export const sendVerificationMail = async (recipient, type, signature) => {
-  return await resend.emails.send({
+  return resend.emails.send({
     from: EMAIL_FROM,
     to: NODE_ENV !== 'development' ? recipient : 'delivered@resend.dev',
     ...getVerificationPayload[type](signature),

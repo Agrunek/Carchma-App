@@ -28,8 +28,9 @@ export const createAccount = async (email, password, agent) => {
   const user = await createUser(email, password);
   const { _id: userId, email: userEmail } = user;
 
-  /* Prevent return of the generated password: */
   delete user.password;
+  delete user.createdAt;
+  delete user.updatedAt;
 
   const { signature } = await createVerificationCode(userId, EMAIL_VERIFICATION);
 
@@ -52,15 +53,12 @@ export const loginUser = async (email, password, agent) => {
 
   const { _id: userId } = user;
 
-  /* Prevent return of the generated password: */
-  delete user.password;
-
   const { _id: sessionId } = await createSession(userId, agent);
 
   const accessToken = signToken({ userId, sessionId }, ACCESS_TOKEN);
   const refreshToken = signToken({ sessionId }, REFRESH_TOKEN);
 
-  return { user, accessToken, refreshToken };
+  return { accessToken, refreshToken };
 };
 
 export const refreshAccessToken = async (currentRefreshToken) => {
