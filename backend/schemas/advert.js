@@ -1,20 +1,26 @@
 import { z } from 'zod';
+import { extractId, findItemById, selectField } from '../utils/car.js';
 import {
-  BODY_TYPES,
-  CAR_MAKES,
-  CAR_MODELS,
-  CAR_TYPES,
-  COLORS,
-  FUEL_TYPES,
-  GEARBOX_TYPES,
-  extractCarItemById,
-  mapCarItemsIds,
-} from '../utils/car.js';
-import { BODY_TYPES_KEY, CAR_MAKES_KEY, CAR_MODELS_KEY } from '../constants/car.js';
+  BODY_TYPES_KEY,
+  CAR_MAKES_KEY,
+  CAR_MODELS_KEY,
+  CAR_TYPES_KEY,
+  COLORS_KEY,
+  FUEL_TYPES_KEY,
+  GEARBOX_TYPES_KEY,
+} from '../constants/car.js';
+
+const carTypes = selectField(CAR_TYPES_KEY);
+const carMakes = selectField(CAR_MAKES_KEY);
+const carModels = selectField(CAR_MODELS_KEY);
+const fuelTypes = selectField(FUEL_TYPES_KEY);
+const gearboxTypes = selectField(GEARBOX_TYPES_KEY);
+const bodyTypes = selectField(BODY_TYPES_KEY);
+const colors = selectField(COLORS_KEY);
 
 /* Configuration */
 const mongoIdPattern = z.string().length(24);
-const typePattern = z.enum(mapCarItemsIds(CAR_TYPES), { message: 'Invalid car type' });
+const typePattern = z.enum(carTypes.map(extractId), { message: 'Invalid car type' });
 
 /* General information */
 const vinPattern = z.string().min(1).max(17).toUpperCase();
@@ -24,16 +30,16 @@ const mileagePattern = z.number().int().nonnegative();
 const damagedPattern = z.boolean();
 
 /* Technical information */
-const makePattern = z.enum(mapCarItemsIds(CAR_MAKES), { message: 'Invalid car make' });
-const modelPattern = z.enum(mapCarItemsIds(CAR_MODELS), { message: 'Invalid car model' });
+const makePattern = z.enum(carMakes.map(extractId), { message: 'Invalid car make' });
+const modelPattern = z.enum(carModels.map(extractId), { message: 'Invalid car model' });
 const yearPattern = z.number().int().min(1900);
-const fuelPattern = z.enum(mapCarItemsIds(FUEL_TYPES), { message: 'Invalid fuel type' });
+const fuelPattern = z.enum(fuelTypes.map(extractId), { message: 'Invalid fuel type' });
 const powerPattern = z.number().int().positive();
 const displacementPattern = z.number().int().positive();
 const doorsPattern = z.number().int().positive();
-const gearboxPattern = z.enum(mapCarItemsIds(GEARBOX_TYPES), { message: 'Invalid gearbox type' });
-const bodyPattern = z.enum(mapCarItemsIds(BODY_TYPES), { message: 'Invalid body type' });
-const colorPattern = z.enum(mapCarItemsIds(COLORS), { message: 'Invalid color' });
+const gearboxPattern = z.enum(gearboxTypes.map(extractId), { message: 'Invalid gearbox type' });
+const bodyPattern = z.enum(bodyTypes.map(extractId), { message: 'Invalid body type' });
+const colorPattern = z.enum(colors.map(extractId), { message: 'Invalid color' });
 
 /* Additional information */
 const titlePattern = z.string().min(1).max(100);
@@ -91,20 +97,20 @@ const carRefine = (data, context) => {
     return;
   }
 
-  const carType = extractCarItemById(CAR_TYPES, data.type);
+  const carType = findItemById(carTypes, data.type);
 
-  const bodyType = extractCarItemById(carType[BODY_TYPES_KEY], data.body);
+  const bodyType = findItemById(carType[BODY_TYPES_KEY], data.body);
   if (!bodyType) {
     context.addIssue({ message: 'Provided body type does not match the car type', path: ['body'] });
   }
 
-  const carMake = extractCarItemById(carType[CAR_MAKES_KEY], data.make);
+  const carMake = findItemById(carType[CAR_MAKES_KEY], data.make);
   if (!carMake) {
     context.addIssue({ message: 'Provided car make does not match the car type', path: ['make'] });
     return;
   }
 
-  const carModel = extractCarItemById(carMake[CAR_MODELS_KEY], data.model);
+  const carModel = findItemById(carMake[CAR_MODELS_KEY], data.model);
   if (!carModel) {
     context.addIssue({ message: 'Provided car model does not match the car make', path: ['model'] });
   }
