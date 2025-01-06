@@ -1,11 +1,11 @@
 import type { AxiosError } from 'axios';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+
+import { QueryClientProvider } from '@tanstack/react-query';
 import { RouterProvider, createRouter } from '@tanstack/react-router';
 import { routeTree } from './routeTree.gen';
+import queryClient from './config/queryClient';
 
-const queryClient = new QueryClient();
-
-const router = createRouter({ routeTree });
+const router = createRouter({ routeTree, context: { queryClient } });
 
 declare module '@tanstack/react-query' {
   interface Register {
