@@ -21,11 +21,11 @@ import { ACCESS_TOKEN, REFRESH_TOKEN } from '../constants/jwt.js';
 import { EMAIL_VERIFICATION, PASSWORD_RESET } from '../constants/verificationType.js';
 import { FIVE_MINUTES, ONE_DAY } from '../constants/time.js';
 
-export const createAccount = async (email, password, agent) => {
+export const createAccount = async (name, email, password, agent) => {
   const account = await getUserByEmail(email);
   appAssert(!account, CONFLICT, 'Email already in use');
 
-  const user = await createUser(email, password);
+  const user = await createUser(name, email, password);
   const { _id: userId, email: userEmail } = user;
 
   delete user.password;

@@ -1,11 +1,13 @@
 import { z } from 'zod';
 
+const namePattern = z.string().min(1).max(255);
 const emailPattern = z.string().email().min(1).max(255);
 const passwordPattern = z.string().min(8).max(255);
-const agentPattern = z.string().optional();
+const agentPattern = z.string().max(255).optional();
 const verificationCodePattern = z.string().length(128);
 
 const registerPattern = z.object({
+  name: namePattern,
   email: emailPattern,
   password: passwordPattern,
   confirm: passwordPattern,

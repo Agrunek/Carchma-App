@@ -19,9 +19,9 @@ import { CREATED, OK } from '../constants/http.js';
 import { ACCESS_TOKEN, REFRESH_TOKEN } from '../constants/jwt.js';
 
 export const registerHandler = async (req, res) => {
-  const { email, password, agent } = registerSchema.parse({ ...req.body, agent: req.headers['user-agent'] });
+  const { name, email, password, agent } = registerSchema.parse({ ...req.body, agent: req.headers['user-agent'] });
 
-  const { user, accessToken, refreshToken } = await createAccount(email, password, agent);
+  const { user, accessToken, refreshToken } = await createAccount(name, email, password, agent);
 
   return setAuthCookies(res, accessToken, refreshToken).status(CREATED).json(user);
 };

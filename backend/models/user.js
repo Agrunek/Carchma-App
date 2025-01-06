@@ -17,11 +17,12 @@ export const getUserByEmail = async (email) => {
   return collection.findOne(query);
 };
 
-export const createUser = async (email, password) => {
+export const createUser = async (name, email, password) => {
   const hashedPassword = await hashValue(password);
   const timestamp = new Date();
 
   const newDocument = {
+    name: name,
     email: email,
     password: hashedPassword,
     verified: false,
