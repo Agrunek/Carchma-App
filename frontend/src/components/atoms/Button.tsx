@@ -22,10 +22,10 @@ const variantClassNames: ClassNameDictionary<ButtonVariant> = {
 
 const loadingClassName = tw`animate-pulse`;
 
-const Button = ({ className, disabled, loading, variant = 'primary', ...props }: ButtonProps) => {
+const Button = ({ className, loading, variant = 'primary', ...props }: ButtonProps) => {
   const style = clsx(baseClassName, variantClassNames[variant], loading && loadingClassName, className);
 
-  return <HeadlessButton disabled={disabled || loading} className={style} {...props} />;
+  return <HeadlessButton className={style} {...props} />;
 };
 
 export default Button;
