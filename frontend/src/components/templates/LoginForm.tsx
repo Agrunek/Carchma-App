@@ -2,6 +2,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import Card from '@/components/atoms/Card';
+import Link from '@/components/atoms/Link';
 import Form from '@/components/molecules/Form';
 import InputField from '@/components/molecules/InputField';
 
@@ -25,7 +26,7 @@ const LoginForm = ({ loading, onSubmit }: LoginFormProps) => {
   } = useForm<LoginInputs>({ disabled: loading, resolver: zodResolver(LoginSchema) });
 
   return (
-    <Card className="mx-4 w-full max-w-md">
+    <Card className="mx-4 flex w-full max-w-md flex-col gap-4">
       <Form
         disabled={loading}
         loading={loading}
@@ -51,6 +52,10 @@ const LoginForm = ({ loading, onSubmit }: LoginFormProps) => {
           {...register('password')}
         />
       </Form>
+      <div className="flex flex-wrap justify-center gap-2">
+        <p>Nie masz konta?</p>
+        <Link to="/register">Załóż je teraz!</Link>
+      </div>
     </Card>
   );
 };

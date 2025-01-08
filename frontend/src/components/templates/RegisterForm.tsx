@@ -2,6 +2,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import Card from '@/components/atoms/Card';
+import Link from '@/components/atoms/Link';
 import Form from '@/components/molecules/Form';
 import InputField from '@/components/molecules/InputField';
 
@@ -32,7 +33,7 @@ const RegisterForm = ({ loading, onSubmit }: RegisterFormProps) => {
   } = useForm<RegisterInputs>({ disabled: loading, resolver: zodResolver(RegisterSchema) });
 
   return (
-    <Card className="mx-4 w-full max-w-md">
+    <Card className="mx-4 flex w-full max-w-md flex-col gap-4">
       <Form
         disabled={loading}
         loading={loading}
@@ -74,6 +75,10 @@ const RegisterForm = ({ loading, onSubmit }: RegisterFormProps) => {
           {...register('confirm')}
         />
       </Form>
+      <div className="flex flex-wrap justify-center gap-2">
+        <p>Posiadasz konto?</p>
+        <Link to="/login">Zaloguj się!</Link>
+      </div>
     </Card>
   );
 };

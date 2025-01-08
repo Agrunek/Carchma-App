@@ -1,9 +1,25 @@
-import type { LinkProps as RouterLinkProps } from '@tanstack/react-router';
+import type { LinkComponent as TanStackLinkComponent } from '@tanstack/react-router';
 
-import { Link as RouterLink } from '@tanstack/react-router';
+import clsx from 'clsx';
+import { forwardRef } from 'react';
+import { createLink } from '@tanstack/react-router';
+import { tw } from '@/utils/string';
 
-const Link = ({ ...props }: RouterLinkProps) => {
-  return <RouterLink {...props} />;
+const LinkComponent = (
+  props: React.AnchorHTMLAttributes<HTMLAnchorElement>,
+  ref: React.ForwardedRef<HTMLAnchorElement>,
+) => {
+  return <a ref={ref} {...props} />;
+};
+
+const CreatedLinkComponent = createLink(forwardRef(LinkComponent));
+
+const baseClassName = tw`font-semibold text-emerald-700 hover:text-emerald-600 hover:underline active:text-emerald-800`;
+
+const Link: TanStackLinkComponent<typeof LinkComponent> = ({ className, ...props }) => {
+  const style = clsx(baseClassName, className);
+
+  return <CreatedLinkComponent preload="intent" className={style} {...props} />;
 };
 
 export default Link;

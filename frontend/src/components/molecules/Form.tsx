@@ -1,7 +1,7 @@
 import { Fieldset, Legend } from '@headlessui/react';
 import Button from '@/components/atoms/Button';
 
-interface FormProps extends React.ComponentProps<'form'> {
+interface FormProps extends React.FormHTMLAttributes<HTMLFormElement> {
   disabled?: boolean;
   loading?: boolean;
   submitTitle: string;
