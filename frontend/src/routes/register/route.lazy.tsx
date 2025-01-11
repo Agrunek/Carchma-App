@@ -1,24 +1,25 @@
-import type { RegisterInputs } from '@/components/templates/RegisterForm';
-
-import { useState } from 'react';
-import { createLazyFileRoute } from '@tanstack/react-router';
+import { createLazyFileRoute, useNavigate } from '@tanstack/react-router';
+import { useMutation } from '@tanstack/react-query';
+import Snackbar from '@/components/molecules/Snackbar';
 import RegisterForm from '@/components/templates/RegisterForm';
+import { register } from '@/middleware/api';
 
 export const Route = createLazyFileRoute('/register')({
   component: Register,
 });
 
 function Register() {
-  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
-  const handleResult = (data: RegisterInputs) => {
-    setLoading(true);
-    console.log(data);
-  };
+  const { mutate, isPending, isError, reset } = useMutation({
+    mutationFn: register,
+    onSuccess: () => navigate({ to: '/', replace: true }),
+  });
 
   return (
     <div className="flex min-h-screen items-center justify-center">
-      <RegisterForm loading={loading} onSubmit={handleResult} />
+      <RegisterForm loading={isPending} onSubmit={mutate} />
+      <Snackbar message="Konto z podanym mailem już istnieje" open={isError} onClose={reset} variant="error" />
     </div>
   );
 }

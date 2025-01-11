@@ -1,24 +1,12 @@
+import type { RegisterInputs } from '@/types/schema';
+
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
 import Card from '@/components/atoms/Card';
 import Link from '@/components/atoms/Link';
 import Form from '@/components/molecules/Form';
 import InputField from '@/components/molecules/InputField';
-
-const RegisterSchema = z
-  .object({
-    name: z.string().min(1, 'Imię nie może być puste').max(255),
-    email: z.string().email('Nieprawidłowy adres email').min(1).max(255),
-    password: z.string().min(8, 'Hasło musi się składać z przynajmniej 8 znaków').max(255),
-    confirm: z.string().min(8, 'Hasło musi się składać z przynajmniej 8 znaków').max(255),
-  })
-  .refine((data) => data.password === data.confirm, {
-    message: 'Hasła nie są takie same',
-    path: ['confirm'],
-  });
-
-export type RegisterInputs = z.infer<typeof RegisterSchema>;
+import { RegisterSchema } from '@/types/schema';
 
 interface RegisterFormProps {
   loading?: boolean;
@@ -77,7 +65,9 @@ const RegisterForm = ({ loading, onSubmit }: RegisterFormProps) => {
       </Form>
       <div className="flex flex-wrap justify-center gap-2">
         <p>Posiadasz konto?</p>
-        <Link to="/login">Zaloguj się!</Link>
+        <Link disabled={loading} to="/login">
+          Zaloguj się!
+        </Link>
       </div>
     </Card>
   );

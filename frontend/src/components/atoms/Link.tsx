@@ -14,7 +14,7 @@ const LinkComponent = (
 
 const CreatedLinkComponent = createLink(forwardRef(LinkComponent));
 
-const baseClassName = tw`font-semibold text-emerald-700 hover:text-emerald-600 hover:underline active:text-emerald-800`;
+const baseClassName = tw`font-semibold text-emerald-700 hover:text-emerald-600 hover:underline active:text-emerald-800 [&:not([href])]:pointer-events-none [&:not([href])]:text-gray-400`;
 
 const Link: TanStackLinkComponent<typeof LinkComponent> = ({ className, ...props }) => {
   const style = clsx(baseClassName, className);
