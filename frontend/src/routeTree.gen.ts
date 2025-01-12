@@ -13,6 +13,7 @@ import { createFileRoute } from '@tanstack/react-router'
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
+import { Route as VerifyEmailCodeRouteImport } from './routes/verify-email/$code/route'
 
 // Create Virtual Routes
 
@@ -42,6 +43,14 @@ const IndexRouteLazyRoute = IndexRouteLazyImport.update({
   getParentRoute: () => rootRoute,
 } as any).lazy(() => import('./routes/index/route.lazy').then((d) => d.Route))
 
+const VerifyEmailCodeRouteRoute = VerifyEmailCodeRouteImport.update({
+  id: '/verify-email/$code',
+  path: '/verify-email/$code',
+  getParentRoute: () => rootRoute,
+} as any).lazy(() =>
+  import('./routes/verify-email/$code/route.lazy').then((d) => d.Route),
+)
+
 // Populate the FileRoutesByPath interface
 
 declare module '@tanstack/react-router' {
@@ -67,6 +76,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RegisterRouteLazyImport
       parentRoute: typeof rootRoute
     }
+    '/verify-email/$code': {
+      id: '/verify-email/$code'
+      path: '/verify-email/$code'
+      fullPath: '/verify-email/$code'
+      preLoaderRoute: typeof VerifyEmailCodeRouteImport
+      parentRoute: typeof rootRoute
+    }
   }
 }
 
@@ -76,12 +92,14 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRouteLazyRoute
   '/login': typeof LoginRouteLazyRoute
   '/register': typeof RegisterRouteLazyRoute
+  '/verify-email/$code': typeof VerifyEmailCodeRouteRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexRouteLazyRoute
   '/login': typeof LoginRouteLazyRoute
   '/register': typeof RegisterRouteLazyRoute
+  '/verify-email/$code': typeof VerifyEmailCodeRouteRoute
 }
 
 export interface FileRoutesById {
@@ -89,14 +107,15 @@ export interface FileRoutesById {
   '/': typeof IndexRouteLazyRoute
   '/login': typeof LoginRouteLazyRoute
   '/register': typeof RegisterRouteLazyRoute
+  '/verify-email/$code': typeof VerifyEmailCodeRouteRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/login' | '/register'
+  fullPaths: '/' | '/login' | '/register' | '/verify-email/$code'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/login' | '/register'
-  id: '__root__' | '/' | '/login' | '/register'
+  to: '/' | '/login' | '/register' | '/verify-email/$code'
+  id: '__root__' | '/' | '/login' | '/register' | '/verify-email/$code'
   fileRoutesById: FileRoutesById
 }
 
@@ -104,12 +123,14 @@ export interface RootRouteChildren {
   IndexRouteLazyRoute: typeof IndexRouteLazyRoute
   LoginRouteLazyRoute: typeof LoginRouteLazyRoute
   RegisterRouteLazyRoute: typeof RegisterRouteLazyRoute
+  VerifyEmailCodeRouteRoute: typeof VerifyEmailCodeRouteRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRouteLazyRoute: IndexRouteLazyRoute,
   LoginRouteLazyRoute: LoginRouteLazyRoute,
   RegisterRouteLazyRoute: RegisterRouteLazyRoute,
+  VerifyEmailCodeRouteRoute: VerifyEmailCodeRouteRoute,
 }
 
 export const routeTree = rootRoute
@@ -124,7 +145,8 @@ export const routeTree = rootRoute
       "children": [
         "/",
         "/login",
-        "/register"
+        "/register",
+        "/verify-email/$code"
       ]
     },
     "/": {
@@ -135,6 +157,9 @@ export const routeTree = rootRoute
     },
     "/register": {
       "filePath": "register/route.lazy.tsx"
+    },
+    "/verify-email/$code": {
+      "filePath": "verify-email/$code/route.tsx"
     }
   }
 }

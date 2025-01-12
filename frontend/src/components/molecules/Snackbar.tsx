@@ -18,9 +18,9 @@ interface SnackbarProps {
 const baseClassName = tw`fixed bottom-4 right-4 z-50 rounded-md px-3.5 py-2 shadow-md transition duration-300 data-[enter]:translate-x-full data-[leave]:translate-y-full data-[enter]:opacity-0 data-[leave]:opacity-0 data-[enter]:ease-out`;
 
 const variantClassNames: ClassNameDictionary<SnackbarVariant> = {
-  success: tw`bg-emerald-700`,
-  warning: tw`bg-orange-500`,
-  error: tw`bg-red-600`,
+  success: tw`bg-emerald-700 shadow-emerald-700/50`,
+  warning: tw`bg-orange-500 shadow-orange-500/50`,
+  error: tw`bg-red-600 shadow-red-600/50`,
 };
 
 const Snackbar = ({ duration = 3000, message, onClose = () => {}, open, variant = 'success' }: SnackbarProps) => {

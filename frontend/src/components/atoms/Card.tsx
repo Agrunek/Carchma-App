@@ -6,7 +6,7 @@ interface CardProps {
   className?: string;
 }
 
-const baseClassName = tw`rounded-md border border-emerald-700 bg-gray-100 p-6 shadow-md`;
+const baseClassName = tw`rounded-md border-2 border-emerald-700 bg-gray-100 p-6 shadow-md shadow-emerald-700/50`;
 
 const Card = ({ children, className }: CardProps) => {
   const style = clsx(baseClassName, className);
