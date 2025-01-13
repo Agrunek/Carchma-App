@@ -23,7 +23,7 @@ const variantClassNames: ClassNameDictionary<SnackbarVariant> = {
   error: tw`bg-red-600 shadow-red-600/50`,
 };
 
-const Snackbar = ({ duration = 3000, message, onClose = () => {}, open, variant = 'success' }: SnackbarProps) => {
+const Snackbar = ({ duration = 5000, message, onClose = () => {}, open, variant = 'success' }: SnackbarProps) => {
   const style = clsx(baseClassName, variantClassNames[variant]);
 
   useEffect(() => {
@@ -34,7 +34,7 @@ const Snackbar = ({ duration = 3000, message, onClose = () => {}, open, variant 
   }, [duration, onClose, open]);
 
   return (
-    <Transition show={open} as="div" className={style}>
+    <Transition appear as="div" show={open} className={style}>
       <p className="font-semibold text-white">{message}</p>
     </Transition>
   );

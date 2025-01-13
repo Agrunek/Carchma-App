@@ -6,24 +6,23 @@ import Link from '@/components/atoms/Link';
 import Form from '@/components/molecules/Form';
 import InputField from '@/components/molecules/InputField';
 
-const LoginSchema = z.object({
+const ForgotPasswordSchema = z.object({
   email: z.string().email('Nieprawidłowy adres email').min(1).max(255),
-  password: z.string().min(8, 'Hasło musi się składać z przynajmniej 8 znaków').max(255),
 });
 
-export type LoginInputs = z.infer<typeof LoginSchema>;
+export type ForgotPasswordInputs = z.infer<typeof ForgotPasswordSchema>;
 
-interface LoginFormProps {
+interface ForgotPasswordFormProps {
   loading?: boolean;
-  onSubmit: (data: LoginInputs) => void;
+  onSubmit: (data: ForgotPasswordInputs) => void;
 }
 
-const LoginForm = ({ loading, onSubmit }: LoginFormProps) => {
+const ForgotPasswordForm = ({ loading, onSubmit }: ForgotPasswordFormProps) => {
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<LoginInputs>({ disabled: loading, resolver: zodResolver(LoginSchema) });
+  } = useForm<ForgotPasswordInputs>({ disabled: loading, resolver: zodResolver(ForgotPasswordSchema) });
 
   return (
     <Card className="flex w-full max-w-md flex-col items-center gap-4">
@@ -31,8 +30,8 @@ const LoginForm = ({ loading, onSubmit }: LoginFormProps) => {
         disabled={loading}
         loading={loading}
         onSubmit={handleSubmit(onSubmit)}
-        submitTitle="Zaloguj się"
-        title="Logowanie"
+        submitTitle="Wyślij maila"
+        title="Aktualizacja hasła"
         className="flex w-full flex-col gap-4"
       >
         <InputField
@@ -43,28 +42,15 @@ const LoginForm = ({ loading, onSubmit }: LoginFormProps) => {
           type="email"
           {...register('email')}
         />
-        <InputField
-          label="Hasło"
-          invalid={!!errors.password}
-          invalidMessage={errors.password?.message}
-          loading={loading}
-          type="password"
-          {...register('password')}
-        />
       </Form>
-      <div className="flex justify-center">
-        <Link disabled={loading} to="/forgot-password">
-          Nie pamiętam hasła...
-        </Link>
-      </div>
       <div className="flex flex-wrap justify-center gap-2">
-        <p>Nie masz konta?</p>
-        <Link disabled={loading} to="/register">
-          Załóż je teraz!
+        <p>Pamiętasz hasło?</p>
+        <Link disabled={loading} to="/login">
+          Zaloguj się!
         </Link>
       </div>
     </Card>
   );
 };
 
-export default LoginForm;
+export default ForgotPasswordForm;

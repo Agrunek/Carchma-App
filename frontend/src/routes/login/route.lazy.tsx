@@ -17,9 +17,9 @@ function Login() {
   });
 
   return (
-    <>
+    <div className="flex w-full justify-center p-4">
       <LoginForm loading={isPending} onSubmit={mutate} />
       <Snackbar message="Nieprawidłowy email lub hasło" open={isError} onClose={reset} variant="error" />
-    </>
+    </div>
   );
 }

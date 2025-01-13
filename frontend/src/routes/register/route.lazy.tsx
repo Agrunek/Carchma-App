@@ -17,9 +17,9 @@ function Register() {
   });
 
   return (
-    <>
+    <div className="flex w-full justify-center p-4">
       <RegisterForm loading={isPending} onSubmit={mutate} />
       <Snackbar message="Konto z podanym mailem już istnieje" open={isError} onClose={reset} variant="error" />
-    </>
+    </div>
   );
 }

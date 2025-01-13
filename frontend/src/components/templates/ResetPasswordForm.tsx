@@ -6,10 +6,8 @@ import Link from '@/components/atoms/Link';
 import Form from '@/components/molecules/Form';
 import InputField from '@/components/molecules/InputField';
 
-const RegisterSchema = z
+const ResetPasswordSchema = z
   .object({
-    name: z.string().min(1, 'Imię nie może być puste').max(255),
-    email: z.string().email('Nieprawidłowy adres email').min(1).max(255),
     password: z.string().min(8, 'Hasło musi się składać z przynajmniej 8 znaków').max(255),
     confirm: z.string().min(8, 'Hasło musi się składać z przynajmniej 8 znaków').max(255),
   })
@@ -18,19 +16,19 @@ const RegisterSchema = z
     path: ['confirm'],
   });
 
-export type RegisterInputs = z.infer<typeof RegisterSchema>;
+export type ResetPasswordInputs = z.infer<typeof ResetPasswordSchema>;
 
-interface RegisterFormProps {
+interface ResetPasswordFormProps {
   loading?: boolean;
-  onSubmit: (data: RegisterInputs) => void;
+  onSubmit: (data: ResetPasswordInputs) => void;
 }
 
-const RegisterForm = ({ loading, onSubmit }: RegisterFormProps) => {
+const ResetPasswordForm = ({ loading, onSubmit }: ResetPasswordFormProps) => {
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<RegisterInputs>({ disabled: loading, resolver: zodResolver(RegisterSchema) });
+  } = useForm<ResetPasswordInputs>({ disabled: loading, resolver: zodResolver(ResetPasswordSchema) });
 
   return (
     <Card className="flex w-full max-w-md flex-col items-center gap-4">
@@ -38,26 +36,10 @@ const RegisterForm = ({ loading, onSubmit }: RegisterFormProps) => {
         disabled={loading}
         loading={loading}
         onSubmit={handleSubmit(onSubmit)}
-        submitTitle="Utwórz konto"
-        title="Rejestracja"
+        submitTitle="Zmień hasło"
+        title="Aktualizacja hasła"
         className="flex w-full flex-col gap-4"
       >
-        <InputField
-          label="Imię"
-          invalid={!!errors.name}
-          invalidMessage={errors.name?.message}
-          loading={loading}
-          type="text"
-          {...register('name')}
-        />
-        <InputField
-          label="E-mail"
-          invalid={!!errors.email}
-          invalidMessage={errors.email?.message}
-          loading={loading}
-          type="email"
-          {...register('email')}
-        />
         <InputField
           label="Hasło"
           invalid={!!errors.password}
@@ -76,7 +58,7 @@ const RegisterForm = ({ loading, onSubmit }: RegisterFormProps) => {
         />
       </Form>
       <div className="flex flex-wrap justify-center gap-2">
-        <p>Posiadasz konto?</p>
+        <p>Pamiętasz hasło?</p>
         <Link disabled={loading} to="/login">
           Zaloguj się!
         </Link>
@@ -85,4 +67,4 @@ const RegisterForm = ({ loading, onSubmit }: RegisterFormProps) => {
   );
 };
 
-export default RegisterForm;
+export default ResetPasswordForm;
