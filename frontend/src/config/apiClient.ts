@@ -5,4 +5,6 @@ const apiClient = axios.create({
   withCredentials: true,
 });
 
+apiClient.interceptors.response.use((response) => response.data);
+
 export default apiClient;

@@ -19,7 +19,7 @@ function ResetPassword() {
     mutationFn: (data: ResetPasswordInputs) => resetPassword(code, data),
   });
 
-  if (!isSuccess) {
+  if (isSuccess) {
     return (
       <RouterFeedback actionNode={<Link to="/login" replace children="Zaloguj się!" />}>
         Hasło zostało zmienione!
