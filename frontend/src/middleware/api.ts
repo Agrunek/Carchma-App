@@ -26,6 +26,10 @@ export const resetPassword = async (code: string, data: ResetPasswordInputs) => 
   return apiClient.post(`auth/reset-password/${code}`, data);
 };
 
+export const logout = async () => {
+  return apiClient.post('auth/logout');
+};
+
 export const getUserPrivate = async (): Promise<UserPrivate> => {
   return apiClient.get('/user');
 };

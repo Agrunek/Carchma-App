@@ -2,6 +2,7 @@ import type { ButtonProps as HeadlessButtonProps } from '@headlessui/react';
 import type { ClassNameDictionary } from '@/types/utils';
 
 import clsx from 'clsx';
+import { forwardRef } from 'react';
 import { Button as HeadlessButton } from '@headlessui/react';
 import { tw } from '@/utils/string';
 
@@ -22,10 +23,13 @@ const variantClassNames: ClassNameDictionary<ButtonVariant> = {
 
 const loadingClassName = tw`animate-pulse`;
 
-const Button = ({ className, loading, variant = 'primary', ...props }: ButtonProps) => {
+const Button = (
+  { className, loading, variant = 'primary', ...props }: ButtonProps,
+  ref: React.ForwardedRef<HTMLButtonElement>,
+) => {
   const style = clsx(baseClassName, variantClassNames[variant], loading && loadingClassName, className);
 
-  return <HeadlessButton className={style} {...props} />;
+  return <HeadlessButton ref={ref} className={style} {...props} />;
 };
 
-export default Button;
+export default forwardRef(Button);
