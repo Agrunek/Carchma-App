@@ -31,5 +31,5 @@ export const logout = async () => {
 };
 
 export const getUserPrivate = async (): Promise<UserPrivate> => {
-  return apiClient.get('/user');
+  return apiClient.get('user');
 };
