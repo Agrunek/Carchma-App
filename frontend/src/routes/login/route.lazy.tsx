@@ -3,7 +3,7 @@ import { useMutation } from '@tanstack/react-query';
 import Snackbar from '@/components/molecules/Snackbar';
 import LoginForm from '@/components/templates/LoginForm';
 import { login } from '@/middleware/api';
-import { AUTH_KEY } from '@/hooks/useAuth';
+import { AUTH_KEY } from '@/middleware/queryOptions';
 
 export const Route = createLazyFileRoute('/login')({
   component: Login,

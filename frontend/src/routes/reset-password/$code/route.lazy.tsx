@@ -21,7 +21,13 @@ function ResetPassword() {
 
   if (isSuccess) {
     return (
-      <RouterFeedback actionNode={<Link to="/login" replace children="Zaloguj się!" />}>
+      <RouterFeedback
+        actionNode={
+          <Link to="/login" replace>
+            Zaloguj się!
+          </Link>
+        }
+      >
         Hasło zostało zmienione!
       </RouterFeedback>
     );

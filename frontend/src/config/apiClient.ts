@@ -2,7 +2,7 @@ import type { AxiosError, CreateAxiosDefaults } from 'axios';
 
 import axios from 'axios';
 import queryClient from '@/config/queryClient';
-import { AUTH_KEY } from '@/hooks/useAuth';
+import { AUTH_KEY } from '@/middleware/queryOptions';
 
 interface ApiError {
   type?: string;
