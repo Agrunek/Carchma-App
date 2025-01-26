@@ -5,30 +5,25 @@ export interface UserPrivate {
   verified: boolean;
 }
 
-interface CarItem {
-  id: string;
-  name: string;
-}
-
 export interface Advert {
   _id: string;
   userId: string;
-  type: CarItem;
+  type: string;
   vin: string;
   registrationNumber: string;
   dateOfFirstRegistration: string;
   mileage: number;
   damaged: boolean;
-  make: CarItem;
-  model: CarItem;
+  make: string;
+  model: string;
   year: number;
-  fuel: CarItem;
+  fuel: string;
   power: number;
   displacement: number;
   doors: number;
-  gearbox: CarItem;
-  body: CarItem;
-  color: CarItem;
+  gearbox: string;
+  body: string;
+  color: string;
   title: string | null;
   price: number | null;
   description: string | null;
@@ -36,6 +31,11 @@ export interface Advert {
   verified: boolean;
   closed: boolean;
   images: string[];
+}
+
+interface CarItem {
+  id: string;
+  name: string;
 }
 
 interface CarTypeInfo extends CarItem {
