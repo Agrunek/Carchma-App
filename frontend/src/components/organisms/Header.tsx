@@ -21,7 +21,7 @@ const Header = () => {
   });
 
   return (
-    <div className="fixed top-0 flex h-16 w-full items-center justify-end gap-8 bg-gradient-to-tr from-cyan-950 via-teal-950 to-emerald-950 px-6 shadow-md shadow-teal-950/50">
+    <div className="fixed top-0 z-40 flex h-16 w-full items-center justify-end gap-8 bg-gradient-to-tr from-cyan-950 via-teal-950 to-emerald-950 px-6 shadow-md shadow-teal-950/50">
       <Link to="/builder" variant="secondary">
         Utwórz ogłoszenie
       </Link>

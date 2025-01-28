@@ -168,6 +168,7 @@ const BuilderFirstStep = ({ loading, onSubmit }: BuilderFirstStepProps) => {
         <Controller
           name="make"
           control={control}
+          disabled={!carType}
           render={({ field, fieldState: { error } }) => (
             <ComboboxField
               label="Marka"
@@ -185,7 +186,7 @@ const BuilderFirstStep = ({ loading, onSubmit }: BuilderFirstStepProps) => {
         <Controller
           name="model"
           control={control}
-          disabled={isLoading}
+          disabled={!carMake || isLoading}
           render={({ field, fieldState: { error } }) => (
             <ComboboxField
               label="Model"

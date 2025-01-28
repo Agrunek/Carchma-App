@@ -3,7 +3,7 @@ import type { RegisterInputs } from '@/components/templates/RegisterForm';
 import type { ForgotPasswordInputs } from '@/components/templates/ForgotPasswordForm';
 import type { ResetPasswordInputs } from '@/components/templates/ResetPasswordForm';
 import type { BuilderFirstStepInputs } from '@/components/templates/BuilderFirstStep';
-import type { Advert, CarInfo, CarMake, UserPrivate } from '@/types/api';
+import type { Advert, CarInfo, CarMake, UserPrivate, UserPublic } from '@/types/api';
 
 import apiClient from '@/config/apiClient';
 
@@ -33,6 +33,10 @@ export const logout = async () => {
 
 export const getUserPrivate = async (): Promise<UserPrivate> => {
   return apiClient.get('user');
+};
+
+export const getUserPublic = async (id: string): Promise<UserPublic> => {
+  return apiClient.get(`user/${id}`);
 };
 
 export const getCarInfo = async (): Promise<CarInfo> => {

@@ -18,6 +18,7 @@ import { Route as MeRouteImport } from './routes/me/route'
 import { Route as LoginRouteImport } from './routes/login/route'
 import { Route as VerifyEmailCodeRouteImport } from './routes/verify-email/$code/route'
 import { Route as BuilderIdRouteImport } from './routes/builder/$id/route'
+import { Route as AdvertIdRouteImport } from './routes/advert/$id/route'
 import { Route as BuilderIndexRouteImport } from './routes/builder/index/route'
 
 // Create Virtual Routes
@@ -90,6 +91,14 @@ const BuilderIdRouteRoute = BuilderIdRouteImport.update({
   import('./routes/builder/$id/route.lazy').then((d) => d.Route),
 )
 
+const AdvertIdRouteRoute = AdvertIdRouteImport.update({
+  id: '/advert/$id',
+  path: '/advert/$id',
+  getParentRoute: () => rootRoute,
+} as any).lazy(() =>
+  import('./routes/advert/$id/route.lazy').then((d) => d.Route),
+)
+
 const BuilderIndexRouteRoute = BuilderIndexRouteImport.update({
   id: '/builder/',
   path: '/builder/',
@@ -144,6 +153,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BuilderIndexRouteImport
       parentRoute: typeof rootRoute
     }
+    '/advert/$id': {
+      id: '/advert/$id'
+      path: '/advert/$id'
+      fullPath: '/advert/$id'
+      preLoaderRoute: typeof AdvertIdRouteImport
+      parentRoute: typeof rootRoute
+    }
     '/builder/$id': {
       id: '/builder/$id'
       path: '/builder/$id'
@@ -177,6 +193,7 @@ export interface FileRoutesByFullPath {
   '/register': typeof RegisterRouteRoute
   '/forgot-password': typeof ForgotPasswordRouteLazyRoute
   '/builder': typeof BuilderIndexRouteRoute
+  '/advert/$id': typeof AdvertIdRouteRoute
   '/builder/$id': typeof BuilderIdRouteRoute
   '/verify-email/$code': typeof VerifyEmailCodeRouteRoute
   '/reset-password/$code': typeof ResetPasswordCodeRouteLazyRoute
@@ -189,6 +206,7 @@ export interface FileRoutesByTo {
   '/register': typeof RegisterRouteRoute
   '/forgot-password': typeof ForgotPasswordRouteLazyRoute
   '/builder': typeof BuilderIndexRouteRoute
+  '/advert/$id': typeof AdvertIdRouteRoute
   '/builder/$id': typeof BuilderIdRouteRoute
   '/verify-email/$code': typeof VerifyEmailCodeRouteRoute
   '/reset-password/$code': typeof ResetPasswordCodeRouteLazyRoute
@@ -202,6 +220,7 @@ export interface FileRoutesById {
   '/register': typeof RegisterRouteRoute
   '/forgot-password': typeof ForgotPasswordRouteLazyRoute
   '/builder/': typeof BuilderIndexRouteRoute
+  '/advert/$id': typeof AdvertIdRouteRoute
   '/builder/$id': typeof BuilderIdRouteRoute
   '/verify-email/$code': typeof VerifyEmailCodeRouteRoute
   '/reset-password/$code': typeof ResetPasswordCodeRouteLazyRoute
@@ -216,6 +235,7 @@ export interface FileRouteTypes {
     | '/register'
     | '/forgot-password'
     | '/builder'
+    | '/advert/$id'
     | '/builder/$id'
     | '/verify-email/$code'
     | '/reset-password/$code'
@@ -227,6 +247,7 @@ export interface FileRouteTypes {
     | '/register'
     | '/forgot-password'
     | '/builder'
+    | '/advert/$id'
     | '/builder/$id'
     | '/verify-email/$code'
     | '/reset-password/$code'
@@ -238,6 +259,7 @@ export interface FileRouteTypes {
     | '/register'
     | '/forgot-password'
     | '/builder/'
+    | '/advert/$id'
     | '/builder/$id'
     | '/verify-email/$code'
     | '/reset-password/$code'
@@ -251,6 +273,7 @@ export interface RootRouteChildren {
   RegisterRouteRoute: typeof RegisterRouteRoute
   ForgotPasswordRouteLazyRoute: typeof ForgotPasswordRouteLazyRoute
   BuilderIndexRouteRoute: typeof BuilderIndexRouteRoute
+  AdvertIdRouteRoute: typeof AdvertIdRouteRoute
   BuilderIdRouteRoute: typeof BuilderIdRouteRoute
   VerifyEmailCodeRouteRoute: typeof VerifyEmailCodeRouteRoute
   ResetPasswordCodeRouteLazyRoute: typeof ResetPasswordCodeRouteLazyRoute
@@ -263,6 +286,7 @@ const rootRouteChildren: RootRouteChildren = {
   RegisterRouteRoute: RegisterRouteRoute,
   ForgotPasswordRouteLazyRoute: ForgotPasswordRouteLazyRoute,
   BuilderIndexRouteRoute: BuilderIndexRouteRoute,
+  AdvertIdRouteRoute: AdvertIdRouteRoute,
   BuilderIdRouteRoute: BuilderIdRouteRoute,
   VerifyEmailCodeRouteRoute: VerifyEmailCodeRouteRoute,
   ResetPasswordCodeRouteLazyRoute: ResetPasswordCodeRouteLazyRoute,
@@ -284,6 +308,7 @@ export const routeTree = rootRoute
         "/register",
         "/forgot-password",
         "/builder/",
+        "/advert/$id",
         "/builder/$id",
         "/verify-email/$code",
         "/reset-password/$code"
@@ -306,6 +331,9 @@ export const routeTree = rootRoute
     },
     "/builder/": {
       "filePath": "builder/index/route.tsx"
+    },
+    "/advert/$id": {
+      "filePath": "advert/$id/route.tsx"
     },
     "/builder/$id": {
       "filePath": "builder/$id/route.tsx"

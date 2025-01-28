@@ -1,5 +1,5 @@
 import { queryOptions } from '@tanstack/react-query';
-import { getAdvert, getCarInfo, getMakeInfo, getUserPrivate } from '@/middleware/api';
+import { getAdvert, getCarInfo, getMakeInfo, getUserPrivate, getUserPublic } from '@/middleware/api';
 
 export const AUTH_KEY = 'auth';
 
@@ -8,9 +8,15 @@ export const getAuthQueryOptions = () => {
     queryKey: [AUTH_KEY],
     queryFn: getUserPrivate,
     staleTime: Infinity,
-    refetchOnMount: false,
-    refetchOnReconnect: false,
-    refetchOnWindowFocus: false,
+  });
+};
+
+export const USER_KEY = 'user';
+
+export const getUserQueryOptions = (id: string) => {
+  return queryOptions({
+    queryKey: [USER_KEY, id],
+    queryFn: () => getUserPublic(id),
   });
 };
 
@@ -29,9 +35,6 @@ export const getMakeInfoQueryOptions = (id: string, enabled?: boolean) => {
     queryKey: [INFO_KEY, id],
     queryFn: () => getMakeInfo(id),
     staleTime: Infinity,
-    refetchOnMount: false,
-    refetchOnReconnect: false,
-    refetchOnWindowFocus: false,
     enabled: enabled,
   });
 };

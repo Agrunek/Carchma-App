@@ -5,6 +5,12 @@ export interface UserPrivate {
   verified: boolean;
 }
 
+export interface UserPublic {
+  _id: string;
+  name: string;
+  verified: boolean;
+}
+
 export interface Advert {
   _id: string;
   userId: string;
