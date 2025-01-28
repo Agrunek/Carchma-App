@@ -1,19 +1,27 @@
+import clsx from 'clsx';
 import { Fieldset, Legend } from '@headlessui/react';
 import Button from '@/components/atoms/Button';
+import { tw } from '@/utils/string';
 
 interface FormProps extends React.FormHTMLAttributes<HTMLFormElement> {
   disabled?: boolean;
   loading?: boolean;
   submitTitle: string;
+  submitClassName?: string;
   title?: string;
+  titleClassName?: string;
 }
 
-const Form = ({ children, loading, submitTitle, title, ...props }: FormProps) => {
+const titleBaseClassName = tw`w-full text-center text-xl font-semibold`;
+
+const Form = ({ children, loading, submitTitle, submitClassName, title, titleClassName, ...props }: FormProps) => {
+  const titleStyle = clsx(titleBaseClassName, titleClassName);
+
   return (
     <Fieldset as="form" {...props}>
-      {title && <Legend className="w-full text-center text-xl font-semibold">{title}</Legend>}
+      {title && <Legend className={titleStyle}>{title}</Legend>}
       {children}
-      <Button loading={loading} type="submit">
+      <Button className={submitClassName} loading={loading} type="submit">
         {submitTitle}
       </Button>
     </Fieldset>

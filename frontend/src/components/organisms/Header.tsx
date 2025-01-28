@@ -43,7 +43,7 @@ const Header = () => {
               <Link
                 to="/me"
                 disabled={isPending || isSuccess}
-                className="w-full rounded-md py-2 text-center hover:bg-gray-200"
+                className="w-full rounded-md py-2 text-center hover:bg-gray-200 data-[focus]:bg-gray-200"
               >
                 Mój profil
               </Link>
@@ -52,7 +52,7 @@ const Header = () => {
               <Button
                 variant="tertiary"
                 disabled={isPending || isSuccess}
-                className="rounded-md hover:bg-gray-200"
+                className="rounded-md hover:bg-gray-200 data-[focus]:bg-gray-200"
                 onClick={() => mutate()}
               >
                 Wyloguj się

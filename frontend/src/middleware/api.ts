@@ -2,6 +2,7 @@ import type { LoginInputs } from '@/components/templates/LoginForm';
 import type { RegisterInputs } from '@/components/templates/RegisterForm';
 import type { ForgotPasswordInputs } from '@/components/templates/ForgotPasswordForm';
 import type { ResetPasswordInputs } from '@/components/templates/ResetPasswordForm';
+import type { BuilderFirstStepInputs } from '@/components/templates/BuilderFirstStep';
 import type { Advert, CarInfo, CarMake, UserPrivate } from '@/types/api';
 
 import apiClient from '@/config/apiClient';
@@ -44,4 +45,8 @@ export const getMakeInfo = async (id: string): Promise<CarMake> => {
 
 export const getAdvert = async (id: string): Promise<Advert> => {
   return apiClient.get(`advert/${id}`);
+};
+
+export const createAdvert = async (data: BuilderFirstStepInputs) => {
+  return apiClient.post('advert', data);
 };

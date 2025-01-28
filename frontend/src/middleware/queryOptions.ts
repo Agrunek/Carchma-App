@@ -1,5 +1,5 @@
 import { queryOptions } from '@tanstack/react-query';
-import { getAdvert, getCarInfo, getUserPrivate } from '@/middleware/api';
+import { getAdvert, getCarInfo, getMakeInfo, getUserPrivate } from '@/middleware/api';
 
 export const AUTH_KEY = 'auth';
 
@@ -21,6 +21,18 @@ export const getCarInfoQueryOptions = () => {
     queryKey: [INFO_KEY],
     queryFn: getCarInfo,
     staleTime: Infinity,
+  });
+};
+
+export const getMakeInfoQueryOptions = (id: string, enabled?: boolean) => {
+  return queryOptions({
+    queryKey: [INFO_KEY, id],
+    queryFn: () => getMakeInfo(id),
+    staleTime: Infinity,
+    refetchOnMount: false,
+    refetchOnReconnect: false,
+    refetchOnWindowFocus: false,
+    enabled: enabled,
   });
 };
 
