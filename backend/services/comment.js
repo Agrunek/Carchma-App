@@ -1,5 +1,12 @@
 import appAssert from '../utils/appAssert.js';
-import { createComment, deleteCommentById, getCommentById, updateCommentById } from '../models/comment.js';
+import {
+  createComment,
+  deleteCommentById,
+  getCommentById,
+  getCommentsByAdvertId,
+  getCommentsByUserId,
+  updateCommentById,
+} from '../models/comment.js';
 import { getAdvertById } from '../models/advert.js';
 import { FORBIDDEN, INTERNAL_SERVER_ERROR, NOT_FOUND } from '../constants/http.js';
 
@@ -45,4 +52,28 @@ export const showComment = async (commentId) => {
   delete comment.updatedAt;
 
   return { comment };
+};
+
+export const showAdvertComments = async (advertId) => {
+  const comments = await getCommentsByAdvertId(advertId);
+  appAssert(comments.length > 0, NOT_FOUND, 'Comments not found');
+
+  comments.forEach((comment) => {
+    delete comment.createdAt;
+    delete comment.updatedAt;
+  });
+
+  return { comments };
+};
+
+export const showUserComments = async (userId) => {
+  const comments = await getCommentsByUserId(userId);
+  appAssert(comments.length > 0, NOT_FOUND, 'Comments not found');
+
+  comments.forEach((comment) => {
+    delete comment.createdAt;
+    delete comment.updatedAt;
+  });
+
+  return { comments };
 };

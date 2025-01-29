@@ -1,5 +1,19 @@
-import { createSchema, deleteSchema, showSchema, updateSchema } from '../schemas/comment.js';
-import { uploadComment, modifyComment, removeComment, showComment } from '../services/comment.js';
+import {
+  createSchema,
+  deleteSchema,
+  showByAdvertSchema,
+  showByUserSchema,
+  showSchema,
+  updateSchema,
+} from '../schemas/comment.js';
+import {
+  uploadComment,
+  modifyComment,
+  removeComment,
+  showComment,
+  showAdvertComments,
+  showUserComments,
+} from '../services/comment.js';
 import { CREATED, OK } from '../constants/http.js';
 
 export const postCommentHandler = async (req, res) => {
@@ -24,6 +38,22 @@ export const patchCommentHandler = async (req, res) => {
   await modifyComment(commentId, userId, content);
 
   return res.status(OK).json({ message: 'Comment update successful' });
+};
+
+export const getCommentsByAdvertHandler = async (req, res) => {
+  const { advertId } = showByAdvertSchema.parse({ advertId: req.params.advertId });
+
+  const { comments } = await showAdvertComments(advertId);
+
+  return res.status(OK).json(comments);
+};
+
+export const getCommentsByUserHandler = async (req, res) => {
+  const { userId } = showByUserSchema.parse({ userId: req.params.userId });
+
+  const { comments } = await showUserComments(userId);
+
+  return res.status(OK).json(comments);
 };
 
 export const getCommentHandler = async (req, res) => {

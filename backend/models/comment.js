@@ -9,6 +9,18 @@ export const getCommentById = async (id) => {
   return collection.findOne(query);
 };
 
+export const getCommentsByAdvertId = async (advertId) => {
+  const query = { advertId: new ObjectId(advertId) };
+
+  return collection.find(query).toArray();
+};
+
+export const getCommentsByUserId = async (userId) => {
+  const query = { userId: new ObjectId(userId) };
+
+  return collection.find(query).toArray();
+};
+
 export const createComment = async (advertId, userId, content) => {
   const timestamp = new Date();
 

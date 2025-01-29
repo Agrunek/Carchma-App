@@ -24,6 +24,14 @@ const showPattern = z.object({
   commentId: mongoIdPattern,
 });
 
+const showByAdvertPattern = z.object({
+  advertId: mongoIdPattern,
+});
+
+const showByUserPattern = z.object({
+  userId: mongoIdPattern,
+});
+
 export const createSchema = createPattern;
 
 export const updateSchema = updatePattern;
@@ -31,3 +39,7 @@ export const updateSchema = updatePattern;
 export const deleteSchema = deletePattern;
 
 export const showSchema = showPattern;
+
+export const showByAdvertSchema = showByAdvertPattern;
+
+export const showByUserSchema = showByUserPattern;
