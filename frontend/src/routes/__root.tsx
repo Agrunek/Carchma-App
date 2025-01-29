@@ -8,11 +8,11 @@ import Button from '@/components/atoms/Button';
 import QueryDevtools from '@/components/QueryDevtools';
 import RouterDevtools from '@/components/RouterDevtools';
 import RouterFeedback from '@/components/templates/RouterFeedback';
-import { getCarInfoQueryOptions } from '@/middleware/queryOptions';
+import { getInfoQueryOptions } from '@/middleware/queryOptions';
 
 export const Route = createRootRouteWithContext<GlobalRouterContext>()({
   loader: async ({ context }) => {
-    await context.queryClient.ensureQueryData(getCarInfoQueryOptions());
+    await context.queryClient.ensureQueryData(getInfoQueryOptions());
   },
   component: Root,
   errorComponent: RootError,

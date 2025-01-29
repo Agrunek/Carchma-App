@@ -1,36 +1,27 @@
-import type { Advert } from '@/types/api';
+import type { Advert, UserPublic } from '@/types/api';
 
-import useCarInfo from '@/hooks/useCarInfo';
-import useMakeInfo from '@/hooks/useMakeInfo';
-import useUser from '@/hooks/useUser';
 import UserIcon from '@/components/atoms/UserIcon';
 import Card from '@/components/atoms/Card';
 import ImageCarousel from '@/components/molecules/ImageCarousel';
-import { translateAdvert } from '@/utils/advert';
 
 interface AdvertViewProps {
   advert: Advert;
+  user: UserPublic;
 }
 
-const AdvertView = ({ advert }: AdvertViewProps) => {
-  const { info } = useCarInfo();
-  const { data } = useMakeInfo(advert.make);
-  const { user } = useUser(advert.userId);
-
-  const result = translateAdvert(advert, info, data);
-
+const AdvertView = ({ advert, user }: AdvertViewProps) => {
   return (
     <Card className="flex w-full flex-col gap-4">
       <div className="flex w-full flex-col gap-4 md:flex-row">
-        <ImageCarousel className="h-96 w-full max-w-4xl" images={result.images} />
+        <ImageCarousel className="h-96 w-full max-w-4xl" images={advert.images} />
         <div className="mt-8 flex min-w-64 flex-col gap-4 px-8">
-          <p className="text-4xl font-semibold">{result.title}</p>
+          <p className="text-4xl font-semibold">{advert.title}</p>
           <p className="font-semibold">
-            {result.year}
+            {advert.year}
             <span className="font-black"> · </span>
-            {result.damaged ? 'Uszkodzony' : 'Igła'}
+            {advert.damaged ? 'Uszkodzony' : 'Igła'}
           </p>
-          <p className="text-2xl font-semibold">{result.price} PLN</p>
+          <p className="text-2xl font-semibold">{advert.price} PLN</p>
           <div className="hidden items-center gap-2 text-lg font-semibold md:flex">
             <UserIcon className="size-10" />
             {user.name}

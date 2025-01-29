@@ -1,14 +1,14 @@
+import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import useCarInfo from '@/hooks/useCarInfo';
-import useMakeInfo from '@/hooks/useMakeInfo';
 import Card from '@/components/atoms/Card';
 import Form from '@/components/molecules/Form';
 import CheckboxField from '@/components/molecules/CheckboxField';
 import ComboboxField from '@/components/molecules/ComboboxField';
 import InputField from '@/components/molecules/InputField';
 import { schemaWrapper } from '@/utils/schema';
+import { getInfoQueryOptions, getMakeQueryOptions } from '@/middleware/queryOptions';
 import { tw } from '@/utils/string';
 
 const BuilderFirstStepSchema = z.object({
@@ -38,7 +38,7 @@ interface BuilderFirstStepProps {
 }
 
 const BuilderFirstStep = ({ loading, onSubmit }: BuilderFirstStepProps) => {
-  const { info } = useCarInfo();
+  const { data: info } = useSuspenseQuery(getInfoQueryOptions());
 
   const { control, handleSubmit, watch } = useForm<BuilderFirstStepInputs>({
     disabled: loading,
@@ -51,7 +51,7 @@ const BuilderFirstStep = ({ loading, onSubmit }: BuilderFirstStepProps) => {
   const carBodies = carType?.body_types || [];
 
   const carMake = watch('make');
-  const { data, isLoading, isError, isSuccess } = useMakeInfo(carMake, !!carMake);
+  const { data, isLoading, isError, isSuccess } = useQuery(getMakeQueryOptions(carMake));
   const carModels = isSuccess ? data.car_models : [];
 
   return (

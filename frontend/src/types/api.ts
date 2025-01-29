@@ -59,3 +59,10 @@ export interface CarInfo {
 export interface CarMake extends CarItem {
   car_models: CarItem[];
 }
+
+export interface Comment {
+  _id: string;
+  advertId: string;
+  userId: string;
+  content: string;
+}

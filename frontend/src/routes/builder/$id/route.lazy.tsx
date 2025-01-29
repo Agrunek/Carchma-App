@@ -1,10 +1,9 @@
 import { useEffect } from 'react';
 import { createLazyFileRoute, useRouter } from '@tanstack/react-router';
-import { useQueryErrorResetBoundary } from '@tanstack/react-query';
-import useCarInfo from '@/hooks/useCarInfo';
-import useAdvert from '@/hooks/useAdvert';
+import { useQueryErrorResetBoundary, useSuspenseQuery } from '@tanstack/react-query';
 import Button from '@/components/atoms/Button';
 import RouterFeedback from '@/components/templates/RouterFeedback';
+import { getAdvertQueryOptions, getInfoQueryOptions } from '@/middleware/queryOptions';
 
 export const Route = createLazyFileRoute('/builder/$id')({
   component: Builder,
@@ -15,12 +14,12 @@ function Builder() {
   const { id } = Route.useParams();
   const { step } = Route.useSearch();
 
-  const { info } = useCarInfo();
-  const { advert } = useAdvert(id);
+  const { data: advert } = useSuspenseQuery(getAdvertQueryOptions(id));
+  const { data: info } = useSuspenseQuery(getInfoQueryOptions());
 
   console.log(step, info, advert);
 
-  return <></>;
+  return null;
 }
 
 function BuilderError() {
