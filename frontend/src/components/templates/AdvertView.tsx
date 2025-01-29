@@ -1,8 +1,12 @@
 import type { Advert, UserPublic } from '@/types/api';
 
+import { useQuery } from '@tanstack/react-query';
 import UserIcon from '@/components/atoms/UserIcon';
 import Card from '@/components/atoms/Card';
+import CommentBox from '@/components/molecules/CommentBox';
 import ImageCarousel from '@/components/molecules/ImageCarousel';
+import { getAdvertCommentsQueryOptions } from '@/middleware/queryOptions';
+import Section from '@/components/molecules/Section';
 
 interface AdvertViewProps {
   advert: Advert;
@@ -10,32 +14,41 @@ interface AdvertViewProps {
 }
 
 const AdvertView = ({ advert, user }: AdvertViewProps) => {
+  const { data = [] } = useQuery(getAdvertCommentsQueryOptions(advert._id));
+
   return (
-    <Card className="flex w-full flex-col gap-4">
-      <div className="flex w-full flex-col gap-4 md:flex-row">
-        <ImageCarousel className="h-96 w-full max-w-4xl" images={advert.images} />
-        <div className="mt-8 flex min-w-64 flex-col gap-4 px-8">
-          <p className="text-4xl font-semibold">{advert.title}</p>
-          <p className="font-semibold">
+    <Card className="flex w-full flex-col">
+      <div className="flex flex-col lg:flex-row">
+        <ImageCarousel images={advert.images} className="h-96 w-full max-w-full lg:max-w-screen-md" />
+        <div className="mx-4 mt-4 flex flex-col gap-2 lg:mx-0 lg:ml-8">
+          <p className="text-4xl font-bold">{advert.title}</p>
+          <p className="mx-4 mt-4 text-lg font-semibold">
             {advert.year}
             <span className="font-black"> · </span>
             {advert.damaged ? 'Uszkodzony' : 'Igła'}
           </p>
-          <p className="text-2xl font-semibold">{advert.price} PLN</p>
-          <div className="hidden items-center gap-2 text-lg font-semibold md:flex">
-            <UserIcon className="size-10" />
-            {user.name}
-          </div>
+          <p className="mx-4 text-2xl font-semibold">{advert.price} PLN</p>
         </div>
       </div>
-      <div className="mt-8 flex w-full max-w-4xl flex-col gap-4 px-8">
-        <p className="text-2xl font-semibold">OPIS</p>
-        <p className="w-full text-lg">{advert.description}</p>
-      </div>
-      <div className="mt-8 flex w-full max-w-4xl flex-col gap-4 px-8">
-        <p className="text-2xl font-semibold">SPECYFIKACJA</p>
-        <p className="w-full text-lg">To be continued...</p>
-      </div>
+      <Section title="OPIS" className="mx-4 mt-10">
+        <p className="mx-4 text-lg">{advert.description}</p>
+      </Section>
+      <Section title="SPECYFIKACJA" className="mx-4 mt-10">
+        <p className="mx-4 text-lg">To be implemented...</p>
+      </Section>
+      <Section title="KONTAKT" className="mx-4 mt-10">
+        <div className="mx-4 flex items-center gap-2 text-lg font-semibold">
+          <UserIcon className="size-10" />
+          {user.name}
+        </div>
+      </Section>
+      <Section title="OPINIE" className="mx-4 mt-10">
+        {data.length > 0 ? (
+          data.map((comment) => <CommentBox key={comment._id} comment={comment} className="mx-4" />)
+        ) : (
+          <p className="mx-4 text-lg">Brak komentarzy dla tego ogłoszenia...</p>
+        )}
+      </Section>
     </Card>
   );
 };
