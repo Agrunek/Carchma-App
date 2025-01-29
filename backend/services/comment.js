@@ -56,7 +56,6 @@ export const showComment = async (commentId) => {
 
 export const showAdvertComments = async (advertId) => {
   const comments = await getCommentsByAdvertId(advertId);
-  appAssert(comments.length > 0, NOT_FOUND, 'Comments not found');
 
   comments.forEach((comment) => {
     delete comment.createdAt;
@@ -68,7 +67,6 @@ export const showAdvertComments = async (advertId) => {
 
 export const showUserComments = async (userId) => {
   const comments = await getCommentsByUserId(userId);
-  appAssert(comments.length > 0, NOT_FOUND, 'Comments not found');
 
   comments.forEach((comment) => {
     delete comment.createdAt;
