@@ -8,7 +8,14 @@ import {
   updateCommentById,
 } from '../models/comment.js';
 import { getAdvertById } from '../models/advert.js';
+import {
+  createInteraction,
+  deleteInteractionByUserIdAndTargetIdAndAction as deleteInteraction,
+  getInteractionByUserIdAndTargetIdAndAction as getInteraction,
+  updateInteractionByUserIdAndTargetIdAndAction as updateInteraction,
+} from '../models/interaction.js';
 import { FORBIDDEN, INTERNAL_SERVER_ERROR, NOT_FOUND } from '../constants/http.js';
+import { COMMENT_REACTION } from '../constants/interaction.js';
 
 export const uploadComment = async (advertId, userId, content) => {
   const advert = await getAdvertById(advertId);
@@ -74,4 +81,33 @@ export const showUserComments = async (userId) => {
   });
 
   return { comments };
+};
+
+export const reactToComment = async (commentId, userId, value) => {
+  const comment = await getCommentById(commentId);
+  appAssert(comment, NOT_FOUND, 'Comment not found');
+
+  const reaction = await getInteraction(userId, commentId, COMMENT_REACTION);
+
+  if (reaction) {
+    const { updated } = await updateInteraction(userId, commentId, COMMENT_REACTION, value);
+    appAssert(updated, INTERNAL_SERVER_ERROR, 'Failed to like the comment');
+
+    return { created: false, updated: true };
+  }
+
+  const interaction = await createInteraction(userId, commentId, COMMENT_REACTION, value);
+
+  delete interaction.createdAt;
+  delete interaction.updatedAt;
+
+  return { created: true, updated: false, reaction: interaction };
+};
+
+export const removeCommentReaction = async (commentId, userId) => {
+  const comment = await getCommentById(commentId);
+  appAssert(comment, NOT_FOUND, 'Comment not found');
+
+  const { deleted } = await deleteInteraction(userId, commentId, COMMENT_REACTION);
+  appAssert(deleted, INTERNAL_SERVER_ERROR, 'Failed to delete reaction');
 };

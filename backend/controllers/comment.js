@@ -1,9 +1,11 @@
 import {
   createSchema,
+  deleteReactionSchema,
   deleteSchema,
   showByAdvertSchema,
   showByUserSchema,
   showSchema,
+  updateReactionSchema,
   updateSchema,
 } from '../schemas/comment.js';
 import {
@@ -13,6 +15,8 @@ import {
   showComment,
   showAdvertComments,
   showUserComments,
+  removeCommentReaction,
+  reactToComment,
 } from '../services/comment.js';
 import { CREATED, OK } from '../constants/http.js';
 
@@ -70,4 +74,26 @@ export const deleteCommentHandler = async (req, res) => {
   await removeComment(commentId, userId);
 
   return res.status(OK).json({ message: 'Comment deleted successfully' });
+};
+
+export const putReactionHandler = async (req, res) => {
+  const { commentId, userId, value } = updateReactionSchema.parse({
+    ...req.body,
+    commentId: req.params.id,
+    userId: req.userId,
+  });
+
+  const { created, reaction } = await reactToComment(commentId, userId, value);
+
+  return created
+    ? res.status(CREATED).json(reaction)
+    : res.status(OK).json({ message: 'Reaction to comment successful' });
+};
+
+export const deleteReactionHandler = async (req, res) => {
+  const { commentId, userId } = deleteReactionSchema.parse({ commentId: req.params.id, userId: req.userId });
+
+  await removeCommentReaction(commentId, userId);
+
+  return res.status(OK).json({ message: 'Reaction deleted successfully' });
 };
