@@ -23,14 +23,17 @@ const deletePattern = z.object({
 
 const showPattern = z.object({
   commentId: mongoIdPattern,
+  accountId: mongoIdPattern.optional(),
 });
 
 const showByAdvertPattern = z.object({
   advertId: mongoIdPattern,
+  accountId: mongoIdPattern.optional(),
 });
 
 const showByUserPattern = z.object({
   userId: mongoIdPattern,
+  accountId: mongoIdPattern.optional(),
 });
 
 const updateReactionPattern = z.object({

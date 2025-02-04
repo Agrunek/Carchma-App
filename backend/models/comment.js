@@ -28,6 +28,8 @@ export const createComment = async (advertId, userId, content) => {
     advertId: new ObjectId(advertId),
     userId: new ObjectId(userId),
     content: content,
+    likes: 0,
+    dislikes: 0,
     createdAt: timestamp,
     updatedAt: timestamp,
   };
@@ -41,6 +43,15 @@ export const updateCommentById = async (id, content) => {
   const timestamp = new Date();
   const query = { _id: new ObjectId(id) };
   const updates = { $set: { content: content, updatedAt: timestamp } };
+
+  const result = await collection.updateOne(query, updates);
+
+  return { updated: result.modifiedCount === 1 };
+};
+
+export const reactToCommentById = async (id, likeIncrease, dislikeIncrease) => {
+  const query = { _id: new ObjectId(id) };
+  const updates = { $inc: { likes: likeIncrease, dislikes: dislikeIncrease } };
 
   const result = await collection.updateOne(query, updates);
 

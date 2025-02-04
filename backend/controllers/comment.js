@@ -45,25 +45,25 @@ export const patchCommentHandler = async (req, res) => {
 };
 
 export const getCommentsByAdvertHandler = async (req, res) => {
-  const { advertId } = showByAdvertSchema.parse({ advertId: req.params.advertId });
+  const { advertId, accountId } = showByAdvertSchema.parse({ advertId: req.params.advertId, accountId: req.userId });
 
-  const { comments } = await showAdvertComments(advertId);
+  const { comments } = await showAdvertComments(advertId, accountId);
 
   return res.status(OK).json(comments);
 };
 
 export const getCommentsByUserHandler = async (req, res) => {
-  const { userId } = showByUserSchema.parse({ userId: req.params.userId });
+  const { userId, accountId } = showByUserSchema.parse({ userId: req.params.userId, accountId: req.userId });
 
-  const { comments } = await showUserComments(userId);
+  const { comments } = await showUserComments(userId, accountId);
 
   return res.status(OK).json(comments);
 };
 
 export const getCommentHandler = async (req, res) => {
-  const { commentId } = showSchema.parse({ commentId: req.params.id });
+  const { commentId, accountId } = showSchema.parse({ commentId: req.params.id, accountId: req.userId });
 
-  const { comment } = await showComment(commentId);
+  const { comment } = await showComment(commentId, accountId);
 
   return res.status(OK).json(comment);
 };
