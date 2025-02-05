@@ -21,25 +21,25 @@ import {
 import { CREATED, OK } from '../constants/http.js';
 
 export const postCommentHandler = async (req, res) => {
-  const { advertId, userId, content } = createSchema.parse({
+  const { advertId, userId, status, content } = createSchema.parse({
     ...req.body,
     userId: req.userId,
     advertId: req.params.advertId,
   });
 
-  const { comment } = await uploadComment(advertId, userId, content);
+  const { comment } = await uploadComment(advertId, userId, status, content);
 
   return res.status(CREATED).json(comment);
 };
 
 export const patchCommentHandler = async (req, res) => {
-  const { commentId, userId, content } = updateSchema.parse({
+  const { commentId, userId, status, content } = updateSchema.parse({
     ...req.body,
     userId: req.userId,
     commentId: req.params.id,
   });
 
-  await modifyComment(commentId, userId, content);
+  await modifyComment(commentId, userId, status, content);
 
   return res.status(OK).json({ message: 'Comment update successful' });
 };

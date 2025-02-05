@@ -18,11 +18,11 @@ import {
 import { FORBIDDEN, INTERNAL_SERVER_ERROR, NOT_FOUND } from '../constants/http.js';
 import { COMMENT_REACTION, REACTION_DISLIKE, REACTION_LIKE } from '../constants/interaction.js';
 
-export const uploadComment = async (advertId, userId, content) => {
+export const uploadComment = async (advertId, userId, status, content) => {
   const advert = await getAdvertById(advertId);
   appAssert(advert, NOT_FOUND, 'Advertisement not found');
 
-  const comment = await createComment(advertId, userId, content);
+  const comment = await createComment(advertId, userId, status, content);
 
   delete comment.createdAt;
   delete comment.updatedAt;
@@ -32,14 +32,14 @@ export const uploadComment = async (advertId, userId, content) => {
   return { comment };
 };
 
-export const modifyComment = async (commentId, userId, content) => {
+export const modifyComment = async (commentId, userId, status, content) => {
   const comment = await getCommentById(commentId);
   appAssert(comment, NOT_FOUND, 'Comment not found');
 
   const { userId: ownerId } = comment;
   appAssert(userId.toString() === ownerId.toString(), FORBIDDEN, 'User is not the owner of the advertisement');
 
-  const { updated } = await updateCommentById(commentId, content);
+  const { updated } = await updateCommentById(commentId, status, content);
   appAssert(updated, INTERNAL_SERVER_ERROR, 'Failed to modify comment');
 };
 

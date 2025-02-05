@@ -21,12 +21,13 @@ export const getCommentsByUserId = async (userId) => {
   return collection.find(query).toArray();
 };
 
-export const createComment = async (advertId, userId, content) => {
+export const createComment = async (advertId, userId, status, content) => {
   const timestamp = new Date();
 
   const newDocument = {
     advertId: new ObjectId(advertId),
     userId: new ObjectId(userId),
+    status: status,
     content: content,
     likes: 0,
     dislikes: 0,
@@ -39,19 +40,19 @@ export const createComment = async (advertId, userId, content) => {
   return { _id: result.insertedId, ...newDocument };
 };
 
-export const updateCommentById = async (id, content) => {
+export const updateCommentById = async (id, status, content) => {
   const timestamp = new Date();
   const query = { _id: new ObjectId(id) };
-  const updates = { $set: { content: content, updatedAt: timestamp } };
+  const updates = { $set: { status: status, content: content, updatedAt: timestamp } };
 
   const result = await collection.updateOne(query, updates);
 
   return { updated: result.modifiedCount === 1 };
 };
 
-export const reactToCommentById = async (id, likeIncrease, dislikeIncrease) => {
+export const reactToCommentById = async (id, likesUpdate, dislikesUpdate) => {
   const query = { _id: new ObjectId(id) };
-  const updates = { $inc: { likes: likeIncrease, dislikes: dislikeIncrease } };
+  const updates = { $inc: { likes: likesUpdate, dislikes: dislikesUpdate } };
 
   const result = await collection.updateOne(query, updates);
 
