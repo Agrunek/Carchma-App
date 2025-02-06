@@ -1,6 +1,7 @@
 import appAssert from '../utils/appAssert.js';
-import { createAdvert, getAdvertById, updateAdvertById } from '../models/advert.js';
+import { createAdvert, getAdvertById, getAdvertsByUserId, updateAdvertById } from '../models/advert.js';
 import { getImageCursorArrayByAdvertId } from '../models/image.js';
+import { calculateInitialScore } from '../utils/reputation.js';
 import { FORBIDDEN, INTERNAL_SERVER_ERROR, NOT_FOUND } from '../constants/http.js';
 
 /*
@@ -12,8 +13,13 @@ import { FORBIDDEN, INTERNAL_SERVER_ERROR, NOT_FOUND } from '../constants/http.j
 */
 
 export const initializeAdvert = async (userId, data) => {
-  const advert = await createAdvert(userId, data);
+  const previous = await getAdvertsByUserId(userId);
+  const initialScore = calculateInitialScore(previous);
 
+  const advert = await createAdvert(userId, data, initialScore);
+
+  delete advert.initialScore;
+  delete advert.score;
   delete advert.createdAt;
   delete advert.updatedAt;
 
@@ -39,6 +45,8 @@ export const showAdvert = async (advertId) => {
 
   const images = await getImageCursorArrayByAdvertId(advertId);
 
+  delete advert.initialScore;
+  delete advert.score;
   delete advert.createdAt;
   delete advert.updatedAt;
 

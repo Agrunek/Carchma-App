@@ -9,7 +9,13 @@ export const getAdvertById = async (id) => {
   return collection.findOne(query);
 };
 
-export const createAdvert = async (userId, advert) => {
+export const getAdvertsByUserId = async (userId) => {
+  const query = { userId: new ObjectId(userId) };
+
+  return collection.find(query).toArray();
+};
+
+export const createAdvert = async (userId, advert, initialScore) => {
   const timestamp = new Date();
 
   const newDocument = {
@@ -33,6 +39,8 @@ export const createAdvert = async (userId, advert) => {
     title: null,
     price: null,
     description: null,
+    initialScore: initialScore,
+    score: initialScore,
     published: false,
     verified: false,
     closed: false,
@@ -51,6 +59,15 @@ export const updateAdvertById = async (id, advert) => {
   const updates = { $set: { ...advert, updatedAt: timestamp } };
 
   const result = await collection.updateOne(query, updates, { ignoreUndefined: true });
+
+  return { updated: result.modifiedCount === 1 };
+};
+
+export const updateAdvertScoreById = async (id, score) => {
+  const query = { _id: new ObjectId(id) };
+  const updates = { $set: { score: score } };
+
+  const result = await collection.updateOne(query, updates);
 
   return { updated: result.modifiedCount === 1 };
 };

@@ -8,13 +8,14 @@ import {
   reactToCommentById,
   updateCommentById,
 } from '../models/comment.js';
-import { getAdvertById } from '../models/advert.js';
+import { getAdvertById, updateAdvertScoreById } from '../models/advert.js';
 import {
   createInteraction,
   deleteInteractionByUserIdAndTargetIdAndAction as deleteInteraction,
   getInteractionByUserIdAndTargetIdAndAction as getInteraction,
   updateInteractionByUserIdAndTargetIdAndAction as updateInteraction,
 } from '../models/interaction.js';
+import { calculateScore } from '../utils/reputation.js';
 import { FORBIDDEN, INTERNAL_SERVER_ERROR, NOT_FOUND } from '../constants/http.js';
 import { COMMENT_REACTION, REACTION_DISLIKE, REACTION_LIKE } from '../constants/interaction.js';
 
@@ -23,6 +24,10 @@ export const uploadComment = async (advertId, userId, status, content) => {
   appAssert(advert, NOT_FOUND, 'Advertisement not found');
 
   const comment = await createComment(advertId, userId, status, content);
+
+  const updatedComments = await getCommentsByAdvertId(advertId);
+  const newScore = calculateScore(advert.score, updatedComments);
+  await updateAdvertScoreById(advertId, newScore);
 
   delete comment.createdAt;
   delete comment.updatedAt;
@@ -41,6 +46,12 @@ export const modifyComment = async (commentId, userId, status, content) => {
 
   const { updated } = await updateCommentById(commentId, status, content);
   appAssert(updated, INTERNAL_SERVER_ERROR, 'Failed to modify comment');
+
+  const { _id: advertId, score } = await getAdvertById(comment.advertId);
+
+  const updatedComments = await getCommentsByAdvertId(advertId);
+  const newScore = calculateScore(score, updatedComments);
+  await updateAdvertScoreById(advertId, newScore);
 };
 
 export const removeComment = async (commentId, userId) => {
@@ -52,6 +63,12 @@ export const removeComment = async (commentId, userId) => {
 
   const { deleted } = await deleteCommentById(commentId);
   appAssert(deleted, INTERNAL_SERVER_ERROR, 'Failed to delete comment');
+
+  const { _id: advertId, score } = await getAdvertById(comment.advertId);
+
+  const updatedComments = await getCommentsByAdvertId(advertId);
+  const newScore = calculateScore(score, updatedComments);
+  await updateAdvertScoreById(advertId, newScore);
 };
 
 export const showComment = async (commentId, accountId) => {
@@ -116,6 +133,12 @@ export const reactToComment = async (commentId, userId, value) => {
 
   await reactToCommentById(commentId, value === REACTION_LIKE ? 1 : 0, value === REACTION_DISLIKE ? 1 : 0);
 
+  const { _id: advertId, score } = await getAdvertById(comment.advertId);
+
+  const updatedComments = await getCommentsByAdvertId(advertId);
+  const newScore = calculateScore(score, updatedComments);
+  await updateAdvertScoreById(advertId, newScore);
+
   delete interaction.createdAt;
   delete interaction.updatedAt;
 
@@ -134,4 +157,10 @@ export const removeCommentReaction = async (commentId, userId) => {
 
   const { deleted } = await deleteInteraction(userId, commentId, COMMENT_REACTION);
   appAssert(deleted, INTERNAL_SERVER_ERROR, 'Failed to delete reaction');
+
+  const { _id: advertId, score } = await getAdvertById(comment.advertId);
+
+  const updatedComments = await getCommentsByAdvertId(advertId);
+  const newScore = calculateScore(score, updatedComments);
+  await updateAdvertScoreById(advertId, newScore);
 };
