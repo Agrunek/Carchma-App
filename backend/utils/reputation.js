@@ -2,7 +2,6 @@ import { COMMENT_NEGATIVE, COMMENT_POSITIVE } from '../constants/status.js';
 
 const INITIAL_SCORE = 10;
 const BASE_RATIO = 0.1;
-const SCALING_FACTOR = 20;
 const UPPER_LIMIT = 50;
 const LOWER_LIMIT = -50;
 
