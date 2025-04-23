@@ -1,5 +1,5 @@
 import appAssert from '../utils/appAssert.js';
-import { createAdvert, getAdvertById, getAdvertsByUserId, updateAdvertById } from '../models/advert.js';
+import { createAdvert, getAdvertById, getAdverts, getAdvertsByUserId, updateAdvertById } from '../models/advert.js';
 import { getImageCursorArrayByAdvertId } from '../models/image.js';
 import { calculateInitialScore } from '../utils/reputation.js';
 import { FORBIDDEN, INTERNAL_SERVER_ERROR, NOT_FOUND } from '../constants/http.js';
@@ -53,4 +53,10 @@ export const showAdvert = async (advertId) => {
   advert.images = images.map((image) => image._id);
 
   return { advert };
+};
+
+export const searchAdverts = async (page) => {
+  const adverts = await getAdverts(page);
+
+  return { adverts };
 };

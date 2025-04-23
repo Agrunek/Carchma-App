@@ -46,6 +46,8 @@ const titlePattern = z.string().min(1).max(100);
 const pricePattern = z.number().positive().multipleOf(0.01);
 const descriptionPattern = z.string().min(1).max(5000);
 
+const pagePattern = z.coerce.number().int().positive().optional();
+
 const carPattern = z.object({
   type: typePattern,
   vin: vinPattern,
@@ -92,6 +94,10 @@ const advertPattern = z.object({
   advertId: mongoIdPattern,
 });
 
+const searchPattern = z.object({
+  page: pagePattern,
+});
+
 const carRefine = (data, context) => {
   if (!data.type && !data.body && !data.make && !data.model) {
     return;
@@ -121,3 +127,5 @@ export const createSchema = createPattern.superRefine(carRefine);
 export const updateSchema = updatePattern.superRefine(carRefine);
 
 export const advertSchema = advertPattern;
+
+export const searchSchema = searchPattern;
