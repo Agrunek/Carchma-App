@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { REACTION_DISLIKE, REACTION_LIKE } from '../constants/interaction.js';
-import { COMMENT_INFORMATIVE, COMMENT_NEGATIVE, COMMENT_POSITIVE } from '../constants/status.js';
+import { COMMENT_INFORMATIVE, COMMENT_NEGATIVE, COMMENT_POSITIVE } from '../constants/comment.js';
 
 const mongoIdPattern = z.string().length(24);
 const statusPattern = z.enum([COMMENT_POSITIVE, COMMENT_INFORMATIVE, COMMENT_NEGATIVE], { message: 'Invalid status' });

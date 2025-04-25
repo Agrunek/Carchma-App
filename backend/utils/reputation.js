@@ -1,4 +1,4 @@
-import { COMMENT_NEGATIVE, COMMENT_POSITIVE } from '../constants/status.js';
+import { COMMENT_NEGATIVE, COMMENT_POSITIVE } from '../constants/comment.js';
 
 const INITIAL_SCORE = 10;
 const BASE_RATIO = 0.1;

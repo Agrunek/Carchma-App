@@ -17,84 +17,116 @@ export const getAdvertById = async (id) => {
 export const getAdverts = async (page = 1) => {
   const timestamp = new Date();
   const skip = (page - 1) * PAGE_SIZE;
-  const query = [
-    {
-      $facet: {
-        meta: [{ $count: 'total' }],
-        data: [
-          {
-            $setWindowFields: {
-              output: {
-                _minScore: { $min: '$score' },
-                _maxScore: { $max: '$score' },
-                _minAge: { $min: { $trunc: [{ $divide: [{ $subtract: [timestamp, '$createdAt'] }, ONE_DAY] }] } },
-                _maxAge: { $max: { $trunc: [{ $divide: [{ $subtract: [timestamp, '$createdAt'] }, ONE_DAY] }] } },
-              },
-            },
-          },
-          {
-            $addFields: {
-              _score: {
-                $cond: {
-                  if: { $eq: ['$_minScore', '$_maxScore'] },
-                  then: 1,
-                  else: {
-                    $divide: [{ $subtract: ['$score', '$_minScore'] }, { $subtract: ['$_maxScore', '$_minScore'] }],
-                  },
-                },
-              },
-              _age: {
-                $cond: {
-                  if: { $eq: ['$_minAge', '$_maxAge'] },
-                  then: 1,
-                  else: {
-                    $divide: [
-                      {
-                        $subtract: [
-                          '$_maxAge',
-                          { $trunc: [{ $divide: [{ $subtract: [timestamp, '$createdAt'] }, ONE_DAY] }] },
-                        ],
-                      },
-                      { $subtract: ['$_maxAge', '$_minAge'] },
-                    ],
-                  },
-                },
-              },
-            },
-          },
-          {
-            $addFields: {
-              _ranking: {
-                $add: [{ $multiply: ['$_score', SCORE_FACTOR] }, { $multiply: ['$_age', AGE_FACTOR] }],
-              },
-            },
-          },
-          { $sort: { _ranking: -1 } },
-          {
-            $unset: [
-              'initialScore',
-              'score',
-              '_minScore',
-              '_maxScore',
-              '_minAge',
-              '_maxAge',
-              '_score',
-              '_age',
-              '_ranking',
-            ],
-          },
-          { $skip: skip },
-          { $limit: PAGE_SIZE },
-        ],
+
+  const dataPipelineMinMax = {
+    $setWindowFields: {
+      output: {
+        _minScore: { $min: '$score' },
+        _maxScore: { $max: '$score' },
+        _minAge: { $min: { $trunc: [{ $divide: [{ $subtract: [timestamp, '$createdAt'] }, ONE_DAY] }] } },
+        _maxAge: { $max: { $trunc: [{ $divide: [{ $subtract: [timestamp, '$createdAt'] }, ONE_DAY] }] } },
       },
     },
+  };
+
+  const dataPipelineValues = {
+    $addFields: {
+      _score: {
+        $cond: {
+          if: { $eq: ['$_minScore', '$_maxScore'] },
+          then: 1,
+          else: { $divide: [{ $subtract: ['$score', '$_minScore'] }, { $subtract: ['$_maxScore', '$_minScore'] }] },
+        },
+      },
+      _age: {
+        $cond: {
+          if: { $eq: ['$_minAge', '$_maxAge'] },
+          then: 1,
+          else: {
+            $divide: [
+              {
+                $subtract: ['$_maxAge', { $trunc: [{ $divide: [{ $subtract: [timestamp, '$createdAt'] }, ONE_DAY] }] }],
+              },
+              { $subtract: ['$_maxAge', '$_minAge'] },
+            ],
+          },
+        },
+      },
+    },
+  };
+
+  const dataPipelineRank = {
+    $addFields: {
+      _ranking: { $add: [{ $multiply: ['$_score', SCORE_FACTOR] }, { $multiply: ['$_age', AGE_FACTOR] }] },
+    },
+  };
+
+  const dataPipelineSort = { $sort: { _ranking: -1 } };
+
+  const dataPipelineSkip = { $skip: skip };
+
+  const dataPipelineLimit = { $limit: PAGE_SIZE };
+
+  const dataPipelineProject = {
+    $project: {
+      _id: 1,
+      userId: 1,
+      mileage: 1,
+      damaged: 1,
+      year: 1,
+      fuel: 1,
+      power: 1,
+      displacement: 1,
+      gearbox: 1,
+      title: 1,
+      price: 1,
+      verified: 1,
+    },
+  };
+
+  const dataPipeline = [
+    dataPipelineMinMax,
+    dataPipelineValues,
+    dataPipelineRank,
+    dataPipelineSort,
+    dataPipelineSkip,
+    dataPipelineLimit,
+    dataPipelineProject,
   ];
 
-  const result = await collection.aggregate(query).next();
+  const countPipeline = [{ $count: 'total' }];
 
-  result.meta = { total: result.meta[0].total, page: page, size: PAGE_SIZE };
+  const finalPipelineMix = {
+    $facet: {
+      data: dataPipeline,
+      count: countPipeline,
+    },
+  };
 
-  return result;
+  const finalPipelineValues = {
+    $addFields: {
+      currentCount: { $size: '$data' },
+      currentPage: page,
+      pageSize: PAGE_SIZE,
+      totalPages: { $ceil: { $divide: [{ $arrayElemAt: ['$count.total', 0] }, PAGE_SIZE] } },
+    },
+  };
+
+  const finalPipelineProject = {
+    $project: {
+      meta: {
+        currentCount: '$currentCount',
+        currentPage: '$currentPage',
+        pageSize: '$pageSize',
+        totalPages: '$totalPages',
+      },
+      data: '$data',
+    },
+  };
+
+  const finalPipeline = [finalPipelineMix, finalPipelineValues, finalPipelineProject];
+
+  return collection.aggregate(finalPipeline).next();
 };
 
 export const getAdvertsByUserId = async (userId) => {
