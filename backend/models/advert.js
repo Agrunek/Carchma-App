@@ -3,6 +3,7 @@ import db from '../db/connection.js';
 import { ONE_DAY } from '../constants/time.js';
 
 const collection = db.collection('adverts');
+await collection.createSearchIndex({ definition: { mappings: { dynamic: true } } });
 
 const PAGE_SIZE = 20;
 const SCORE_FACTOR = 0.3;
@@ -14,9 +15,11 @@ export const getAdvertById = async (id) => {
   return collection.findOne(query);
 };
 
-export const getAdverts = async (page = 1) => {
+export const getAdverts = async (page = 1, search = '') => {
   const timestamp = new Date();
   const skip = (page - 1) * PAGE_SIZE;
+
+  const searchPipeline = { $search: { index: 'default', text: { query: search, path: ['title', 'description'] } } };
 
   const dataPipelineMinMax = {
     $setWindowFields: {
@@ -126,7 +129,9 @@ export const getAdverts = async (page = 1) => {
 
   const finalPipeline = [finalPipelineMix, finalPipelineValues, finalPipelineProject];
 
-  return collection.aggregate(finalPipeline).next();
+  const query = search ? [searchPipeline, ...finalPipeline] : finalPipeline;
+
+  return collection.aggregate(query).next();
 };
 
 export const getAdvertsByUserId = async (userId) => {

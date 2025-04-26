@@ -4,7 +4,7 @@ import { ATLAS_URI } from '../constants/env.js';
 const client = new MongoClient(ATLAS_URI, {
   serverApi: {
     version: ServerApiVersion.v1,
-    strict: true,
+    // strict: true,
     deprecationErrors: true,
   },
 });
