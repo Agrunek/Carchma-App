@@ -31,9 +31,9 @@ export const getAdvertHandler = async (req, res) => {
 };
 
 export const getAdvertsHandler = async (req, res) => {
-  const { page } = searchSchema.parse({ ...req.query });
+  const { page, q } = searchSchema.parse({ ...req.query });
 
-  const { adverts } = await searchAdverts(page);
+  const { adverts } = await searchAdverts(page, q);
 
   return res.status(OK).json(adverts);
 };

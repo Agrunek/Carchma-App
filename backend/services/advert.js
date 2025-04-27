@@ -55,8 +55,8 @@ export const showAdvert = async (advertId) => {
   return { advert };
 };
 
-export const searchAdverts = async (page) => {
-  const adverts = await getAdverts(page);
+export const searchAdverts = async (page, search) => {
+  const adverts = await getAdverts(page, search);
 
   return { adverts };
 };

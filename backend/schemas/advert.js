@@ -47,6 +47,7 @@ const pricePattern = z.number().positive().multipleOf(0.01);
 const descriptionPattern = z.string().min(1).max(5000);
 
 const pagePattern = z.coerce.number().int().positive().optional();
+const qPattern = z.string().max(1000).optional();
 
 const carPattern = z.object({
   type: typePattern,
@@ -96,6 +97,7 @@ const advertPattern = z.object({
 
 const searchPattern = z.object({
   page: pagePattern,
+  q: qPattern,
 });
 
 const carRefine = (data, context) => {

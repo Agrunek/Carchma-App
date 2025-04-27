@@ -3,7 +3,20 @@ import db from '../db/connection.js';
 import { ONE_DAY } from '../constants/time.js';
 
 const collection = db.collection('adverts');
-await collection.createSearchIndex({ definition: { mappings: { dynamic: true } } });
+await collection.createSearchIndex({
+  definition: {
+    analyzer: 'custom',
+    searchAnalyzer: 'custom',
+    mappings: { dynamic: true },
+    analyzers: [
+      {
+        name: 'custom',
+        tokenizer: { type: 'standard' },
+        tokenFilters: [{ type: 'lowercase' }, { type: 'asciiFolding' }],
+      },
+    ],
+  },
+});
 
 const PAGE_SIZE = 20;
 const SCORE_FACTOR = 0.3;
@@ -19,7 +32,9 @@ export const getAdverts = async (page = 1, search = '') => {
   const timestamp = new Date();
   const skip = (page - 1) * PAGE_SIZE;
 
-  const searchPipeline = { $search: { index: 'default', text: { query: search, path: ['title', 'description'] } } };
+  const searchPipeline = {
+    $search: { index: 'default', text: { query: search, path: ['title', 'description'], fuzzy: { maxEdits: 2 } } },
+  };
 
   const dataPipelineMinMax = {
     $setWindowFields: {
