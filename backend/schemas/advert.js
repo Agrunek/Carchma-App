@@ -98,6 +98,19 @@ const advertPattern = z.object({
 const searchPattern = z.object({
   page: pagePattern,
   q: qPattern,
+  minMileage: z.coerce.number().int().nonnegative().optional(),
+  maxMileage: z.coerce.number().int().nonnegative().optional(),
+  damaged: z.preprocess((val) => (val ? val !== 'false' : undefined), damagedPattern.optional()),
+  make: makePattern.optional(),
+  model: modelPattern.optional(),
+  minYear: z.coerce.number().int().min(1900).optional(),
+  maxYear: z.coerce.number().int().min(1900).optional(),
+  fuel: z.preprocess((val) => (val ? val.split(',') : undefined), fuelPattern.array().nonempty().optional()),
+  minPower: z.coerce.number().int().positive().optional(),
+  maxPower: z.coerce.number().int().positive().optional(),
+  gearbox: gearboxPattern.optional(),
+  body: z.preprocess((val) => (val ? val.split(',') : undefined), bodyPattern.array().nonempty().optional()),
+  color: z.preprocess((val) => (val ? val.split(',') : undefined), colorPattern.array().nonempty().optional()),
 });
 
 const carRefine = (data, context) => {

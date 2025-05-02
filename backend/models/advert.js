@@ -28,12 +28,12 @@ export const getAdvertById = async (id) => {
   return collection.findOne(query);
 };
 
-export const getAdverts = async (page = 1, search = '') => {
+export const getAdverts = async (page = 1, search = '', filterOptions = {}) => {
   const timestamp = new Date();
   const skip = (page - 1) * PAGE_SIZE;
 
   const searchPipeline = {
-    $search: { index: 'default', text: { query: search, path: ['title', 'description'], fuzzy: { maxEdits: 2 } } },
+    $search: { index: 'default', text: { query: search, path: ['title', 'description'], fuzzy: { maxEdits: 1 } } },
   };
 
   const dataPipelineMinMax = {
@@ -114,6 +114,21 @@ export const getAdverts = async (page = 1, search = '') => {
 
   const countPipeline = [{ $count: 'total' }];
 
+  const matchFilters = {};
+
+  matchFilters.mileage = { $gte: filterOptions.minMileage || 0, $lte: filterOptions.maxMileage || Infinity };
+  if (filterOptions.damaged !== undefined) matchFilters.damaged = filterOptions.damaged;
+  if (filterOptions.make !== undefined) matchFilters.make = filterOptions.make;
+  if (filterOptions.model !== undefined) matchFilters.model = filterOptions.model;
+  matchFilters.year = { $gte: filterOptions.minYear || 0, $lte: filterOptions.maxYear || Infinity };
+  if (filterOptions.fuel !== undefined) matchFilters.fuel = { $in: filterOptions.fuel };
+  matchFilters.power = { $gte: filterOptions.minPower || 0, $lte: filterOptions.maxPower || Infinity };
+  if (filterOptions.gearbox !== undefined) matchFilters.gearbox = filterOptions.gearbox;
+  if (filterOptions.body !== undefined) matchFilters.body = { $in: filterOptions.body };
+  if (filterOptions.color !== undefined) matchFilters.color = { $in: filterOptions.color };
+
+  const finalPipelineMatch = { $match: matchFilters };
+
   const finalPipelineMix = {
     $facet: {
       data: dataPipeline,
@@ -142,7 +157,7 @@ export const getAdverts = async (page = 1, search = '') => {
     },
   };
 
-  const finalPipeline = [finalPipelineMix, finalPipelineValues, finalPipelineProject];
+  const finalPipeline = [finalPipelineMatch, finalPipelineMix, finalPipelineValues, finalPipelineProject];
 
   const query = search ? [searchPipeline, ...finalPipeline] : finalPipeline;
 
