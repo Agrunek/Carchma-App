@@ -8,13 +8,13 @@ await collection.createIndex({ email: 1 }, { unique: true });
 export const getUserById = async (id) => {
   const query = { _id: new ObjectId(id) };
 
-  return collection.findOne(query);
+  return collection.findOne(query, { projection: { updatedAt: 0 } });
 };
 
 export const getUserByEmail = async (email) => {
   const query = { email: email };
 
-  return collection.findOne(query);
+  return collection.findOne(query, { projection: { updatedAt: 0 } });
 };
 
 export const createUser = async (name, email, password) => {
@@ -31,6 +31,8 @@ export const createUser = async (name, email, password) => {
   };
 
   const result = await collection.insertOne(newDocument);
+
+  delete newDocument.updatedAt;
 
   return { _id: result.insertedId, ...newDocument };
 };

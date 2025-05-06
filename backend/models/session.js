@@ -29,7 +29,6 @@ export const createSession = async (userId, agent) => {
 
 export const resetSessionById = async (id) => {
   const sessionTimeout = new Date(Date.now() + ONE_MONTH);
-
   const query = { _id: new ObjectId(id) };
   const updates = { $set: { expiresAt: sessionTimeout } };
 

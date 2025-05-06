@@ -1,5 +1,6 @@
 import { ObjectId } from 'mongodb';
 import db from '../db/connection.js';
+import { balance, normalize } from '../utils/aggregation.js';
 import { ONE_DAY } from '../constants/time.js';
 
 const collection = db.collection('adverts');
@@ -19,13 +20,13 @@ await collection.createSearchIndex({
 });
 
 const PAGE_SIZE = 20;
-const SCORE_FACTOR = 0.3;
-const AGE_FACTOR = 0.7;
+const SCORE_FACTOR = 0.5;
+const AGE_FACTOR = 0.5;
 
 export const getAdvertById = async (id) => {
   const query = { _id: new ObjectId(id) };
 
-  return collection.findOne(query);
+  return collection.findOne(query, { projection: { updatedAt: 0 } });
 };
 
 export const getAdverts = async (page = 1, search = '', filterOptions = {}) => {
@@ -36,83 +37,52 @@ export const getAdverts = async (page = 1, search = '', filterOptions = {}) => {
     $search: { index: 'default', text: { query: search, path: ['title', 'description'], fuzzy: { maxEdits: 1 } } },
   };
 
-  const dataPipelineMinMax = {
-    $setWindowFields: {
-      output: {
-        _minScore: { $min: '$score' },
-        _maxScore: { $max: '$score' },
-        _minAge: { $min: { $trunc: [{ $divide: [{ $subtract: [timestamp, '$createdAt'] }, ONE_DAY] }] } },
-        _maxAge: { $max: { $trunc: [{ $divide: [{ $subtract: [timestamp, '$createdAt'] }, ONE_DAY] }] } },
-      },
-    },
-  };
-
-  const dataPipelineValues = {
-    $addFields: {
-      _score: {
-        $cond: {
-          if: { $eq: ['$_minScore', '$_maxScore'] },
-          then: 1,
-          else: { $divide: [{ $subtract: ['$score', '$_minScore'] }, { $subtract: ['$_maxScore', '$_minScore'] }] },
-        },
-      },
-      _age: {
-        $cond: {
-          if: { $eq: ['$_minAge', '$_maxAge'] },
-          then: 1,
-          else: {
-            $divide: [
-              {
-                $subtract: ['$_maxAge', { $trunc: [{ $divide: [{ $subtract: [timestamp, '$createdAt'] }, ONE_DAY] }] }],
-              },
-              { $subtract: ['$_maxAge', '$_minAge'] },
-            ],
-          },
-        },
-      },
-    },
-  };
-
-  const dataPipelineRank = {
-    $addFields: {
-      _ranking: { $add: [{ $multiply: ['$_score', SCORE_FACTOR] }, { $multiply: ['$_age', AGE_FACTOR] }] },
-    },
-  };
-
-  const dataPipelineSort = { $sort: { _ranking: -1 } };
-
-  const dataPipelineSkip = { $skip: skip };
-
-  const dataPipelineLimit = { $limit: PAGE_SIZE };
-
-  const dataPipelineProject = {
-    $project: {
-      _id: 1,
-      userId: 1,
-      mileage: 1,
-      damaged: 1,
-      year: 1,
-      fuel: 1,
-      power: 1,
-      displacement: 1,
-      gearbox: 1,
-      title: 1,
-      price: 1,
-      verified: 1,
-    },
-  };
+  const ageInDays = { $trunc: [{ $divide: [{ $subtract: [timestamp, '$createdAt'] }, ONE_DAY] }] };
 
   const dataPipeline = [
-    dataPipelineMinMax,
-    dataPipelineValues,
-    dataPipelineRank,
-    dataPipelineSort,
-    dataPipelineSkip,
-    dataPipelineLimit,
-    dataPipelineProject,
-  ];
+    {
+      $setWindowFields: {
+        output: {
+          _minScore: { $min: '$score' },
+          _maxScore: { $max: '$score' },
+          _minAge: { $min: ageInDays },
+          _maxAge: { $max: ageInDays },
+        },
+      },
+    },
 
-  const countPipeline = [{ $count: 'total' }];
+    {
+      $addFields: {
+        _scoreRating: normalize('$score', '$_minScore', '$_maxScore'),
+        _ageRating: normalize(ageInDays, '$_minAge', '$_maxAge', true),
+      },
+    },
+
+    { $addFields: { _rating: balance('$_scoreRating', SCORE_FACTOR, '$_ageRating', AGE_FACTOR) } },
+
+    { $sort: { _rating: -1 } },
+
+    { $skip: skip },
+
+    { $limit: PAGE_SIZE },
+
+    {
+      $project: {
+        _id: 1,
+        userId: 1,
+        mileage: 1,
+        damaged: 1,
+        year: 1,
+        fuel: 1,
+        power: 1,
+        displacement: 1,
+        gearbox: 1,
+        title: 1,
+        price: 1,
+        verified: 1,
+      },
+    },
+  ];
 
   const matchFilters = {};
 
@@ -127,37 +97,32 @@ export const getAdverts = async (page = 1, search = '', filterOptions = {}) => {
   if (filterOptions.body !== undefined) matchFilters.body = { $in: filterOptions.body };
   if (filterOptions.color !== undefined) matchFilters.color = { $in: filterOptions.color };
 
-  const finalPipelineMatch = { $match: matchFilters };
+  const finalPipeline = [
+    { $match: matchFilters },
 
-  const finalPipelineMix = {
-    $facet: {
-      data: dataPipeline,
-      count: countPipeline,
-    },
-  };
+    { $facet: { data: dataPipeline, count: [{ $count: 'total' }] } },
 
-  const finalPipelineValues = {
-    $addFields: {
-      currentCount: { $size: '$data' },
-      currentPage: page,
-      pageSize: PAGE_SIZE,
-      totalPages: { $ceil: { $divide: [{ $arrayElemAt: ['$count.total', 0] }, PAGE_SIZE] } },
-    },
-  };
-
-  const finalPipelineProject = {
-    $project: {
-      meta: {
-        currentCount: '$currentCount',
-        currentPage: '$currentPage',
-        pageSize: '$pageSize',
-        totalPages: '$totalPages',
+    {
+      $addFields: {
+        currentCount: { $size: '$data' },
+        currentPage: page,
+        pageSize: PAGE_SIZE,
+        totalPages: { $ceil: { $divide: [{ $arrayElemAt: ['$count.total', 0] }, PAGE_SIZE] } },
       },
-      data: '$data',
     },
-  };
 
-  const finalPipeline = [finalPipelineMatch, finalPipelineMix, finalPipelineValues, finalPipelineProject];
+    {
+      $project: {
+        meta: {
+          currentCount: '$currentCount',
+          currentPage: '$currentPage',
+          pageSize: '$pageSize',
+          totalPages: '$totalPages',
+        },
+        data: '$data',
+      },
+    },
+  ];
 
   const query = search ? [searchPipeline, ...finalPipeline] : finalPipeline;
 
@@ -167,7 +132,7 @@ export const getAdverts = async (page = 1, search = '', filterOptions = {}) => {
 export const getAdvertsByUserId = async (userId) => {
   const query = { userId: new ObjectId(userId) };
 
-  return collection.find(query).toArray();
+  return collection.find(query, { projection: { updatedAt: 0 } }).toArray();
 };
 
 export const createAdvert = async (userId, advert, initialScore) => {
@@ -205,6 +170,8 @@ export const createAdvert = async (userId, advert, initialScore) => {
 
   const result = await collection.insertOne(newDocument);
 
+  delete newDocument.updatedAt;
+
   return { _id: result.insertedId, ...newDocument };
 };
 
@@ -219,8 +186,9 @@ export const updateAdvertById = async (id, advert) => {
 };
 
 export const updateAdvertScoreById = async (id, score) => {
+  const timestamp = new Date();
   const query = { _id: new ObjectId(id) };
-  const updates = { $set: { score: score } };
+  const updates = { $set: { score: score, updatedAt: timestamp } };
 
   const result = await collection.updateOne(query, updates);
 

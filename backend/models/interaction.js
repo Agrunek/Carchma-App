@@ -7,7 +7,7 @@ await collection.createIndex({ userId: 1, targetId: 1, action: 1 }, { unique: tr
 export const getInteractionByUserIdAndTargetIdAndAction = async (userId, targetId, action) => {
   const query = { userId: new ObjectId(userId), targetId: new ObjectId(targetId), action: action };
 
-  return collection.findOne(query);
+  return collection.findOne(query, { projection: { updatedAt: 0 } });
 };
 
 export const createInteraction = async (userId, targetId, action, value) => {
@@ -23,6 +23,8 @@ export const createInteraction = async (userId, targetId, action, value) => {
   };
 
   const result = await collection.insertOne(newDocument);
+
+  delete newDocument.updatedAt;
 
   return { _id: result.insertedId, ...newDocument };
 };
