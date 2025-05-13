@@ -1,5 +1,6 @@
 import { advertSchema, createSchema, searchSchema, updateSchema } from '../schemas/advert.js';
-import { initializeAdvert, modifyAdvert, searchAdverts, showAdvert } from '../services/advert.js';
+import { getAdverts } from '../models/advert.js';
+import { initializeAdvert, modifyAdvert, showAdvert } from '../services/advert.js';
 import { CREATED, OK } from '../constants/http.js';
 
 export const postAdvertHandler = async (req, res) => {
@@ -33,7 +34,7 @@ export const getAdvertHandler = async (req, res) => {
 export const getAdvertsHandler = async (req, res) => {
   const { page, q, ...filterOptions } = searchSchema.parse({ ...req.query });
 
-  const { adverts } = await searchAdverts(page, q, filterOptions);
+  const adverts = await getAdverts(page, q, filterOptions);
 
   return res.status(OK).json(adverts);
 };

@@ -29,7 +29,6 @@ export const uploadComment = async (advertId, userId, status, content) => {
   await updateAdvertScoreById(advertId, calculateScore(advert.initialScore, updatedComments));
 
   delete comment.createdAt;
-  delete comment.updatedAt;
 
   comment.reaction = null;
 
@@ -73,7 +72,6 @@ export const showComment = async (commentId, accountId) => {
   appAssert(comment, NOT_FOUND, 'Comment not found');
 
   delete comment.createdAt;
-  delete comment.updatedAt;
 
   const interaction = accountId ? await getInteraction(accountId, commentId, COMMENT_REACTION) : null;
   comment.reaction = interaction?.value || null;
@@ -86,7 +84,6 @@ export const showAdvertComments = async (advertId, accountId) => {
 
   for (const comment of comments) {
     delete comment.createdAt;
-    delete comment.updatedAt;
 
     const interaction = accountId ? await getInteraction(accountId, comment._id, COMMENT_REACTION) : null;
     comment.reaction = interaction?.value || null;
@@ -100,7 +97,6 @@ export const showUserComments = async (userId, accountId) => {
 
   for (const comment of comments) {
     delete comment.createdAt;
-    delete comment.updatedAt;
 
     const interaction = accountId ? await getInteraction(accountId, comment._id, COMMENT_REACTION) : null;
     comment.reaction = interaction?.value || null;
@@ -141,7 +137,6 @@ export const reactToComment = async (commentId, userId, value) => {
   await updateAdvertScoreById(advertId, calculateScore(initialScore, updatedComments));
 
   delete interaction.createdAt;
-  delete interaction.updatedAt;
 
   return { created: true, updated: false, reaction: interaction };
 };

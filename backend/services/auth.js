@@ -30,7 +30,6 @@ export const createAccount = async (name, email, password, agent) => {
 
   delete user.password;
   delete user.createdAt;
-  delete user.updatedAt;
 
   const { signature } = await createVerificationCode(userId, EMAIL_VERIFICATION);
 
