@@ -1,6 +1,7 @@
 import { ObjectId } from 'mongodb';
 import db from '../db/connection.js';
 import { hashValue } from '../utils/bcrypt.js';
+import { USER } from '../constants/permission.js';
 
 const collection = db.collection('users');
 await collection.createIndex({ email: 1 }, { unique: true });
@@ -8,13 +9,13 @@ await collection.createIndex({ email: 1 }, { unique: true });
 export const getUserById = async (id) => {
   const query = { _id: new ObjectId(id) };
 
-  return collection.findOne(query, { projection: { updatedAt: 0 } });
+  return collection.findOne(query);
 };
 
 export const getUserByEmail = async (email) => {
   const query = { email: email };
 
-  return collection.findOne(query, { projection: { updatedAt: 0 } });
+  return collection.findOne(query);
 };
 
 export const createUser = async (name, email, password) => {
@@ -26,13 +27,12 @@ export const createUser = async (name, email, password) => {
     email: email,
     password: hashedPassword,
     verified: false,
+    permissions: [USER],
     createdAt: timestamp,
     updatedAt: timestamp,
   };
 
   const result = await collection.insertOne(newDocument);
-
-  delete newDocument.updatedAt;
 
   return { _id: result.insertedId, ...newDocument };
 };

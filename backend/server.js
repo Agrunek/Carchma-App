@@ -6,6 +6,7 @@ import auth from './routes/auth.js';
 import comment from './routes/comment.js';
 import image from './routes/image.js';
 import info from './routes/info.js';
+import report from './routes/report.js';
 import user from './routes/user.js';
 import errorHandler from './middleware/errorHandler.js';
 import { APP_ORIGIN, NODE_ENV, PORT } from './constants/env.js';
@@ -21,6 +22,7 @@ app.use('/auth', auth);
 app.use('/comment', comment);
 app.use('/image', image);
 app.use('/info', info);
+app.use('/report', report);
 app.use('/user', user);
 app.use(errorHandler);
 

@@ -42,12 +42,12 @@ const bodyPattern = z.enum(bodyTypes.map(extractId), { message: 'Invalid body ty
 const colorPattern = z.enum(colors.map(extractId), { message: 'Invalid color' });
 
 /* Additional information */
-const titlePattern = z.string().min(1).max(100);
+const titlePattern = z.string().max(100);
 const pricePattern = z.number().positive().multipleOf(0.01);
-const descriptionPattern = z.string().min(1).max(5000);
+const descriptionPattern = z.string().max(5000);
 
-const pagePattern = z.coerce.number().int().positive().optional();
-const qPattern = z.string().max(1000).optional();
+const pagePattern = z.coerce.number().int().positive();
+const qPattern = z.string().max(1000);
 
 const carPattern = z.object({
   type: typePattern,
@@ -91,28 +91,6 @@ const updatePattern = z.union([
   updateMetaPattern.merge(customPattern).strict(),
 ]);
 
-const advertPattern = z.object({
-  advertId: mongoIdPattern,
-});
-
-const searchPattern = z.object({
-  page: pagePattern,
-  q: qPattern,
-  minMileage: z.coerce.number().int().nonnegative().optional(),
-  maxMileage: z.coerce.number().int().nonnegative().optional(),
-  damaged: z.preprocess((val) => (val ? val !== 'false' : undefined), damagedPattern.optional()),
-  make: makePattern.optional(),
-  model: modelPattern.optional(),
-  minYear: z.coerce.number().int().min(1900).optional(),
-  maxYear: z.coerce.number().int().min(1900).optional(),
-  fuel: z.preprocess((val) => (val ? val.split(',') : undefined), fuelPattern.array().nonempty().optional()),
-  minPower: z.coerce.number().int().positive().optional(),
-  maxPower: z.coerce.number().int().positive().optional(),
-  gearbox: gearboxPattern.optional(),
-  body: z.preprocess((val) => (val ? val.split(',') : undefined), bodyPattern.array().nonempty().optional()),
-  color: z.preprocess((val) => (val ? val.split(',') : undefined), colorPattern.array().nonempty().optional()),
-});
-
 const carRefine = (data, context) => {
   if (!data.type && !data.body && !data.make && !data.model) {
     return;
@@ -141,6 +119,24 @@ export const createSchema = createPattern.superRefine(carRefine);
 
 export const updateSchema = updatePattern.superRefine(carRefine);
 
-export const advertSchema = advertPattern;
+export const showSchema = z.object({
+  advertId: mongoIdPattern,
+});
 
-export const searchSchema = searchPattern;
+export const searchSchema = z.object({
+  page: pagePattern.optional(),
+  q: qPattern.optional(),
+  minMileage: z.coerce.number().int().nonnegative().optional(),
+  maxMileage: z.coerce.number().int().nonnegative().optional(),
+  damaged: z.preprocess((val) => (val ? val !== 'false' : undefined), damagedPattern.optional()),
+  make: makePattern.optional(),
+  model: modelPattern.optional(),
+  minYear: z.coerce.number().int().min(1900).optional(),
+  maxYear: z.coerce.number().int().min(1900).optional(),
+  fuel: z.preprocess((val) => (val ? val.split(',') : undefined), fuelPattern.array().nonempty().optional()),
+  minPower: z.coerce.number().int().positive().optional(),
+  maxPower: z.coerce.number().int().positive().optional(),
+  gearbox: gearboxPattern.optional(),
+  body: z.preprocess((val) => (val ? val.split(',') : undefined), bodyPattern.array().nonempty().optional()),
+  color: z.preprocess((val) => (val ? val.split(',') : undefined), colorPattern.array().nonempty().optional()),
+});

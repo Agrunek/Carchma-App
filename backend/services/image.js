@@ -2,8 +2,8 @@ import appAssert from '../utils/appAssert.js';
 import {
   createImage,
   deleteImageById,
-  getImageCursorArrayByAdvertId,
-  getImageCursorArrayById,
+  getImageCursorById,
+  getImageCursorsByAdvertId,
   getImageDownloadStreamById,
 } from '../models/image.js';
 import { getAdvertById } from '../models/advert.js';
@@ -16,32 +16,29 @@ export const uploadImages = async (advertId, userId, images) => {
   const { userId: ownerId } = advert;
   appAssert(userId.toString() === ownerId.toString(), FORBIDDEN, 'User is not the owner of the advertisement');
 
-  const stored = await getImageCursorArrayByAdvertId(advertId);
+  const stored = await getImageCursorsByAdvertId(advertId);
   appAssert(stored.length + images.length <= 10, BAD_REQUEST, 'Total number of images exceeds maximum');
 
   for (const image of images) {
-    await createImage(advertId, image);
+    await createImage(advertId, userId, image);
   }
 };
 
 export const downloadImage = async (imageId) => {
-  const stored = await getImageCursorArrayById(imageId);
-  appAssert(stored.length > 0, NOT_FOUND, 'Image not found');
+  const stored = await getImageCursorById(imageId);
+  appAssert(stored, NOT_FOUND, 'Image not found');
 
-  const mimetype = stored.pop().metadata.mimetype;
+  const { mimetype } = stored.metadata;
   const downloadStream = await getImageDownloadStreamById(imageId);
 
   return { mimetype, downloadStream };
 };
 
 export const removeImage = async (imageId, userId) => {
-  const stored = await getImageCursorArrayById(imageId);
-  appAssert(stored.length > 0, NOT_FOUND, 'Image not found');
+  const stored = await getImageCursorById(imageId);
+  appAssert(stored, NOT_FOUND, 'Image not found');
 
-  const { advertId } = stored.pop().metadata;
-  const advert = await getAdvertById(advertId);
-
-  const { userId: ownerId } = advert;
+  const { userId: ownerId } = stored.metadata;
   appAssert(userId.toString() === ownerId.toString(), FORBIDDEN, 'User is not the owner of the image');
 
   await deleteImageById(imageId);

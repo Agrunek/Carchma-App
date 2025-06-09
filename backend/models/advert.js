@@ -26,10 +26,10 @@ const AGE_FACTOR = 0.5;
 export const getAdvertById = async (id) => {
   const query = { _id: new ObjectId(id) };
 
-  return collection.findOne(query, { projection: { updatedAt: 0 } });
+  return collection.findOne(query);
 };
 
-export const getAdverts = async (page = 1, search = '', filterOptions = {}) => {
+export const getAdverts = async (page = 1, search = '', options = {}) => {
   const timestamp = new Date();
   const skip = (page - 1) * PAGE_SIZE;
 
@@ -84,21 +84,27 @@ export const getAdverts = async (page = 1, search = '', filterOptions = {}) => {
     },
   ];
 
-  const matchFilters = {};
+  const filters = { published: true, closed: false };
 
-  matchFilters.mileage = { $gte: filterOptions.minMileage || 0, $lte: filterOptions.maxMileage || Infinity };
-  if (filterOptions.damaged !== undefined) matchFilters.damaged = filterOptions.damaged;
-  if (filterOptions.make !== undefined) matchFilters.make = filterOptions.make;
-  if (filterOptions.model !== undefined) matchFilters.model = filterOptions.model;
-  matchFilters.year = { $gte: filterOptions.minYear || 0, $lte: filterOptions.maxYear || Infinity };
-  if (filterOptions.fuel !== undefined) matchFilters.fuel = { $in: filterOptions.fuel };
-  matchFilters.power = { $gte: filterOptions.minPower || 0, $lte: filterOptions.maxPower || Infinity };
-  if (filterOptions.gearbox !== undefined) matchFilters.gearbox = filterOptions.gearbox;
-  if (filterOptions.body !== undefined) matchFilters.body = { $in: filterOptions.body };
-  if (filterOptions.color !== undefined) matchFilters.color = { $in: filterOptions.color };
+  filters.mileage = { $gte: options.minMileage || 0, $lte: options.maxMileage || Infinity };
+  filters.damaged = options.damaged;
+  filters.make = options.make;
+  filters.model = options.model;
+  filters.year = { $gte: options.minYear || 0, $lte: options.maxYear || Infinity };
+  filters.fuel = { $in: options.fuel };
+  filters.power = { $gte: options.minPower || 0, $lte: options.maxPower || Infinity };
+  filters.gearbox = options.gearbox;
+  filters.body = { $in: options.body };
+  filters.color = { $in: options.color };
+
+  for (const key in filters) {
+    if (filters[key] === undefined) {
+      delete filters[key];
+    }
+  }
 
   const finalPipeline = [
-    { $match: matchFilters },
+    { $match: filters },
 
     { $facet: { data: dataPipeline, count: [{ $count: 'total' }] } },
 
@@ -132,30 +138,30 @@ export const getAdverts = async (page = 1, search = '', filterOptions = {}) => {
 export const getAdvertsByUserId = async (userId) => {
   const query = { userId: new ObjectId(userId) };
 
-  return collection.find(query, { projection: { updatedAt: 0 } }).toArray();
+  return collection.find(query).toArray();
 };
 
-export const createAdvert = async (userId, advert, initialScore) => {
+export const createAdvert = async (userId, template, initialScore) => {
   const timestamp = new Date();
 
   const newDocument = {
     userId: new ObjectId(userId),
-    type: advert.type,
-    vin: advert.vin,
-    registrationNumber: advert.registrationNumber,
-    dateOfFirstRegistration: advert.dateOfFirstRegistration,
-    mileage: advert.mileage,
-    damaged: advert.damaged,
-    make: advert.make,
-    model: advert.model,
-    year: advert.year,
-    fuel: advert.fuel,
-    power: advert.power,
-    displacement: advert.displacement,
-    doors: advert.doors,
-    gearbox: advert.gearbox,
-    body: advert.body,
-    color: advert.color,
+    type: template.type,
+    vin: template.vin,
+    registrationNumber: template.registrationNumber,
+    dateOfFirstRegistration: template.dateOfFirstRegistration,
+    mileage: template.mileage,
+    damaged: template.damaged,
+    make: template.make,
+    model: template.model,
+    year: template.year,
+    fuel: template.fuel,
+    power: template.power,
+    displacement: template.displacement,
+    doors: template.doors,
+    gearbox: template.gearbox,
+    body: template.body,
+    color: template.color,
     title: null,
     price: null,
     description: null,
@@ -170,15 +176,13 @@ export const createAdvert = async (userId, advert, initialScore) => {
 
   const result = await collection.insertOne(newDocument);
 
-  delete newDocument.updatedAt;
-
   return { _id: result.insertedId, ...newDocument };
 };
 
-export const updateAdvertById = async (id, advert) => {
+export const updateAdvertById = async (id, changes) => {
   const timestamp = new Date();
   const query = { _id: new ObjectId(id) };
-  const updates = { $set: { ...advert, updatedAt: timestamp } };
+  const updates = { $set: { ...changes, updatedAt: timestamp } };
 
   const result = await collection.updateOne(query, updates, { ignoreUndefined: true });
 
@@ -193,4 +197,12 @@ export const updateAdvertScoreById = async (id, score) => {
   const result = await collection.updateOne(query, updates);
 
   return { updated: result.modifiedCount === 1 };
+};
+
+export const deleteAdvertById = async (id) => {
+  const query = { _id: new ObjectId(id) };
+
+  const result = await collection.deleteOne(query);
+
+  return { deleted: result.deletedCount === 1 };
 };

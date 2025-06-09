@@ -9,11 +9,11 @@ const makeSchema = z.string().min(1).max(100);
 const carInfo = avoidField(CAR_MODELS_KEY);
 const carMakes = selectField(CAR_MAKES_KEY);
 
-export const carInfoHandler = async (req, res) => {
+export const getCarInfoHandler = async (req, res) => {
   return res.status(OK).json(carInfo);
 };
 
-export const carMakeInfoHandler = async (req, res) => {
+export const getCarMakeInfoHandler = async (req, res) => {
   const makeId = makeSchema.parse(req.params.id);
 
   const make = findItemById(carMakes, makeId);

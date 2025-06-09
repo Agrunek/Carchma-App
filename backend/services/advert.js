@@ -1,16 +1,8 @@
 import appAssert from '../utils/appAssert.js';
-import { createAdvert, getAdvertById, getAdvertsByUserId, updateAdvertById } from '../models/advert.js';
-import { getImageCursorArrayByAdvertId } from '../models/image.js';
+import { createAdvert, getAdvertById, getAdverts, getAdvertsByUserId, updateAdvertById } from '../models/advert.js';
+import { getImageCursorsByAdvertId } from '../models/image.js';
 import { calculateInitialScore } from '../utils/reputation.js';
 import { FORBIDDEN, INTERNAL_SERVER_ERROR, NOT_FOUND } from '../constants/http.js';
-
-/*
-  There is need for more advanced logic.
-  User should be able to delete advert as long as it is not published for more than a day.
-  Moreover admin should be able to do it as well.
-  There should be one advert for car only, but it isn't as simple as blocking the vin.
-  Someone different could sell the bought car and everything get problematic from a system standpoint.
-*/
 
 export const initializeAdvert = async (userId, data) => {
   const previous = await getAdvertsByUserId(userId);
@@ -20,7 +12,6 @@ export const initializeAdvert = async (userId, data) => {
 
   delete advert.initialScore;
   delete advert.score;
-  delete advert.createdAt;
 
   advert.images = [];
 
@@ -42,13 +33,18 @@ export const showAdvert = async (advertId) => {
   const advert = await getAdvertById(advertId);
   appAssert(advert, NOT_FOUND, 'Advertisement not found');
 
-  const images = await getImageCursorArrayByAdvertId(advertId);
+  const images = await getImageCursorsByAdvertId(advertId);
 
   delete advert.initialScore;
   delete advert.score;
-  delete advert.createdAt;
 
   advert.images = images.map((image) => image._id);
 
   return { advert };
+};
+
+export const searchAdverts = async (page, query, options) => {
+  const adverts = await getAdverts(page, query, options);
+
+  return { adverts };
 };

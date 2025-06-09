@@ -5,7 +5,7 @@ import { NOT_FOUND, OK } from '../constants/http.js';
 
 const userIdSchema = z.string().length(24);
 
-export const currentProfileHandler = async (req, res) => {
+export const getCurrentProfileHandler = async (req, res) => {
   const userId = userIdSchema.parse(req.userId);
 
   const user = await getUserById(userId);
@@ -16,7 +16,7 @@ export const currentProfileHandler = async (req, res) => {
   return res.status(OK).json(user);
 };
 
-export const anyProfileHandler = async (req, res) => {
+export const getAnyProfileHandler = async (req, res) => {
   const userId = userIdSchema.parse(req.params.id);
 
   const user = await getUserById(userId);
@@ -24,6 +24,8 @@ export const anyProfileHandler = async (req, res) => {
 
   delete user.email;
   delete user.password;
+  delete user.permissions;
+  delete user.updatedAt;
 
   return res.status(OK).json(user);
 };

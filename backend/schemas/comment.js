@@ -7,63 +7,49 @@ const statusPattern = z.enum([COMMENT_POSITIVE, COMMENT_INFORMATIVE, COMMENT_NEG
 const contentPattern = z.string().min(1).max(1000);
 const reactionPattern = z.enum([REACTION_LIKE, REACTION_DISLIKE], { message: 'Invalid reaction value' });
 
-const createPattern = z.object({
+export const createSchema = z.object({
   advertId: mongoIdPattern,
   userId: mongoIdPattern,
   status: statusPattern,
   content: contentPattern,
 });
 
-const updatePattern = z.object({
+export const updateSchema = z.object({
   commentId: mongoIdPattern,
   userId: mongoIdPattern,
   status: statusPattern,
   content: contentPattern,
 });
 
-const deletePattern = z.object({
+export const deleteSchema = z.object({
   commentId: mongoIdPattern,
   userId: mongoIdPattern,
 });
 
-const showPattern = z.object({
+export const showSchema = z.object({
   commentId: mongoIdPattern,
-  accountId: mongoIdPattern.optional(),
 });
 
-const showByAdvertPattern = z.object({
+export const showByAdvertSchema = z.object({
   advertId: mongoIdPattern,
-  accountId: mongoIdPattern.optional(),
 });
 
-const showByUserPattern = z.object({
+export const showByUserSchema = z.object({
   userId: mongoIdPattern,
-  accountId: mongoIdPattern.optional(),
 });
 
-const updateReactionPattern = z.object({
+export const updateReactionSchema = z.object({
   commentId: mongoIdPattern,
   userId: mongoIdPattern,
   value: reactionPattern,
 });
 
-const deleteReactionPattern = z.object({
+export const deleteReactionSchema = z.object({
   commentId: mongoIdPattern,
   userId: mongoIdPattern,
 });
 
-export const createSchema = createPattern;
-
-export const updateSchema = updatePattern;
-
-export const deleteSchema = deletePattern;
-
-export const showSchema = showPattern;
-
-export const showByAdvertSchema = showByAdvertPattern;
-
-export const showByUserSchema = showByUserPattern;
-
-export const updateReactionSchema = updateReactionPattern;
-
-export const deleteReactionSchema = deleteReactionPattern;
+export const showReactionSchema = z.object({
+  commentId: mongoIdPattern,
+  userId: mongoIdPattern,
+});

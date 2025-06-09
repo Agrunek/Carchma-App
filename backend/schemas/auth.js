@@ -14,38 +14,29 @@ const registerPattern = z.object({
   agent: agentPattern,
 });
 
-const loginPattern = z.object({
-  email: emailPattern,
-  password: passwordPattern,
-  agent: agentPattern,
-});
-
-const emailVerificationPattern = z.object({
-  verificationCode: verificationCodePattern,
-});
-
-const forgotPasswordPattern = z.object({
-  email: emailPattern,
-});
-
 const resetPasswordPattern = z.object({
   password: passwordPattern,
   confirm: passwordPattern,
   verificationCode: verificationCodePattern,
 });
 
-export const registerSchema = registerPattern.refine((data) => data.password === data.confirm, {
-  message: 'Passwords are not the same',
-  path: ['confirm'],
+const confirmRefine = (data) => data.password === data.confirm;
+const confirmIssue = { message: 'Passwords are not the same', path: ['confirm'] };
+
+export const registerSchema = registerPattern.refine(confirmRefine, confirmIssue);
+
+export const loginSchema = z.object({
+  email: emailPattern,
+  password: passwordPattern,
+  agent: agentPattern,
 });
 
-export const loginSchema = loginPattern;
-
-export const emailVerificationSchema = emailVerificationPattern;
-
-export const forgotPasswordSchema = forgotPasswordPattern;
-
-export const resetPasswordSchema = resetPasswordPattern.refine((data) => data.password === data.confirm, {
-  message: 'Passwords are not the same',
-  path: ['confirm'],
+export const emailVerificationSchema = z.object({
+  verificationCode: verificationCodePattern,
 });
+
+export const forgotPasswordSchema = z.object({
+  email: emailPattern,
+});
+
+export const resetPasswordSchema = resetPasswordPattern.refine(confirmRefine, confirmIssue);

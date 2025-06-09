@@ -28,10 +28,6 @@ export const uploadComment = async (advertId, userId, status, content) => {
   const updatedComments = await getCommentsByAdvertId(advertId);
   await updateAdvertScoreById(advertId, calculateScore(advert.initialScore, updatedComments));
 
-  delete comment.createdAt;
-
-  comment.reaction = null;
-
   return { comment };
 };
 
@@ -67,40 +63,21 @@ export const removeComment = async (commentId, userId) => {
   await updateAdvertScoreById(advertId, calculateScore(initialScore, updatedComments));
 };
 
-export const showComment = async (commentId, accountId) => {
+export const showComment = async (commentId) => {
   const comment = await getCommentById(commentId);
   appAssert(comment, NOT_FOUND, 'Comment not found');
-
-  delete comment.createdAt;
-
-  const interaction = accountId ? await getInteraction(accountId, commentId, COMMENT_REACTION) : null;
-  comment.reaction = interaction?.value || null;
 
   return { comment };
 };
 
-export const showAdvertComments = async (advertId, accountId) => {
+export const showAdvertComments = async (advertId) => {
   const comments = await getCommentsByAdvertId(advertId);
-
-  for (const comment of comments) {
-    delete comment.createdAt;
-
-    const interaction = accountId ? await getInteraction(accountId, comment._id, COMMENT_REACTION) : null;
-    comment.reaction = interaction?.value || null;
-  }
 
   return { comments };
 };
 
-export const showUserComments = async (userId, accountId) => {
+export const showUserComments = async (userId) => {
   const comments = await getCommentsByUserId(userId);
-
-  for (const comment of comments) {
-    delete comment.createdAt;
-
-    const interaction = accountId ? await getInteraction(accountId, comment._id, COMMENT_REACTION) : null;
-    comment.reaction = interaction?.value || null;
-  }
 
   return { comments };
 };
@@ -116,7 +93,7 @@ export const reactToComment = async (commentId, userId, value) => {
     appAssert(updated, INTERNAL_SERVER_ERROR, 'Failed to like the comment');
 
     if (reaction.value !== value) {
-      await reactToCommentById(commentId, value === REACTION_LIKE ? 1 : -1, value === REACTION_DISLIKE ? 1 : -1);
+      await reactToCommentById(commentId, { like: value === REACTION_LIKE, dislike: value === REACTION_DISLIKE });
     }
 
     const { _id: advertId, initialScore } = await getAdvertById(comment.advertId);
@@ -129,7 +106,13 @@ export const reactToComment = async (commentId, userId, value) => {
 
   const interaction = await createInteraction(userId, commentId, COMMENT_REACTION, value);
 
-  await reactToCommentById(commentId, value === REACTION_LIKE ? 1 : 0, value === REACTION_DISLIKE ? 1 : 0);
+  if (value === REACTION_LIKE) {
+    await reactToCommentById(commentId, { like: true });
+  }
+
+  if (value === REACTION_DISLIKE) {
+    await reactToCommentById(commentId, { dislike: true });
+  }
 
   const { _id: advertId, initialScore } = await getAdvertById(comment.advertId);
 
@@ -149,7 +132,14 @@ export const removeCommentReaction = async (commentId, userId) => {
   appAssert(reaction, NOT_FOUND, 'Reaction not found');
 
   const { value } = reaction;
-  await reactToCommentById(commentId, value === REACTION_LIKE ? -1 : 0, value === REACTION_DISLIKE ? -1 : 0);
+
+  if (value === REACTION_LIKE) {
+    await reactToCommentById(commentId, { like: false });
+  }
+
+  if (value === REACTION_DISLIKE) {
+    await reactToCommentById(commentId, { dislike: false });
+  }
 
   const { deleted } = await deleteInteraction(userId, commentId, COMMENT_REACTION);
   appAssert(deleted, INTERNAL_SERVER_ERROR, 'Failed to delete reaction');
@@ -158,4 +148,10 @@ export const removeCommentReaction = async (commentId, userId) => {
 
   const updatedComments = await getCommentsByAdvertId(advertId);
   await updateAdvertScoreById(advertId, calculateScore(initialScore, updatedComments));
+};
+
+export const showCommentReaction = async (commentId, userId) => {
+  const interaction = accountId ? await getInteraction(userId, commentId, COMMENT_REACTION) : null;
+
+  return { reaction: interaction?.value || null };
 };
