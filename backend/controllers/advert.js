@@ -1,39 +1,33 @@
-import { createSchema, searchSchema, showSchema, updateSchema } from '../schemas/advert.js';
+import { getAdvertsSchema, patchAdvertSchema, postAdvertSchema } from '../schemas/advert.js';
 import { initializeAdvert, modifyAdvert, searchAdverts, showAdvert } from '../services/advert.js';
 import { CREATED, OK } from '../constants/http.js';
 
 export const postAdvertHandler = async (req, res) => {
-  const { userId, ...data } = createSchema.parse({ ...req.body, userId: req.userId });
+  const car = postAdvertSchema.parse(req.body);
 
-  const { advert } = await initializeAdvert(userId, data);
+  const { advert } = await initializeAdvert(req.userId, car);
 
   return res.status(CREATED).json(advert);
 };
 
 export const patchAdvertHandler = async (req, res) => {
-  const { advertId, userId, ...data } = updateSchema.parse({
-    ...req.body,
-    userId: req.userId,
-    advertId: req.params.id,
-  });
+  const changes = patchAdvertSchema.parse(req.body);
 
-  await modifyAdvert(advertId, userId, data);
+  await modifyAdvert(req.params.id, req.userId, changes);
 
   return res.status(OK).json({ message: 'Advertisement update successful' });
 };
 
 export const getAdvertHandler = async (req, res) => {
-  const { advertId } = showSchema.parse({ advertId: req.params.id });
-
-  const { advert } = await showAdvert(advertId);
+  const { advert } = await showAdvert(req.params.id);
 
   return res.status(OK).json(advert);
 };
 
 export const getAdvertsHandler = async (req, res) => {
-  const { page, q, ...filterOptions } = searchSchema.parse({ ...req.query });
+  const { page, query, ...options } = getAdvertsSchema.parse(req.query);
 
-  const { adverts } = await searchAdverts(page, q, filterOptions);
+  const { adverts } = await searchAdverts(page, query, options);
 
   return res.status(OK).json(adverts);
 };

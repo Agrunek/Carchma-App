@@ -91,11 +91,11 @@ export const getAdverts = async (page = 1, search = '', options = {}) => {
   filters.make = options.make;
   filters.model = options.model;
   filters.year = { $gte: options.minYear || 0, $lte: options.maxYear || Infinity };
-  filters.fuel = { $in: options.fuel };
+  filters.fuel = options.fuel ? { $in: options.fuel } : undefined;
   filters.power = { $gte: options.minPower || 0, $lte: options.maxPower || Infinity };
   filters.gearbox = options.gearbox;
-  filters.body = { $in: options.body };
-  filters.color = { $in: options.color };
+  filters.body = options.body ? { $in: options.body } : undefined;
+  filters.color = options.color ? { $in: options.color } : undefined;
 
   for (const key in filters) {
     if (filters[key] === undefined) {

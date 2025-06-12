@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { extractId, findItemById, selectField } from '../utils/car.js';
+import { translateObject } from '../utils/object.js';
 import {
   BODY_TYPES_KEY,
   CAR_MAKES_KEY,
@@ -18,9 +19,19 @@ const gearboxTypes = selectField(GEARBOX_TYPES_KEY);
 const bodyTypes = selectField(BODY_TYPES_KEY);
 const colors = selectField(COLORS_KEY);
 
+const searchQueryTranslation = {
+  min_mileage: 'minMileage',
+  max_mileage: 'maxMileage',
+  min_year: 'minYear',
+  max_year: 'maxYear',
+  min_power: 'minPower',
+  max_power: 'maxPower',
+};
+
 /* Configuration */
-const mongoIdPattern = z.string().length(24);
 const typePattern = z.enum(carTypes.map(extractId), { message: 'Invalid car type' });
+const pagePattern = z.coerce.number().int().positive();
+const queryPattern = z.string().max(1000);
 
 /* General information */
 const vinPattern = z.string().min(1).max(17).toUpperCase();
@@ -46,8 +57,10 @@ const titlePattern = z.string().max(100);
 const pricePattern = z.number().positive().multipleOf(0.01);
 const descriptionPattern = z.string().max(5000);
 
-const pagePattern = z.coerce.number().int().positive();
-const qPattern = z.string().max(1000);
+/* Search Query */
+const mileageFilterPattern = z.coerce.number().int().nonnegative();
+const yearFilterPattern = z.coerce.number().int().min(1900);
+const powerFilterPattern = z.coerce.number().int().positive();
 
 const carPattern = z.object({
   type: typePattern,
@@ -74,22 +87,23 @@ const customPattern = z.object({
   description: descriptionPattern,
 });
 
-const createMetaPattern = z.object({
-  userId: mongoIdPattern,
+const searchPattern = z.object({
+  page: pagePattern.optional(),
+  query: queryPattern.optional(),
+  min_mileage: mileageFilterPattern.optional(),
+  max_mileage: mileageFilterPattern.optional(),
+  damaged: z.preprocess((val) => (val ? val !== 'false' : undefined), damagedPattern.optional()),
+  make: makePattern.optional(),
+  model: modelPattern.optional(),
+  min_year: yearFilterPattern.optional(),
+  max_year: yearFilterPattern.optional(),
+  fuel: z.preprocess((val) => (val ? val.split(',') : undefined), fuelPattern.array().nonempty().optional()),
+  min_power: powerFilterPattern.optional(),
+  max_power: powerFilterPattern.optional(),
+  gearbox: gearboxPattern.optional(),
+  body: z.preprocess((val) => (val ? val.split(',') : undefined), bodyPattern.array().nonempty().optional()),
+  color: z.preprocess((val) => (val ? val.split(',') : undefined), colorPattern.array().nonempty().optional()),
 });
-
-const updateMetaPattern = z.object({
-  advertId: mongoIdPattern,
-  userId: mongoIdPattern,
-});
-
-const createPattern = createMetaPattern.merge(carPattern);
-
-const updatePattern = z.union([
-  updateMetaPattern.merge(carPattern).merge(customPattern),
-  updateMetaPattern.merge(carPattern).strict(),
-  updateMetaPattern.merge(customPattern).strict(),
-]);
 
 const carRefine = (data, context) => {
   if (!data.type && !data.body && !data.make && !data.model) {
@@ -115,28 +129,8 @@ const carRefine = (data, context) => {
   }
 };
 
-export const createSchema = createPattern.superRefine(carRefine);
+export const postAdvertSchema = carPattern.superRefine(carRefine);
 
-export const updateSchema = updatePattern.superRefine(carRefine);
+export const patchAdvertSchema = z.union([carPattern, customPattern]).superRefine(carRefine);
 
-export const showSchema = z.object({
-  advertId: mongoIdPattern,
-});
-
-export const searchSchema = z.object({
-  page: pagePattern.optional(),
-  q: qPattern.optional(),
-  minMileage: z.coerce.number().int().nonnegative().optional(),
-  maxMileage: z.coerce.number().int().nonnegative().optional(),
-  damaged: z.preprocess((val) => (val ? val !== 'false' : undefined), damagedPattern.optional()),
-  make: makePattern.optional(),
-  model: modelPattern.optional(),
-  minYear: z.coerce.number().int().min(1900).optional(),
-  maxYear: z.coerce.number().int().min(1900).optional(),
-  fuel: z.preprocess((val) => (val ? val.split(',') : undefined), fuelPattern.array().nonempty().optional()),
-  minPower: z.coerce.number().int().positive().optional(),
-  maxPower: z.coerce.number().int().positive().optional(),
-  gearbox: gearboxPattern.optional(),
-  body: z.preprocess((val) => (val ? val.split(',') : undefined), bodyPattern.array().nonempty().optional()),
-  color: z.preprocess((val) => (val ? val.split(',') : undefined), colorPattern.array().nonempty().optional()),
-});
+export const getAdvertsSchema = searchPattern.transform((request) => translateObject(request, searchQueryTranslation));
