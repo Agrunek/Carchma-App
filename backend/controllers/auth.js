@@ -1,10 +1,4 @@
-import {
-  emailVerificationSchema,
-  forgotPasswordSchema,
-  loginSchema,
-  registerSchema,
-  resetPasswordSchema,
-} from '../schemas/auth.js';
+import { forgotPasswordSchema, loginSchema, registerSchema, resetPasswordSchema } from '../schemas/auth.js';
 import {
   createAccount,
   killSession,
@@ -51,9 +45,7 @@ export const logoutHandler = async (req, res) => {
 };
 
 export const emailVerificationHandler = async (req, res) => {
-  const { verificationCode } = emailVerificationSchema.parse({ verificationCode: req.params.code });
-
-  await verifyEmail(verificationCode);
+  await verifyEmail(req.params.code);
 
   return res.status(OK).json({ message: 'Email verified successfully' });
 };
@@ -67,9 +59,9 @@ export const forgotPasswordHandler = async (req, res) => {
 };
 
 export const resetPasswordHandler = async (req, res) => {
-  const { password, verificationCode } = resetPasswordSchema.parse({ ...req.body, verificationCode: req.params.code });
+  const { password } = resetPasswordSchema.parse(req.body);
 
-  await resetPassword(password, verificationCode);
+  await resetPassword(password, req.params.code);
 
   return clearAuthCookies(res).status(OK).json({ message: 'Password reset successful' });
 };

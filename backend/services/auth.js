@@ -30,6 +30,7 @@ export const createAccount = async (name, email, password, agent) => {
 
   delete user.password;
   delete user.createdAt;
+  delete user.updatedAt;
 
   const { signature } = await createVerificationCode(userId, EMAIL_VERIFICATION);
 
@@ -47,10 +48,10 @@ export const loginUser = async (email, password, agent) => {
   const user = await getUserByEmail(email);
   appAssert(user, UNAUTHORIZED, 'Invalid email or password');
 
-  const isPasswordValid = await compareValues(password, user.password);
-  appAssert(isPasswordValid, UNAUTHORIZED, 'Invalid email or password');
+  const { _id: userId, password: userPassword } = user;
 
-  const { _id: userId } = user;
+  const isPasswordValid = await compareValues(password, userPassword);
+  appAssert(isPasswordValid, UNAUTHORIZED, 'Invalid email or password');
 
   const { _id: sessionId } = await createSession(userId, agent);
 
