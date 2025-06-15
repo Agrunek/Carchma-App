@@ -29,8 +29,6 @@ export const createAccount = async (name, email, password, agent) => {
   const { _id: userId, email: userEmail } = user;
 
   delete user.password;
-  delete user.createdAt;
-  delete user.updatedAt;
 
   const { signature } = await createVerificationCode(userId, EMAIL_VERIFICATION);
 

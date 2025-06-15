@@ -4,16 +4,15 @@ import {
   deleteCommentById,
   getCommentById,
   getCommentsByAdvertId,
-  getCommentsByUserId,
   reactToCommentById,
   updateCommentById,
 } from '../models/comment.js';
 import { getAdvertById, updateAdvertScoreById } from '../models/advert.js';
 import {
   createInteraction,
-  deleteInteractionByUserIdAndTargetIdAndAction as deleteInteraction,
-  getInteractionByUserIdAndTargetIdAndAction as getInteraction,
-  updateInteractionByUserIdAndTargetIdAndAction as updateInteraction,
+  deleteInteractionByUserIdAndTargetIdAndAction,
+  getInteractionByUserIdAndTargetIdAndAction,
+  updateInteractionByUserIdAndTargetIdAndAction,
 } from '../models/interaction.js';
 import { calculateScore } from '../utils/reputation.js';
 import { FORBIDDEN, INTERNAL_SERVER_ERROR, NOT_FOUND } from '../constants/http.js';
@@ -23,10 +22,11 @@ export const uploadComment = async (advertId, userId, status, content) => {
   const advert = await getAdvertById(advertId);
   appAssert(advert, NOT_FOUND, 'Advertisement not found');
 
+  const { initialScore } = advert;
   const comment = await createComment(advertId, userId, status, content);
 
   const updatedComments = await getCommentsByAdvertId(advertId);
-  await updateAdvertScoreById(advertId, calculateScore(advert.initialScore, updatedComments));
+  await updateAdvertScoreById(advertId, calculateScore(initialScore, updatedComments));
 
   return { comment };
 };
@@ -35,13 +35,13 @@ export const modifyComment = async (commentId, userId, status, content) => {
   const comment = await getCommentById(commentId);
   appAssert(comment, NOT_FOUND, 'Comment not found');
 
-  const { userId: ownerId } = comment;
-  appAssert(userId.toString() === ownerId.toString(), FORBIDDEN, 'User is not the owner of the advertisement');
+  const { advertId, userId: ownerId } = comment;
+  appAssert(userId.toString() === ownerId.toString(), FORBIDDEN, 'User is not the owner of the comment');
 
   const { updated } = await updateCommentById(commentId, status, content);
   appAssert(updated, INTERNAL_SERVER_ERROR, 'Failed to modify comment');
 
-  const { _id: advertId, initialScore } = await getAdvertById(comment.advertId);
+  const { initialScore } = await getAdvertById(advertId);
 
   const updatedComments = await getCommentsByAdvertId(advertId);
   await updateAdvertScoreById(advertId, calculateScore(initialScore, updatedComments));
@@ -51,13 +51,13 @@ export const removeComment = async (commentId, userId) => {
   const comment = await getCommentById(commentId);
   appAssert(comment, NOT_FOUND, 'Comment not found');
 
-  const { userId: ownerId } = comment;
-  appAssert(userId.toString() === ownerId.toString(), FORBIDDEN, 'User is not the owner of the advertisement');
+  const { advertId, userId: ownerId } = comment;
+  appAssert(userId.toString() === ownerId.toString(), FORBIDDEN, 'User is not the owner of the comment');
 
   const { deleted } = await deleteCommentById(commentId);
   appAssert(deleted, INTERNAL_SERVER_ERROR, 'Failed to delete comment');
 
-  const { _id: advertId, initialScore } = await getAdvertById(comment.advertId);
+  const { initialScore } = await getAdvertById(advertId);
 
   const updatedComments = await getCommentsByAdvertId(advertId);
   await updateAdvertScoreById(advertId, calculateScore(initialScore, updatedComments));
@@ -76,62 +76,52 @@ export const showAdvertComments = async (advertId) => {
   return { comments };
 };
 
-export const showUserComments = async (userId) => {
-  const comments = await getCommentsByUserId(userId);
-
-  return { comments };
-};
-
 export const reactToComment = async (commentId, userId, value) => {
   const comment = await getCommentById(commentId);
   appAssert(comment, NOT_FOUND, 'Comment not found');
 
-  const reaction = await getInteraction(userId, commentId, COMMENT_REACTION);
+  const { advertId } = comment;
+  const current = await getInteractionByUserIdAndTargetIdAndAction(userId, commentId, COMMENT_REACTION);
 
-  if (reaction) {
-    const { updated } = await updateInteraction(userId, commentId, COMMENT_REACTION, value);
-    appAssert(updated, INTERNAL_SERVER_ERROR, 'Failed to like the comment');
+  let interaction = null;
 
-    if (reaction.value !== value) {
+  if (current) {
+    const { updated } = await updateInteractionByUserIdAndTargetIdAndAction(userId, commentId, COMMENT_REACTION, value);
+    appAssert(updated, INTERNAL_SERVER_ERROR, 'Failed to react to the comment');
+
+    const { value: currentValue } = current;
+    if (currentValue !== value) {
       await reactToCommentById(commentId, { like: value === REACTION_LIKE, dislike: value === REACTION_DISLIKE });
     }
+  } else {
+    interaction = await createInteraction(userId, commentId, COMMENT_REACTION, value);
 
-    const { _id: advertId, initialScore } = await getAdvertById(comment.advertId);
+    if (value === REACTION_LIKE) {
+      await reactToCommentById(commentId, { like: true });
+    }
 
-    const updatedComments = await getCommentsByAdvertId(advertId);
-    await updateAdvertScoreById(advertId, calculateScore(initialScore, updatedComments));
-
-    return { created: false, updated: true };
+    if (value === REACTION_DISLIKE) {
+      await reactToCommentById(commentId, { dislike: true });
+    }
   }
 
-  const interaction = await createInteraction(userId, commentId, COMMENT_REACTION, value);
-
-  if (value === REACTION_LIKE) {
-    await reactToCommentById(commentId, { like: true });
-  }
-
-  if (value === REACTION_DISLIKE) {
-    await reactToCommentById(commentId, { dislike: true });
-  }
-
-  const { _id: advertId, initialScore } = await getAdvertById(comment.advertId);
+  const { initialScore } = await getAdvertById(advertId);
 
   const updatedComments = await getCommentsByAdvertId(advertId);
   await updateAdvertScoreById(advertId, calculateScore(initialScore, updatedComments));
 
-  delete interaction.createdAt;
-
-  return { created: true, updated: false, reaction: interaction };
+  return { created: !current, updated: !!current, reaction: interaction };
 };
 
 export const removeCommentReaction = async (commentId, userId) => {
   const comment = await getCommentById(commentId);
   appAssert(comment, NOT_FOUND, 'Comment not found');
 
-  const reaction = await getInteraction(userId, commentId, COMMENT_REACTION);
-  appAssert(reaction, NOT_FOUND, 'Reaction not found');
+  const interaction = await getInteractionByUserIdAndTargetIdAndAction(userId, commentId, COMMENT_REACTION);
+  appAssert(interaction, NOT_FOUND, 'Reaction not found');
 
-  const { value } = reaction;
+  const { advertId } = comment;
+  const { value } = interaction;
 
   if (value === REACTION_LIKE) {
     await reactToCommentById(commentId, { like: false });
@@ -141,17 +131,17 @@ export const removeCommentReaction = async (commentId, userId) => {
     await reactToCommentById(commentId, { dislike: false });
   }
 
-  const { deleted } = await deleteInteraction(userId, commentId, COMMENT_REACTION);
+  const { deleted } = await deleteInteractionByUserIdAndTargetIdAndAction(userId, commentId, COMMENT_REACTION);
   appAssert(deleted, INTERNAL_SERVER_ERROR, 'Failed to delete reaction');
 
-  const { _id: advertId, initialScore } = await getAdvertById(comment.advertId);
+  const { initialScore } = await getAdvertById(advertId);
 
   const updatedComments = await getCommentsByAdvertId(advertId);
   await updateAdvertScoreById(advertId, calculateScore(initialScore, updatedComments));
 };
 
 export const showCommentReaction = async (commentId, userId) => {
-  const interaction = accountId ? await getInteraction(userId, commentId, COMMENT_REACTION) : null;
+  const interaction = await getInteractionByUserIdAndTargetIdAndAction(userId, commentId, COMMENT_REACTION);
 
   return { reaction: interaction?.value || null };
 };
