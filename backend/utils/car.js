@@ -35,7 +35,7 @@ export const avoidField = (key, object = CAR_INFO) => {
     return object.map((v) => avoidField(key, v));
   }
 
-  const filteredEntries = Object.entries(object).filter(([k, v]) => k !== key);
+  const filteredEntries = Object.entries(object).filter(([k]) => k !== key);
 
   const mappedEntries = filteredEntries.map(([k, v]) => [k, avoidField(key, v)]);
 
