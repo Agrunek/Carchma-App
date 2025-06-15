@@ -1,19 +1,13 @@
+import { Buffer } from 'node:buffer';
 import { z } from 'zod';
+import { ALLOWED_MIME_TYPES } from '../constants/image.js';
 
-const mongoIdPattern = z.string().length(24);
-const imagePattern = z.any();
+const imagePattern = z.object({
+  originalname: z.string().min(1).max(100),
+  mimetype: z.enum(ALLOWED_MIME_TYPES, { message: 'Invalid MIME type' }),
+  buffer: z.instanceof(Buffer),
+});
 
-export const createSchema = z.object({
-  advertId: mongoIdPattern,
-  userId: mongoIdPattern,
+export const postImagesSchema = z.object({
   images: imagePattern.array().nonempty(),
-});
-
-export const downloadSchema = z.object({
-  imageId: mongoIdPattern,
-});
-
-export const deleteSchema = z.object({
-  imageId: mongoIdPattern,
-  userId: mongoIdPattern,
 });

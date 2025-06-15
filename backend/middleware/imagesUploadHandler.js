@@ -1,9 +1,5 @@
 import multer from 'multer';
-
-const MAX_FILE_SIZE = 5 * 1024 * 1024;
-const MAX_NUMBER_OF_FILES = 10;
-const ALLOWED_MIME_TYPES = ['image/jpeg', 'image/png'];
-const FILES_FIELDNAME = 'images';
+import { ALLOWED_MIME_TYPES, FILES_FIELDNAME, MAX_FILE_SIZE, MAX_NUMBER_OF_FILES } from '../constants/image.js';
 
 const upload = multer({
   storage: multer.memoryStorage(),
