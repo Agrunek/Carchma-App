@@ -1,14 +1,12 @@
 import { z } from 'zod';
 
-const mongoIdPattern = z.string().length(24);
+const contentPattern = z.string().min(1).max(1000);
+const pagePattern = z.coerce.number().int().positive();
 
-export const createSchema = z.object({
-  id: mongoIdPattern,
-  userId: mongoIdPattern,
-  content: z.string().max(1000).optional(),
+export const postReportSchema = z.object({
+  content: contentPattern,
 });
 
-export const searchSchema = z.object({
-  page: z.coerce.number().int().positive().optional(),
-  userId: mongoIdPattern,
+export const getReportsSchema = z.object({
+  page: pagePattern.optional(),
 });
