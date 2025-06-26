@@ -113,7 +113,7 @@ export const getAdverts = async (page = 1, search = '', options = {}) => {
         currentCount: { $size: '$data' },
         currentPage: page,
         pageSize: PAGE_SIZE,
-        totalPages: { $ceil: { $divide: [{ $arrayElemAt: ['$count.total', 0] }, PAGE_SIZE] } },
+        totalPages: { $ceil: { $divide: [{ $ifNull: [{ $arrayElemAt: ['$count.total', 0] }, 0] }, PAGE_SIZE] } },
       },
     },
 
