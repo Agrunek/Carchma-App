@@ -46,5 +46,10 @@ export const showAdvert = async (advertId) => {
 export const searchAdverts = async (page, query, options) => {
   const adverts = await getAdverts(page, query, options);
 
+  for (const advert of adverts.data) {
+    const images = await getImageCursorsByAdvertId(advert._id);
+    advert.images = images.map((image) => image._id);
+  }
+
   return { adverts };
 };
