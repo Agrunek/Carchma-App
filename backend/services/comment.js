@@ -143,5 +143,5 @@ export const removeCommentReaction = async (commentId, userId) => {
 export const showCommentReaction = async (commentId, userId) => {
   const interaction = await getInteractionByUserIdAndTargetIdAndAction(userId, commentId, COMMENT_REACTION);
 
-  return { reaction: interaction?.value || null };
+  return { reaction: interaction };
 };
