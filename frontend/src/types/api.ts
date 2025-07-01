@@ -1,17 +1,17 @@
-export interface UserPrivate {
-  _id: string;
-  name: string;
-  email: string;
-  verified: boolean;
+/* Utilities */
+
+interface SearchResult<T> {
+  meta: { currentCount: number; currentPage: number; pageSize: number; totalPages: number };
+  data: T[];
 }
 
-export interface UserPublic {
-  _id: string;
-  name: string;
-  verified: boolean;
+interface DefaultResult {
+  message: string;
 }
 
-export interface Advert {
+/* Models */
+
+interface Advert {
   _id: string;
   userId: string;
   type: string;
@@ -36,33 +36,84 @@ export interface Advert {
   published: boolean;
   verified: boolean;
   closed: boolean;
+  createdAt: string;
+  updatedAt: string;
   images: string[];
 }
 
-interface CarItem {
-  id: string;
-  name: string;
-}
+/* APIs */
 
-interface CarTypeInfo extends CarItem {
-  body_types: CarItem[];
-  car_makes: CarItem[];
-}
+export type PostAdvertData = Omit<
+  Advert,
+  | '_id'
+  | 'userId'
+  | 'title'
+  | 'price'
+  | 'description'
+  | 'published'
+  | 'verified'
+  | 'closed'
+  | 'createdAt'
+  | 'updatedAt'
+  | 'images'
+>;
 
-export interface CarInfo {
-  car_types: CarTypeInfo[];
-  colors: CarItem[];
-  fuel_types: CarItem[];
-  gearbox_types: CarItem[];
-}
+export type PostAdvertResult = Advert;
 
-export interface CarMake extends CarItem {
-  car_models: CarItem[];
-}
+export type PatchAdvertData =
+  | Omit<
+      Advert,
+      | '_id'
+      | 'userId'
+      | 'title'
+      | 'price'
+      | 'description'
+      | 'published'
+      | 'verified'
+      | 'closed'
+      | 'createdAt'
+      | 'updatedAt'
+      | 'images'
+    >
+  | Pick<Advert, 'title' | 'price' | 'description'>;
 
-export interface Comment {
-  _id: string;
-  advertId: string;
-  userId: string;
-  content: string;
-}
+export type PatchAdvertResult = DefaultResult;
+
+export type GetAdvertResult = Advert;
+
+export type GetAdvertsParams = {
+  page?: string;
+  query?: string;
+  min_mileage?: string;
+  max_mileage?: string;
+  damaged?: string;
+  make?: string;
+  model?: string;
+  min_year?: string;
+  max_year?: string;
+  fuel?: string;
+  min_power?: string;
+  max_power?: string;
+  gearbox?: string;
+  body?: string;
+  color?: string;
+};
+
+export type GetAdvertsResult = SearchResult<
+  Pick<
+    Advert,
+    | '_id'
+    | 'userId'
+    | 'mileage'
+    | 'damaged'
+    | 'year'
+    | 'fuel'
+    | 'power'
+    | 'displacement'
+    | 'gearbox'
+    | 'title'
+    | 'price'
+    | 'verified'
+    | 'images'
+  >
+>;
