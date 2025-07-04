@@ -133,4 +133,8 @@ export const postAdvertSchema = carPattern.superRefine(carRefine);
 
 export const patchAdvertSchema = z.union([carPattern, customPattern]).superRefine(carRefine);
 
+export const getAdvertsFromUserSchema = z.object({
+  page: pagePattern.optional(),
+});
+
 export const getAdvertsSchema = searchPattern.transform((request) => translateObject(request, searchQueryTranslation));

@@ -141,6 +141,64 @@ export const getAdvertsByUserId = async (userId) => {
   return collection.find(query).toArray();
 };
 
+export const getAdvertsPaginatedByUserId = async (userId, page = 1) => {
+  const skip = (page - 1) * PAGE_SIZE;
+
+  const pipeline = [
+    { $match: { userId: new ObjectId(userId) } },
+
+    {
+      $facet: {
+        data: [
+          { $sort: { createdAt: 1 } },
+          { $skip: skip },
+          { $limit: PAGE_SIZE },
+          {
+            $project: {
+              _id: 1,
+              userId: 1,
+              mileage: 1,
+              damaged: 1,
+              year: 1,
+              fuel: 1,
+              power: 1,
+              displacement: 1,
+              gearbox: 1,
+              title: 1,
+              price: 1,
+              verified: 1,
+            },
+          },
+        ],
+        count: [{ $count: 'total' }],
+      },
+    },
+
+    {
+      $addFields: {
+        currentCount: { $size: '$data' },
+        currentPage: page,
+        pageSize: PAGE_SIZE,
+        totalPages: { $ceil: { $divide: [{ $ifNull: [{ $arrayElemAt: ['$count.total', 0] }, 0] }, PAGE_SIZE] } },
+      },
+    },
+
+    {
+      $project: {
+        meta: {
+          currentCount: '$currentCount',
+          currentPage: '$currentPage',
+          pageSize: '$pageSize',
+          totalPages: '$totalPages',
+        },
+        data: '$data',
+      },
+    },
+  ];
+
+  return collection.aggregate(pipeline).next();
+};
+
 export const createAdvert = async (userId, template, initialScore) => {
   const timestamp = new Date();
 

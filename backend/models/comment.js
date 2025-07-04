@@ -3,6 +3,8 @@ import db from '../db/connection.js';
 
 const collection = db.collection('comments');
 
+const PAGE_SIZE = 20;
+
 export const getCommentById = async (id) => {
   const query = { _id: new ObjectId(id) };
 
@@ -13,6 +15,44 @@ export const getCommentsByAdvertId = async (advertId) => {
   const query = { advertId: new ObjectId(advertId) };
 
   return collection.find(query).toArray();
+};
+
+export const getCommentsPaginatedByAdvertId = async (advertId, page = 1) => {
+  const skip = (page - 1) * PAGE_SIZE;
+
+  const pipeline = [
+    { $match: { advertId: new ObjectId(advertId) } },
+
+    {
+      $facet: {
+        data: [{ $sort: { createdAt: 1 } }, { $skip: skip }, { $limit: PAGE_SIZE }],
+        count: [{ $count: 'total' }],
+      },
+    },
+
+    {
+      $addFields: {
+        currentCount: { $size: '$data' },
+        currentPage: page,
+        pageSize: PAGE_SIZE,
+        totalPages: { $ceil: { $divide: [{ $ifNull: [{ $arrayElemAt: ['$count.total', 0] }, 0] }, PAGE_SIZE] } },
+      },
+    },
+
+    {
+      $project: {
+        meta: {
+          currentCount: '$currentCount',
+          currentPage: '$currentPage',
+          pageSize: '$pageSize',
+          totalPages: '$totalPages',
+        },
+        data: '$data',
+      },
+    },
+  ];
+
+  return collection.aggregate(pipeline).next();
 };
 
 export const getCommentsByUserId = async (userId) => {
