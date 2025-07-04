@@ -5,6 +5,7 @@ import { COMMENT_INFORMATIVE, COMMENT_NEGATIVE, COMMENT_POSITIVE } from '../cons
 const statusPattern = z.enum([COMMENT_POSITIVE, COMMENT_INFORMATIVE, COMMENT_NEGATIVE], { message: 'Invalid status' });
 const contentPattern = z.string().min(1).max(1000);
 const reactionPattern = z.enum([REACTION_LIKE, REACTION_DISLIKE], { message: 'Invalid reaction value' });
+const pagePattern = z.coerce.number().int().positive();
 
 export const postCommentSchema = z.object({
   status: statusPattern,
@@ -18,4 +19,8 @@ export const putReactionSchema = z.object({
 export const patchCommentSchema = z.object({
   status: statusPattern,
   content: contentPattern,
+});
+
+export const getCommentsFromAdvertSchema = z.object({
+  page: pagePattern.optional(),
 });

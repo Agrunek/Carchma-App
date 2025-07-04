@@ -4,6 +4,7 @@ import {
   deleteCommentById,
   getCommentById,
   getCommentsByAdvertId,
+  getCommentsPaginatedByAdvertId,
   reactToCommentById,
   updateCommentById,
 } from '../models/comment.js';
@@ -70,8 +71,8 @@ export const showComment = async (commentId) => {
   return { comment };
 };
 
-export const showAdvertComments = async (advertId) => {
-  const comments = await getCommentsByAdvertId(advertId);
+export const showAdvertComments = async (advertId, page) => {
+  const comments = await getCommentsPaginatedByAdvertId(advertId, page);
 
   return { comments };
 };

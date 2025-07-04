@@ -1,4 +1,9 @@
-import { patchCommentSchema, postCommentSchema, putReactionSchema } from '../schemas/comment.js';
+import {
+  getCommentsFromAdvertSchema,
+  patchCommentSchema,
+  postCommentSchema,
+  putReactionSchema,
+} from '../schemas/comment.js';
 import {
   modifyComment,
   reactToComment,
@@ -44,7 +49,9 @@ export const getCommentHandler = async (req, res) => {
 };
 
 export const getCommentsFromAdvertHandler = async (req, res) => {
-  const { comments } = await showAdvertComments(req.params.advertId);
+  const { page } = getCommentsFromAdvertSchema.parse(req.query);
+
+  const { comments } = await showAdvertComments(req.params.advertId, page);
 
   return res.status(OK).json(comments);
 };

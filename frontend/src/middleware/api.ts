@@ -1,12 +1,14 @@
 import type {
   GetAdvertResult,
+  GetAdvertsFromUserParams,
+  GetAdvertsFromUserResult,
   GetAdvertsParams,
   GetAdvertsResult,
   PatchAdvertData,
   PatchAdvertResult,
   PostAdvertData,
   PostAdvertResult,
-} from '../types/api';
+} from '@/types/api';
 
 import apiClient from '@/config/apiClient';
 
@@ -22,6 +24,13 @@ export const patchAdvert = async (id: string, data: PatchAdvertData): Promise<Pa
 
 export const getAdvert = async (id: string): Promise<GetAdvertResult> => {
   return apiClient.get(`advert/${id}`);
+};
+
+export const GetAdvertsFromUser = async (
+  userId: string,
+  params: GetAdvertsFromUserParams,
+): Promise<GetAdvertsFromUserResult> => {
+  return apiClient.get(`advert/from-user/${userId}`, { params });
 };
 
 export const getAdverts = async (params: GetAdvertsParams): Promise<GetAdvertsResult> => {

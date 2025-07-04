@@ -81,6 +81,27 @@ export type PatchAdvertResult = DefaultResult;
 
 export type GetAdvertResult = Advert;
 
+export type GetAdvertsFromUserParams = { page?: string };
+
+export type GetAdvertsFromUserResult = SearchResult<
+  Pick<
+    Advert,
+    | '_id'
+    | 'userId'
+    | 'mileage'
+    | 'damaged'
+    | 'year'
+    | 'fuel'
+    | 'power'
+    | 'displacement'
+    | 'gearbox'
+    | 'title'
+    | 'price'
+    | 'verified'
+    | 'images'
+  >
+>;
+
 export type GetAdvertsParams = {
   page?: string;
   query?: string;
