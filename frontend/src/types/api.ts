@@ -9,6 +9,11 @@ interface DefaultResult {
   message: string;
 }
 
+interface CarItem {
+  id: string;
+  name: string;
+}
+
 /* Models */
 
 interface Advert {
@@ -39,6 +44,60 @@ interface Advert {
   createdAt: string;
   updatedAt: string;
   images: string[];
+}
+
+interface User {
+  _id: string;
+  name: string;
+  email: string;
+  password: string;
+  verified: boolean;
+  permissions: string[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+interface Comment {
+  _id: string;
+  advertId: string;
+  userId: string;
+  status: 'positive' | 'informative' | 'negative';
+  content: string;
+  likes: number;
+  dislikes: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+interface Reaction {
+  _id: string;
+  userId: string;
+  targetId: string;
+  action: 'comment_reaction';
+  value: 'like' | 'dislike';
+  createdAt: string;
+  updatedAt: string;
+}
+
+interface CarInfo {
+  car_types: ({ body_types: CarItem[]; car_makes: CarItem[] } & CarItem)[];
+  colors: CarItem[];
+  fuel_types: CarItem[];
+  gearbox_types: CarItem[];
+}
+
+interface MakeInfo extends CarItem {
+  car_models: CarItem[];
+}
+
+interface Report {
+  _id: string;
+  userId: string;
+  targetId: string;
+  action: 'advert_report' | 'comment_report';
+  value: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 /* APIs */
@@ -138,3 +197,73 @@ export type GetAdvertsResult = SearchResult<
     | 'images'
   >
 >;
+
+export type RegisterData = Pick<User, 'name' | 'email' | 'password'> & { confirm: string };
+
+export type RegisterResult = Omit<User, 'password'>;
+
+export type LoginData = Pick<User, 'email' | 'password'>;
+
+export type LoginResult = DefaultResult;
+
+export type LogoutResult = DefaultResult;
+
+export type EmailVerificationResult = DefaultResult;
+
+export type ForgotPasswordData = Pick<User, 'email'>;
+
+export type ForgotPasswordResult = DefaultResult;
+
+export type ResetPasswordData = Pick<User, 'password'> & { confirm: string };
+
+export type ResetPasswordResult = DefaultResult;
+
+export type PostCommentData = Pick<Comment, 'status' | 'content'>;
+
+export type PostCommentResult = Comment;
+
+export type PutReactionData = Pick<Reaction, 'value'>;
+
+export type PutReactionResult = Reaction | DefaultResult;
+
+export type PatchCommentData = Pick<Comment, 'status' | 'content'>;
+
+export type PatchCommentResult = DefaultResult;
+
+export type GetCommentResult = Comment;
+
+export type GetCommentsFromAdvertParams = { page?: string };
+
+export type GetCommentsFromAdvertResult = SearchResult<Comment>;
+
+export type GetReactionResult = Reaction | null;
+
+export type DeleteCommentResult = DefaultResult;
+
+export type DeleteReactionResult = DefaultResult;
+
+export type PostImagesData = { images: File[] };
+
+export type PostImagesResult = DefaultResult;
+
+export type DeleteImageResult = DefaultResult;
+
+export type GetCarInfoResult = CarInfo;
+
+export type GetCarMakeInfoResult = MakeInfo;
+
+export type PostAdvertReportData = Pick<Report, 'value'>;
+
+export type PostAdvertReportResult = Report;
+
+export type PostCommentReportData = Pick<Report, 'value'>;
+
+export type PostCommentReportResult = Report;
+
+export type GetReportsParams = { page?: string };
+
+export type GetReportsResult = SearchResult<Omit<Report, 'createdAt' | 'updatedAt'>>;
+
+export type GetCurrentProfileResult = Omit<User, 'password'>;
+
+export type GetAnyProfileResult = Omit<User, 'email' | 'password'>;

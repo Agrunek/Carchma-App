@@ -19,5 +19,9 @@
       radial-gradient(circle at 0% 30%, var(--color-gradient-base), transparent),
       radial-gradient(circle at 100% 80%, var(--color-gradient-base), transparent),
       radial-gradient(circle at 50% 100%, var(--color-gradient-base), transparent);
+
+    & * {
+      --color-gradient-base: initial;
+    }
   }
 }

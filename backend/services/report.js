@@ -7,20 +7,20 @@ import { ADVERT_REPORT, COMMENT_REPORT } from '../constants/interaction.js';
 import { FORBIDDEN, NOT_FOUND } from '../constants/http.js';
 import { REPORT_REVIEWER } from '../constants/permission.js';
 
-export const reportAdvert = async (advertId, userId, content) => {
+export const reportAdvert = async (advertId, userId, value) => {
   const advert = await getAdvertById(advertId);
   appAssert(advert, NOT_FOUND, 'Advertisement not found');
 
-  const interaction = await createInteraction(userId, advertId, ADVERT_REPORT, content);
+  const interaction = await createInteraction(userId, advertId, ADVERT_REPORT, value);
 
   return { report: interaction };
 };
 
-export const reportComment = async (commentId, userId, content) => {
+export const reportComment = async (commentId, userId, value) => {
   const comment = await getCommentById(commentId);
   appAssert(comment, NOT_FOUND, 'Comment not found');
 
-  const interaction = await createInteraction(userId, commentId, COMMENT_REPORT, content);
+  const interaction = await createInteraction(userId, commentId, COMMENT_REPORT, value);
 
   return { report: interaction };
 };
