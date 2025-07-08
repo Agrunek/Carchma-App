@@ -1,14 +1,22 @@
+import { MongoError } from 'mongodb';
 import { MulterError } from 'multer';
 import { ZodError } from 'zod';
 import AppError from '../utils/AppError.js';
 import { clearAuthCookies, REFRESH_PATH } from '../utils/cookies.js';
-import { BAD_REQUEST, INTERNAL_SERVER_ERROR } from '../constants/http.js';
+import { BAD_REQUEST, IM_A_TEAPOT, INTERNAL_SERVER_ERROR } from '../constants/http.js';
 
 const errorHandler = (error, req, res, next) => {
   console.log(`PATH ${req.path}`, error);
 
   if (req.path === REFRESH_PATH) {
     clearAuthCookies(res);
+  }
+
+  if (error instanceof MongoError) {
+    return res.status(IM_A_TEAPOT).json({
+      message: 'Database shenanigans',
+      type: error.code,
+    });
   }
 
   if (error instanceof MulterError) {

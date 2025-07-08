@@ -11,6 +11,7 @@ interface ApiError {
 const config: CreateAxiosDefaults = {
   baseURL: 'http://localhost:5050',
   withCredentials: true,
+  formSerializer: { indexes: null },
 };
 
 const jwtClient = axios.create(config);
@@ -25,7 +26,7 @@ const onError = async (error: AxiosError<ApiError>) => {
 
   if (config && status === 401 && data?.type === 'invalid_access_token') {
     try {
-      await jwtClient.post('/auth/refresh');
+      await jwtClient.post('auth/refresh');
       return jwtClient(config);
     } catch {
       queryClient.invalidateQueries({ queryKey: [AUTH_KEY], exact: true, refetchType: 'none' });
