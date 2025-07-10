@@ -1,10 +1,10 @@
 import type { AuthContext } from '@/types/context';
 
 import { useQuery } from '@tanstack/react-query';
-import { getAuthQueryOptions } from '@/middleware/queryOptions';
+import { getCurrentProfileQueryOptions } from '@/middleware/queryOptions';
 
 const useAuth = (): AuthContext => {
-  const { data, isSuccess } = useQuery(getAuthQueryOptions());
+  const { data, isSuccess } = useQuery(getCurrentProfileQueryOptions());
 
   return isSuccess ? { isAuthenticated: true, user: data } : { isAuthenticated: false, user: null };
 };

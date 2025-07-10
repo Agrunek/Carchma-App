@@ -1,6 +1,7 @@
 import { useEffect, useMemo } from 'react';
 import { createRouter, RouterProvider } from '@tanstack/react-router';
 import { useQueryClient } from '@tanstack/react-query';
+import useAuth from '@/hooks/useAuth';
 
 import { routeTree } from './routeTree.gen';
 
@@ -14,8 +15,9 @@ declare module '@tanstack/react-router' {
 
 const Router = () => {
   const queryClient = useQueryClient();
+  const auth = useAuth();
 
-  const context = useMemo(() => ({ queryClient }), [queryClient]);
+  const context = useMemo(() => ({ queryClient, auth }), [queryClient, auth]);
 
   useEffect(() => {
     router.invalidate();
