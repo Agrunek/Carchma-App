@@ -9,27 +9,286 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SearchRouteImport } from './routes/search'
+import { Route as IndexRouteImport } from './routes/index'
+import { Route as UserMeRouteImport } from './routes/user/me'
+import { Route as UserIdRouteImport } from './routes/user/$id'
+import { Route as AuthRegisterRouteImport } from './routes/auth/register'
+import { Route as AuthLoginRouteImport } from './routes/auth/login'
+import { Route as AuthForgotPasswordRouteImport } from './routes/auth/forgot-password'
+import { Route as AdvertWizardRouteImport } from './routes/advert/wizard'
+import { Route as AdvertIdRouteImport } from './routes/advert/$id'
+import { Route as AdminReportRouteImport } from './routes/admin/report'
+import { Route as AuthVerifyEmailCodeRouteImport } from './routes/auth/verify-email.$code'
+import { Route as AuthResetPasswordCodeRouteImport } from './routes/auth/reset-password.$code'
 
-export interface FileRoutesByFullPath {}
-export interface FileRoutesByTo {}
+const SearchRoute = SearchRouteImport.update({
+  id: '/search',
+  path: '/search',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const UserMeRoute = UserMeRouteImport.update({
+  id: '/user/me',
+  path: '/user/me',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const UserIdRoute = UserIdRouteImport.update({
+  id: '/user/$id',
+  path: '/user/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRegisterRoute = AuthRegisterRouteImport.update({
+  id: '/auth/register',
+  path: '/auth/register',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthLoginRoute = AuthLoginRouteImport.update({
+  id: '/auth/login',
+  path: '/auth/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthForgotPasswordRoute = AuthForgotPasswordRouteImport.update({
+  id: '/auth/forgot-password',
+  path: '/auth/forgot-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdvertWizardRoute = AdvertWizardRouteImport.update({
+  id: '/advert/wizard',
+  path: '/advert/wizard',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdvertIdRoute = AdvertIdRouteImport.update({
+  id: '/advert/$id',
+  path: '/advert/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminReportRoute = AdminReportRouteImport.update({
+  id: '/admin/report',
+  path: '/admin/report',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthVerifyEmailCodeRoute = AuthVerifyEmailCodeRouteImport.update({
+  id: '/auth/verify-email/$code',
+  path: '/auth/verify-email/$code',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthResetPasswordCodeRoute = AuthResetPasswordCodeRouteImport.update({
+  id: '/auth/reset-password/$code',
+  path: '/auth/reset-password/$code',
+  getParentRoute: () => rootRouteImport,
+} as any)
+
+export interface FileRoutesByFullPath {
+  '/': typeof IndexRoute
+  '/search': typeof SearchRoute
+  '/admin/report': typeof AdminReportRoute
+  '/advert/$id': typeof AdvertIdRoute
+  '/advert/wizard': typeof AdvertWizardRoute
+  '/auth/forgot-password': typeof AuthForgotPasswordRoute
+  '/auth/login': typeof AuthLoginRoute
+  '/auth/register': typeof AuthRegisterRoute
+  '/user/$id': typeof UserIdRoute
+  '/user/me': typeof UserMeRoute
+  '/auth/reset-password/$code': typeof AuthResetPasswordCodeRoute
+  '/auth/verify-email/$code': typeof AuthVerifyEmailCodeRoute
+}
+export interface FileRoutesByTo {
+  '/': typeof IndexRoute
+  '/search': typeof SearchRoute
+  '/admin/report': typeof AdminReportRoute
+  '/advert/$id': typeof AdvertIdRoute
+  '/advert/wizard': typeof AdvertWizardRoute
+  '/auth/forgot-password': typeof AuthForgotPasswordRoute
+  '/auth/login': typeof AuthLoginRoute
+  '/auth/register': typeof AuthRegisterRoute
+  '/user/$id': typeof UserIdRoute
+  '/user/me': typeof UserMeRoute
+  '/auth/reset-password/$code': typeof AuthResetPasswordCodeRoute
+  '/auth/verify-email/$code': typeof AuthVerifyEmailCodeRoute
+}
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
+  '/': typeof IndexRoute
+  '/search': typeof SearchRoute
+  '/admin/report': typeof AdminReportRoute
+  '/advert/$id': typeof AdvertIdRoute
+  '/advert/wizard': typeof AdvertWizardRoute
+  '/auth/forgot-password': typeof AuthForgotPasswordRoute
+  '/auth/login': typeof AuthLoginRoute
+  '/auth/register': typeof AuthRegisterRoute
+  '/user/$id': typeof UserIdRoute
+  '/user/me': typeof UserMeRoute
+  '/auth/reset-password/$code': typeof AuthResetPasswordCodeRoute
+  '/auth/verify-email/$code': typeof AuthVerifyEmailCodeRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: never
+  fullPaths:
+    | '/'
+    | '/search'
+    | '/admin/report'
+    | '/advert/$id'
+    | '/advert/wizard'
+    | '/auth/forgot-password'
+    | '/auth/login'
+    | '/auth/register'
+    | '/user/$id'
+    | '/user/me'
+    | '/auth/reset-password/$code'
+    | '/auth/verify-email/$code'
   fileRoutesByTo: FileRoutesByTo
-  to: never
-  id: '__root__'
+  to:
+    | '/'
+    | '/search'
+    | '/admin/report'
+    | '/advert/$id'
+    | '/advert/wizard'
+    | '/auth/forgot-password'
+    | '/auth/login'
+    | '/auth/register'
+    | '/user/$id'
+    | '/user/me'
+    | '/auth/reset-password/$code'
+    | '/auth/verify-email/$code'
+  id:
+    | '__root__'
+    | '/'
+    | '/search'
+    | '/admin/report'
+    | '/advert/$id'
+    | '/advert/wizard'
+    | '/auth/forgot-password'
+    | '/auth/login'
+    | '/auth/register'
+    | '/user/$id'
+    | '/user/me'
+    | '/auth/reset-password/$code'
+    | '/auth/verify-email/$code'
   fileRoutesById: FileRoutesById
 }
-export interface RootRouteChildren {}
-
-declare module '@tanstack/react-router' {
-  interface FileRoutesByPath {}
+export interface RootRouteChildren {
+  IndexRoute: typeof IndexRoute
+  SearchRoute: typeof SearchRoute
+  AdminReportRoute: typeof AdminReportRoute
+  AdvertIdRoute: typeof AdvertIdRoute
+  AdvertWizardRoute: typeof AdvertWizardRoute
+  AuthForgotPasswordRoute: typeof AuthForgotPasswordRoute
+  AuthLoginRoute: typeof AuthLoginRoute
+  AuthRegisterRoute: typeof AuthRegisterRoute
+  UserIdRoute: typeof UserIdRoute
+  UserMeRoute: typeof UserMeRoute
+  AuthResetPasswordCodeRoute: typeof AuthResetPasswordCodeRoute
+  AuthVerifyEmailCodeRoute: typeof AuthVerifyEmailCodeRoute
 }
 
-const rootRouteChildren: RootRouteChildren = {}
+declare module '@tanstack/react-router' {
+  interface FileRoutesByPath {
+    '/search': {
+      id: '/search'
+      path: '/search'
+      fullPath: '/search'
+      preLoaderRoute: typeof SearchRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/user/me': {
+      id: '/user/me'
+      path: '/user/me'
+      fullPath: '/user/me'
+      preLoaderRoute: typeof UserMeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/user/$id': {
+      id: '/user/$id'
+      path: '/user/$id'
+      fullPath: '/user/$id'
+      preLoaderRoute: typeof UserIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth/register': {
+      id: '/auth/register'
+      path: '/auth/register'
+      fullPath: '/auth/register'
+      preLoaderRoute: typeof AuthRegisterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth/login': {
+      id: '/auth/login'
+      path: '/auth/login'
+      fullPath: '/auth/login'
+      preLoaderRoute: typeof AuthLoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth/forgot-password': {
+      id: '/auth/forgot-password'
+      path: '/auth/forgot-password'
+      fullPath: '/auth/forgot-password'
+      preLoaderRoute: typeof AuthForgotPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/advert/wizard': {
+      id: '/advert/wizard'
+      path: '/advert/wizard'
+      fullPath: '/advert/wizard'
+      preLoaderRoute: typeof AdvertWizardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/advert/$id': {
+      id: '/advert/$id'
+      path: '/advert/$id'
+      fullPath: '/advert/$id'
+      preLoaderRoute: typeof AdvertIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/report': {
+      id: '/admin/report'
+      path: '/admin/report'
+      fullPath: '/admin/report'
+      preLoaderRoute: typeof AdminReportRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth/verify-email/$code': {
+      id: '/auth/verify-email/$code'
+      path: '/auth/verify-email/$code'
+      fullPath: '/auth/verify-email/$code'
+      preLoaderRoute: typeof AuthVerifyEmailCodeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth/reset-password/$code': {
+      id: '/auth/reset-password/$code'
+      path: '/auth/reset-password/$code'
+      fullPath: '/auth/reset-password/$code'
+      preLoaderRoute: typeof AuthResetPasswordCodeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+  }
+}
+
+const rootRouteChildren: RootRouteChildren = {
+  IndexRoute: IndexRoute,
+  SearchRoute: SearchRoute,
+  AdminReportRoute: AdminReportRoute,
+  AdvertIdRoute: AdvertIdRoute,
+  AdvertWizardRoute: AdvertWizardRoute,
+  AuthForgotPasswordRoute: AuthForgotPasswordRoute,
+  AuthLoginRoute: AuthLoginRoute,
+  AuthRegisterRoute: AuthRegisterRoute,
+  UserIdRoute: UserIdRoute,
+  UserMeRoute: UserMeRoute,
+  AuthResetPasswordCodeRoute: AuthResetPasswordCodeRoute,
+  AuthVerifyEmailCodeRoute: AuthVerifyEmailCodeRoute,
+}
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
