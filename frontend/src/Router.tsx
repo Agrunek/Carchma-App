@@ -1,7 +1,7 @@
 import { useEffect, useMemo } from 'react';
 import { createRouter, RouterProvider } from '@tanstack/react-router';
 import { useQueryClient } from '@tanstack/react-query';
-import useAuth from '@/hooks/useAuth';
+import useAuth from './hooks/useAuth';
 
 import { routeTree } from './routeTree.gen';
 
