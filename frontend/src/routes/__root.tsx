@@ -4,6 +4,8 @@ import type { GlobalRouterContext } from '@/types/context';
 import { createRootRouteWithContext, Outlet } from '@tanstack/react-router';
 import { TanStackRouterDevtools } from '@tanstack/react-router-devtools';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+import ErrorOccurred from '@/components/pages/ErrorOccurred';
+import NotFound from '@/components/pages/NotFound';
 
 export const Route = createRootRouteWithContext<GlobalRouterContext>()({
   component: RouteComponent,
@@ -22,9 +24,9 @@ function RouteComponent() {
 }
 
 function ErrorComponent({ error }: ErrorComponentProps) {
-  return <div>{error.message}</div>;
+  return <ErrorOccurred errorMessage={error.message} />;
 }
 
 function NotFoundComponent() {
-  return <div>Hello "/???"!</div>;
+  return <NotFound />;
 }

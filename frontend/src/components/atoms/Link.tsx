@@ -13,7 +13,7 @@ interface BasicLinkProps extends AnchorHTMLAttributes<HTMLAnchorElement> {
   variant?: LinkVariant;
 }
 
-const baseClassName = tw``;
+const baseClassName = tw`text-base font-bold text-gray-900 underline hover:font-black hover:decoration-2 dark:text-gray-200`;
 
 const variantClassNames: ClassNameDictionary<LinkVariant> = {
   primary: tw``,
