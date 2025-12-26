@@ -29,28 +29,28 @@ const searchQueryTranslation = {
 };
 
 /* Configuration */
-const typePattern = z.enum(carTypes.map(extractId), { message: 'Invalid car type' });
+const typePattern = z.enum(carTypes.map(extractId), { error: 'Invalid car type' });
 const pagePattern = z.coerce.number().int().positive();
 const queryPattern = z.string().max(1000);
 
 /* General information */
 const vinPattern = z.string().min(1).max(17).toUpperCase();
 const registrationNumberPattern = z.string().min(1).max(8).toUpperCase();
-const dateOfFirstRegistrationPattern = z.string().date();
-const mileagePattern = z.number().int().nonnegative();
+const dateOfFirstRegistrationPattern = z.iso.date();
+const mileagePattern = z.int().nonnegative();
 const damagedPattern = z.boolean();
 
 /* Technical information */
-const makePattern = z.enum(carMakes.map(extractId), { message: 'Invalid car make' });
-const modelPattern = z.enum(carModels.map(extractId), { message: 'Invalid car model' });
-const yearPattern = z.number().int().min(1900);
-const fuelPattern = z.enum(fuelTypes.map(extractId), { message: 'Invalid fuel type' });
-const powerPattern = z.number().int().positive();
-const displacementPattern = z.number().int().positive();
-const doorsPattern = z.number().int().positive();
-const gearboxPattern = z.enum(gearboxTypes.map(extractId), { message: 'Invalid gearbox type' });
-const bodyPattern = z.enum(bodyTypes.map(extractId), { message: 'Invalid body type' });
-const colorPattern = z.enum(colors.map(extractId), { message: 'Invalid color' });
+const makePattern = z.enum(carMakes.map(extractId), { error: 'Invalid car make' });
+const modelPattern = z.enum(carModels.map(extractId), { error: 'Invalid car model' });
+const yearPattern = z.int().min(1900);
+const fuelPattern = z.enum(fuelTypes.map(extractId), { error: 'Invalid fuel type' });
+const powerPattern = z.int().positive();
+const displacementPattern = z.int().positive();
+const doorsPattern = z.int().positive();
+const gearboxPattern = z.enum(gearboxTypes.map(extractId), { error: 'Invalid gearbox type' });
+const bodyPattern = z.enum(bodyTypes.map(extractId), { error: 'Invalid body type' });
+const colorPattern = z.enum(colors.map(extractId), { error: 'Invalid color' });
 
 /* Additional information */
 const titlePattern = z.string().max(100);
@@ -114,18 +114,18 @@ const carRefine = (data, context) => {
 
   const bodyType = findItemById(carType[BODY_TYPES_KEY], data.body);
   if (!bodyType) {
-    context.addIssue({ message: 'Provided body type does not match the car type', path: ['body'] });
+    context.addIssue({ error: 'Provided body type does not match the car type', path: ['body'] });
   }
 
   const carMake = findItemById(carType[CAR_MAKES_KEY], data.make);
   if (!carMake) {
-    context.addIssue({ message: 'Provided car make does not match the car type', path: ['make'] });
+    context.addIssue({ error: 'Provided car make does not match the car type', path: ['make'] });
     return;
   }
 
   const carModel = findItemById(carMake[CAR_MODELS_KEY], data.model);
   if (!carModel) {
-    context.addIssue({ message: 'Provided car model does not match the car make', path: ['model'] });
+    context.addIssue({ error: 'Provided car model does not match the car make', path: ['model'] });
   }
 };
 

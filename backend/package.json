@@ -12,10 +12,10 @@
     "cors": "^2.8.5",
     "express": "^5.2.1",
     "jsonwebtoken": "^9.0.3",
-    "mongodb": "^6.21.0",
+    "mongodb": "^7.0.0",
     "multer": "^2.0.2",
-    "resend": "^4.8.0",
-    "zod": "^3.25.76"
+    "resend": "^6.6.0",
+    "zod": "^4.2.1"
   },
   "devDependencies": {
     "prettier": "^3.7.4"

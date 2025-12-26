@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 const namePattern = z.string().min(1).max(255);
-const emailPattern = z.string().min(1).email().max(255);
+const emailPattern = z.email().min(1).max(255);
 const passwordPattern = z.string().min(8).max(255);
 const agentPattern = z.string().max(255).optional();
 
@@ -14,7 +14,7 @@ const credentialsPattern = z.object({
 });
 
 const confirmRefine = (data) => data.password === data.confirm;
-const confirmIssue = { message: 'Passwords are not the same', path: ['confirm'] };
+const confirmIssue = { error: 'Passwords are not the same', path: ['confirm'] };
 
 export const registerSchema = credentialsPattern.refine(confirmRefine, confirmIssue);
 
