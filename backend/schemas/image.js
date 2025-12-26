@@ -4,7 +4,7 @@ import { ALLOWED_MIME_TYPES } from '../constants/image.js';
 
 const imagePattern = z.object({
   originalname: z.string().min(1).max(100),
-  mimetype: z.enum(ALLOWED_MIME_TYPES, { message: 'Invalid MIME type' }),
+  mimetype: z.enum(ALLOWED_MIME_TYPES, { error: 'Invalid MIME type' }),
   buffer: z.instanceof(Buffer),
 });
 
