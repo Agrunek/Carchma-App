@@ -27,7 +27,7 @@ const Pagination = ({ className, currentPage, totalPages, onChange }: Pagination
 
         return (
           <Button
-            className={n === currentPage ? 'font-black!' : ''}
+            className={n === currentPage ? 'scale-110 font-black!' : ''}
             key={n}
             onClick={() => onChange(n)}
             variant={isEllipsis ? 'tertiary' : 'secondary'}
