@@ -1,28 +1,18 @@
 import type { AnchorHTMLAttributes, Ref } from 'react';
 import type { LinkComponent } from '@tanstack/react-router';
-import type { ClassNameDictionary } from '@/types/utils';
 
 import clsx from 'clsx';
 import { createLink } from '@tanstack/react-router';
 import { tw } from '@/utils/string';
 
-type LinkVariant = 'primary' | 'secondary' | 'tertiary';
-
 interface BasicLinkProps extends AnchorHTMLAttributes<HTMLAnchorElement> {
   ref?: Ref<HTMLAnchorElement>;
-  variant?: LinkVariant;
 }
 
 const baseClassName = tw`text-base font-bold text-gray-900 underline hover:font-black hover:decoration-2 dark:text-gray-200`;
 
-const variantClassNames: ClassNameDictionary<LinkVariant> = {
-  primary: tw``,
-  secondary: tw``,
-  tertiary: tw``,
-};
-
-const BasicLinkComponent = ({ className, variant = 'primary', ...props }: BasicLinkProps) => {
-  const style = clsx(baseClassName, variantClassNames[variant], className);
+const BasicLinkComponent = ({ className, ...props }: BasicLinkProps) => {
+  const style = clsx(baseClassName, className);
 
   return <a className={style} {...props} />;
 };
