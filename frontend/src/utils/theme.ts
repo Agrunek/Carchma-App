@@ -18,3 +18,7 @@ export const setTheme = (theme: Theme) => {
       (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches),
   );
 };
+
+export const getTheme = (): Theme => {
+  return localStorage.theme || 'system';
+};
