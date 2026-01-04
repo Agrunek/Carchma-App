@@ -2,15 +2,11 @@ import type { ClassNameDictionary } from '@/types/utils';
 
 import clsx from 'clsx';
 import { createPortal } from 'react-dom';
-import { useNavigate, useRouteContext } from '@tanstack/react-router';
-import { useMutation } from '@tanstack/react-query';
+import { useRouteContext } from '@tanstack/react-router';
 import useViewportVisibility from '@/hooks/useViewportVisibility';
 import ThemeToggle from '@/components/molecules/ThemeToggle';
-import Button from '@/components/atoms/Button';
 import Link from '@/components/atoms/Link';
 import Text from '@/components/atoms/Text';
-import { logout } from '@/middleware/api';
-import { AUTH_KEY } from '@/middleware/queryOptions';
 import { tw } from '@/utils/string';
 
 type HeaderVariant = 'expanded' | 'collapsed';
@@ -30,16 +26,7 @@ const titleVariantClassNames: ClassNameDictionary<HeaderVariant> = {
 const Header = () => {
   const { elementRef, isVisible: isAtTheTop } = useViewportVisibility<HTMLDivElement>(true);
 
-  const { auth, queryClient } = useRouteContext({ from: '__root__' });
-  const navigate = useNavigate();
-
-  const { mutate, isPending, isSuccess } = useMutation({
-    mutationFn: logout,
-    onSuccess: async () => {
-      await navigate({ to: '/' });
-      await queryClient.invalidateQueries({ queryKey: [AUTH_KEY], exact: true });
-    },
-  });
+  const { auth } = useRouteContext({ from: '__root__' });
 
   const style = clsx(baseClassName, variantClassNames[isAtTheTop ? 'expanded' : 'collapsed']);
   const titleStyle = clsx(titleVariantClassNames[isAtTheTop ? 'expanded' : 'collapsed']);
@@ -64,9 +51,7 @@ const Header = () => {
 
         <div className="flex flex-1 justify-end">
           {auth.isAuthenticated ? (
-            <Button disabled={isPending || isSuccess} onClick={() => mutate()} variant="tertiary">
-              Wyloguj się
-            </Button>
+            <Link to="/auth/logout">Wyloguj się</Link>
           ) : (
             <Link to="/auth/login">Zaloguj się</Link>
           )}
