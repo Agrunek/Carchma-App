@@ -14,6 +14,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as UserMeRouteImport } from './routes/user/me'
 import { Route as UserIdRouteImport } from './routes/user/$id'
 import { Route as AuthRegisterRouteImport } from './routes/auth/register'
+import { Route as AuthLogoutRouteImport } from './routes/auth/logout'
 import { Route as AuthLoginRouteImport } from './routes/auth/login'
 import { Route as AuthForgotPasswordRouteImport } from './routes/auth/forgot-password'
 import { Route as AdvertWizardRouteImport } from './routes/advert/wizard'
@@ -45,6 +46,11 @@ const UserIdRoute = UserIdRouteImport.update({
 const AuthRegisterRoute = AuthRegisterRouteImport.update({
   id: '/auth/register',
   path: '/auth/register',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthLogoutRoute = AuthLogoutRouteImport.update({
+  id: '/auth/logout',
+  path: '/auth/logout',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthLoginRoute = AuthLoginRouteImport.update({
@@ -91,6 +97,7 @@ export interface FileRoutesByFullPath {
   '/advert/wizard': typeof AdvertWizardRoute
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
   '/auth/login': typeof AuthLoginRoute
+  '/auth/logout': typeof AuthLogoutRoute
   '/auth/register': typeof AuthRegisterRoute
   '/user/$id': typeof UserIdRoute
   '/user/me': typeof UserMeRoute
@@ -105,6 +112,7 @@ export interface FileRoutesByTo {
   '/advert/wizard': typeof AdvertWizardRoute
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
   '/auth/login': typeof AuthLoginRoute
+  '/auth/logout': typeof AuthLogoutRoute
   '/auth/register': typeof AuthRegisterRoute
   '/user/$id': typeof UserIdRoute
   '/user/me': typeof UserMeRoute
@@ -120,6 +128,7 @@ export interface FileRoutesById {
   '/advert/wizard': typeof AdvertWizardRoute
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
   '/auth/login': typeof AuthLoginRoute
+  '/auth/logout': typeof AuthLogoutRoute
   '/auth/register': typeof AuthRegisterRoute
   '/user/$id': typeof UserIdRoute
   '/user/me': typeof UserMeRoute
@@ -136,6 +145,7 @@ export interface FileRouteTypes {
     | '/advert/wizard'
     | '/auth/forgot-password'
     | '/auth/login'
+    | '/auth/logout'
     | '/auth/register'
     | '/user/$id'
     | '/user/me'
@@ -150,6 +160,7 @@ export interface FileRouteTypes {
     | '/advert/wizard'
     | '/auth/forgot-password'
     | '/auth/login'
+    | '/auth/logout'
     | '/auth/register'
     | '/user/$id'
     | '/user/me'
@@ -164,6 +175,7 @@ export interface FileRouteTypes {
     | '/advert/wizard'
     | '/auth/forgot-password'
     | '/auth/login'
+    | '/auth/logout'
     | '/auth/register'
     | '/user/$id'
     | '/user/me'
@@ -179,6 +191,7 @@ export interface RootRouteChildren {
   AdvertWizardRoute: typeof AdvertWizardRoute
   AuthForgotPasswordRoute: typeof AuthForgotPasswordRoute
   AuthLoginRoute: typeof AuthLoginRoute
+  AuthLogoutRoute: typeof AuthLogoutRoute
   AuthRegisterRoute: typeof AuthRegisterRoute
   UserIdRoute: typeof UserIdRoute
   UserMeRoute: typeof UserMeRoute
@@ -221,6 +234,13 @@ declare module '@tanstack/react-router' {
       path: '/auth/register'
       fullPath: '/auth/register'
       preLoaderRoute: typeof AuthRegisterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth/logout': {
+      id: '/auth/logout'
+      path: '/auth/logout'
+      fullPath: '/auth/logout'
+      preLoaderRoute: typeof AuthLogoutRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth/login': {
@@ -283,6 +303,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdvertWizardRoute: AdvertWizardRoute,
   AuthForgotPasswordRoute: AuthForgotPasswordRoute,
   AuthLoginRoute: AuthLoginRoute,
+  AuthLogoutRoute: AuthLogoutRoute,
   AuthRegisterRoute: AuthRegisterRoute,
   UserIdRoute: UserIdRoute,
   UserMeRoute: UserMeRoute,

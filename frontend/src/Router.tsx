@@ -1,11 +1,13 @@
 import { useEffect, useMemo } from 'react';
-import { createRouter, RouterProvider } from '@tanstack/react-router';
+import { createRouteMask, createRouter, RouterProvider } from '@tanstack/react-router';
 import { useQueryClient } from '@tanstack/react-query';
 import useAuth from './hooks/useAuth';
 
 import { routeTree } from './routeTree.gen';
 
-const router = createRouter({ routeTree, context: undefined! });
+const logoutMask = createRouteMask({ routeTree, from: '/auth/logout', to: '/' });
+
+const router = createRouter({ routeTree, context: undefined!, routeMasks: [logoutMask] });
 
 declare module '@tanstack/react-router' {
   interface Register {
