@@ -1,27 +1,77 @@
+import type { ClassNameDictionary } from '@/types/utils';
+
 import clsx from 'clsx';
-import useViewportVisibility from '@/hooks/useViewportVisibility';
 import { createPortal } from 'react-dom';
+import { useNavigate, useRouteContext } from '@tanstack/react-router';
+import { useMutation } from '@tanstack/react-query';
+import useViewportVisibility from '@/hooks/useViewportVisibility';
+import ThemeToggle from '@/components/molecules/ThemeToggle';
+import Button from '@/components/atoms/Button';
+import Link from '@/components/atoms/Link';
+import Text from '@/components/atoms/Text';
+import { logout } from '@/middleware/api';
+import { AUTH_KEY } from '@/middleware/queryOptions';
 import { tw } from '@/utils/string';
 
-interface HeaderProps {
-  className?: string;
-  offset?: number;
-}
+type HeaderVariant = 'expanded' | 'collapsed';
 
-const baseClassName = tw`fixed top-0 left-0 w-full transition-all duration-300`;
+const baseClassName = tw`fixed top-0 left-0 z-40 flex w-full items-center gap-4 p-4 transition-all duration-500`;
 
-const Header = ({ className, offset = 1 }: HeaderProps) => {
+const variantClassNames: ClassNameDictionary<HeaderVariant> = {
+  expanded: tw`h-24 bg-white/10 dark:bg-black/10`,
+  collapsed: tw`h-16 bg-white/50 backdrop-blur-md dark:bg-black/50`,
+};
+
+const titleVariantClassNames: ClassNameDictionary<HeaderVariant> = {
+  expanded: tw`hidden text-center font-serif text-5xl sm:block`,
+  collapsed: tw`text-left`,
+};
+
+const Header = () => {
   const { elementRef, isVisible: isAtTheTop } = useViewportVisibility<HTMLDivElement>(true);
 
-  const style = clsx(baseClassName, isAtTheTop ? 'h-32 bg-blue-300' : 'h-16 bg-red-500', className);
+  const { auth, queryClient } = useRouteContext({ from: '__root__' });
+  const navigate = useNavigate();
+
+  const { mutate, isPending, isSuccess } = useMutation({
+    mutationFn: logout,
+    onSuccess: async () => {
+      await navigate({ to: '/' });
+      await queryClient.invalidateQueries({ queryKey: [AUTH_KEY], exact: true });
+    },
+  });
+
+  const style = clsx(baseClassName, variantClassNames[isAtTheTop ? 'expanded' : 'collapsed']);
+  const titleStyle = clsx(titleVariantClassNames[isAtTheTop ? 'expanded' : 'collapsed']);
 
   return (
     <>
       {createPortal(
-        <div className="invisible absolute top-0 left-0 w-full" ref={elementRef} style={{ height: offset }} />,
+        <div className="invisible absolute top-0 left-0 h-20 w-full" ref={elementRef} />,
         document.getElementById('root')!,
       )}
-      <div className={style}>HEADER</div>
+
+      <div className={style}>
+        {isAtTheTop && (
+          <div className="flex flex-1">
+            <ThemeToggle />
+          </div>
+        )}
+
+        <Text as="h1" variant="heading" className={titleStyle}>
+          CARchma
+        </Text>
+
+        <div className="flex flex-1 justify-end">
+          {auth.isAuthenticated ? (
+            <Button disabled={isPending || isSuccess} onClick={() => mutate()} variant="tertiary">
+              Wyloguj się
+            </Button>
+          ) : (
+            <Link to="/auth/login">Zaloguj się</Link>
+          )}
+        </div>
+      </div>
     </>
   );
 };
