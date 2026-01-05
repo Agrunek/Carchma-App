@@ -9,7 +9,7 @@ interface BasicLinkProps extends AnchorHTMLAttributes<HTMLAnchorElement> {
   ref?: Ref<HTMLAnchorElement>;
 }
 
-const baseClassName = tw`text-base font-bold text-gray-900 underline hover:font-black hover:decoration-2 dark:text-gray-200`;
+const baseClassName = tw`cursor-pointer text-base font-bold text-gray-900 underline not-[[href]]:cursor-not-allowed not-[[href]]:text-gray-900/70 dark:text-gray-200 dark:not-[[href]]:text-gray-200/70 [[href]]:hover:font-black [[href]]:hover:decoration-2`;
 
 const BasicLinkComponent = ({ className, ...props }: BasicLinkProps) => {
   const style = clsx(baseClassName, className);
