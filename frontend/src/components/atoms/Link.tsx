@@ -1,5 +1,5 @@
 import type { AnchorHTMLAttributes, Ref } from 'react';
-import type { LinkComponent } from '@tanstack/react-router';
+import type { LinkComponent, LinkComponentProps } from '@tanstack/react-router';
 
 import clsx from 'clsx';
 import { createLink } from '@tanstack/react-router';
@@ -16,6 +16,8 @@ const BasicLinkComponent = ({ className, ...props }: BasicLinkProps) => {
 
   return <a className={style} {...props} />;
 };
+
+export type LinkProps = LinkComponentProps<typeof BasicLinkComponent>;
 
 const CreatedLinkComponent = createLink(BasicLinkComponent);
 
