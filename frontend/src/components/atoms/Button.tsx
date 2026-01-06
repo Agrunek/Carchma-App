@@ -8,7 +8,7 @@ import { tw } from '@/utils/string';
 
 type ButtonVariant = 'primary' | 'secondary' | 'tertiary';
 
-interface ButtonProps extends HeadlessButtonProps {
+export interface ButtonProps extends HeadlessButtonProps {
   loading?: boolean;
   ref?: Ref<HTMLButtonElement>;
   variant?: ButtonVariant;

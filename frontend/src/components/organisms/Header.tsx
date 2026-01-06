@@ -5,6 +5,7 @@ import { createPortal } from 'react-dom';
 import { useRouteContext } from '@tanstack/react-router';
 import useViewportVisibility from '@/hooks/useViewportVisibility';
 import ThemeToggle from '@/components/molecules/ThemeToggle';
+import Menu from '@/components/molecules/Menu';
 import Link from '@/components/atoms/Link';
 import Text from '@/components/atoms/Text';
 import { tw } from '@/utils/string';
@@ -51,7 +52,16 @@ const Header = () => {
 
         <div className="flex flex-1 justify-end">
           {auth.isAuthenticated ? (
-            <Link to="/auth/logout">Wyloguj się</Link>
+            <Menu
+              anchor="bottom end"
+              items={[
+                { componentType: 'link', children: 'Twój profil', to: '/user/me' },
+                { componentType: 'link', children: 'Utwórz ogłoszenie', to: '/advert/wizard' },
+                { componentType: 'link', children: 'Wyloguj się', to: '/auth/logout' },
+              ]}
+            >
+              {auth.user.name}
+            </Menu>
           ) : (
             <Link to="/auth/login">Zaloguj się</Link>
           )}
