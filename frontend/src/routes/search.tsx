@@ -1,9 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router';
 
 export const Route = createFileRoute('/search')({
-  component: RouteComponent,
+  component: () => <div>Hello "/search"!</div>,
 });
-
-function RouteComponent() {
-  return <div>Hello "/search"!</div>;
-}
