@@ -17,7 +17,7 @@ const fieldLoadingClassName = tw`animate-pulse`;
 const labelBaseClassName = tw`cursor-text px-1 font-bold data-disabled:cursor-not-allowed`;
 const labelRequiredClassName = tw`after:content-['*']`;
 
-const inputBaseClassName = tw`px-3.5 py-1 outline-none data-disabled:cursor-not-allowed`;
+const inputBaseClassName = tw`w-full px-3.5 pb-1 outline-none data-disabled:cursor-not-allowed`;
 const inputPlaceholderClassName = tw`placeholder:font-serif placeholder:italic`;
 
 const Input = ({ className, disabled, label = 'Tekst', loading, required, ...props }: InputProps) => {
@@ -30,7 +30,7 @@ const Input = ({ className, disabled, label = 'Tekst', loading, required, ...pro
       <legend className="ml-2.75">
         <Label className={labelStyle}>{label}</Label>
       </legend>
-      <HeadlessInput className={inputStyle} required={required} {...props} />
+      <HeadlessInput autoComplete="off" className={inputStyle} required={required} {...props} />
     </Field>
   );
 };
