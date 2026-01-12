@@ -44,13 +44,13 @@ const Menu = ({ anchor, children, items = [] }: MenuProps) => {
             case 'button':
               return (
                 <MenuItem key={idx}>
-                  <Button {...item} />
+                  <Button {...(({ componentType: _, ...props }) => props)(item)} />
                 </MenuItem>
               );
             case 'link':
               return (
                 <MenuItem key={idx}>
-                  <Link {...item} />
+                  <Link {...(({ componentType: _, ...props }) => props)(item)} />
                 </MenuItem>
               );
           }
