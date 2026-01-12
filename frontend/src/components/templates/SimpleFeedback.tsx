@@ -17,7 +17,7 @@ const baseClassName = tw`flex flex-col items-center gap-4 rounded-md border-2 p-
 
 const variantClassNames: ClassNameDictionary<SimpleFeedbackVariant> = {
   informative: tw`border-white/70 bg-white/50 dark:border-black/70 dark:bg-black/50`,
-  error: tw`border-rose-500/70 bg-rose-500/50`,
+  error: tw`border-rose-600/70 bg-rose-600/50 dark:border-rose-500/70 dark:bg-rose-500/50`,
 };
 
 const SimpleFeedback = ({ children, className, variant = 'informative' }: GlobalFeedbackProps) => {
