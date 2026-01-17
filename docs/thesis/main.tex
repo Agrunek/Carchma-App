@@ -18,6 +18,19 @@
 \usepackage{fancyhdr} % Add page numbering customization
 \usepackage{graphicx} % Add image handling
 \usepackage[hidelinks]{hyperref} % Add link references
+\usepackage{csquotes} % Tame biblatex warnings
+\usepackage[
+    backend=biber,
+    style=authoryear,
+    sorting=nyt,
+    maxnames=99,
+    autocite=inline,
+    backref=true,
+    giveninits=true,
+    alldates=comp,
+    dashed=false,
+    uniquename=false
+]{biblatex} % Add advanced citations
 
 % =================================================================================================
 % Configure document
@@ -77,6 +90,16 @@
 \def\input@path{{chapters/}}
 \makeatother
 
+% Adjust bibliography
+\addbibresource{bibliographies/references.bib}
+\DeclareNameAlias{sortname}{family-given}
+\DeclareFieldFormat{edition}{Wyd. #1\isdot}
+\DeclareFieldFormat{url}{Dostępny w: \url{#1}}
+\DeclareFieldFormat{urldate}{(Dostęp: #1)}
+\DeclareDelimFormat[bib]{nametitledelim}{\addspace}
+\renewcommand*{\bibinitdelim}{}
+\setlength{\bibitemsep}{1em}
+
 % =================================================================================================
 % Document content
 % =================================================================================================
@@ -131,5 +154,7 @@
 
 \chapter{Wprowadzenie}
 \input{chapter_01}
+
+\printbibliography[heading=bibintoc, title=Literatura]
 
 \end{document}
