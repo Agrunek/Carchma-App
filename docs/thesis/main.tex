@@ -18,6 +18,7 @@
 \usepackage{fancyhdr} % Add page numbering customization
 \usepackage{graphicx} % Add image handling
 \usepackage[hidelinks]{hyperref} % Add link references
+\usepackage{caption} % Allow modifications of captions
 \usepackage{csquotes} % Tame biblatex warnings
 \usepackage[
     backend=biber,
@@ -82,8 +83,18 @@
     \renewcommand{\footrulewidth}{0pt}
 }
 
-% Set images source folder
+% Adjust images
 \graphicspath{{figures/}}
+\addto\captionspolish{\renewcommand{\listfigurename}{Wykaz rysunków}}
+\DeclareCaptionFont{captionfont}{\normalfont\itshape\fontsize{10}{12}\selectfont}
+\newcommand{\figref}[1]{(Rys.~\ref{#1})}
+\newcommand{\figcaption}[2]{\caption[#1]{#1\\\textbf{Źródło:} #2}}
+\captionsetup{
+    font=captionfont,
+    labelfont=bf,
+    justification=centering,
+    figurename=Rys.
+}
 
 % Set chapters source folder
 \makeatletter
@@ -156,5 +167,8 @@
 \input{chapter_01}
 
 \printbibliography[heading=bibintoc, title=Literatura]
+
+\listoffigures
+\addcontentsline{toc}{chapter}{\listfigurename}
 
 \end{document}
