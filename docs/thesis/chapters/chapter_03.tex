@@ -1,1 +1,40 @@
-Lorem ipsum
+Projekt został zrealizowany na podstawie modelu \emph{klient-serwer} \figref{fig:clientserver}, polegającego na rozproszeniu aplikacji na dwa główne komponenty:
+\begin{itemize}
+    \item \textbf{backend} (serwer) -- odpowiedzialny za przetwarzanie żądań klientów, obsługę logiki biznesowej oraz komunikację z zewnętrznymi usługami,
+    \item \textbf{frontend} (aplikacja kliencka) -- interaktywny interfejs, który wysyła zapytania do serwera oraz prezentuje odpowiednio sformatowane dane użytkownikowi.
+\end{itemize}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.8\textwidth]{client-server_model}
+    \figcaption{Przykładowy schemat modelu klient-serwer}{\cite{wikipedia_clientserver}}
+    \label{fig:clientserver}
+\end{figure}
+
+Komponenty komunikują się poprzez sieć za pomocą protokołu HTTP\footnote{Hypertext Transfer Protocol -- protokół komunikacyjny wykorzystywany przez przeglądarki}.
+Dostęp do zasobów serwera odbywa się poprzez interfejs programowania aplikacji zgodny z architekturą REST\footnote{Representational State Transfer -- styl architektoniczny identyfikujący elementy systemu jako zasoby}.
+Komunikacja odbywa się w sposób \emph{bezstanowy}, czyli serwer nie zapisuje kontekstu komunikacji po swojej stronie.
+Wszystkie informacje dotyczące sesji muszą zostać przekazane łącznie z samym zapytaniem przez aplikację kliencką.
+Zasoby są identyfikowane jako unikalne adresy URL\footnote{Uniform Resource Locator -- adres zasobu dostępnego w sieci komputerowej}, a operacje na nich są zdefiniowane jako podstawowe metody protokołu HTTP: GET, POST, PATCH, DELETE \autocite{rest_tutorial}.
+
+\section{Serwer}
+
+\subsection{Warstwowy system}
+
+\subsection{Obsługa żądań}
+
+\subsection{Walidacja danych}
+
+\subsection{Autentykacja za pośrednictwem ciasteczek}
+
+\subsection{Rozsyłanie maili}
+
+\subsection{Zarządzanie zdjęciami}
+
+\subsection{Przeliczanie reputacji sprzedawcy}
+
+\subsection{Obsługa błędów}
+
+\subsection{Baza danych NoSQL}
+
+\subsection{Opis użytych modeli danych}
