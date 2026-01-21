@@ -83,6 +83,12 @@
     \renewcommand{\footrulewidth}{0pt}
 }
 
+% Prevent word breaks
+\tolerance=1
+\emergencystretch=\maxdimen
+\hyphenpenalty=10000
+\hbadness=10000
+
 % Adjust images
 \graphicspath{{figures/}}
 \addto\captionspolish{\renewcommand{\listfigurename}{Wykaz rysunków}}

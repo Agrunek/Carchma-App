@@ -1,1 +1,79 @@
-Lorem ipsum
+W ramach projektu została zrealizowana aplikacja internetowa, będąca serwisem z ogłoszeniami o sprzedaży samochodów.
+Użytkownicy mają możliwość wystawiania swoich pojazdów na sprzedaż oraz przeglądania istniejących ofert.
+Aplikacja opatrzona jest możliwością publikacji komentarzy oraz wystawiania ocen pod ogłoszeniami.
+W celu zapewnienia bezpieczeństwa społeczności, do rozwiązania włączony jest system moderowania treściami dostępnymi w serwisie.
+
+\section{Zrealizowane wymagania funkcjonalne}
+
+\subsection{Autentykacja i autoryzacja użytkowników}
+
+Proces autentykacji i autoryzacji użytkowników zapewnia w sposób kontrolowany dostęp do poszczególnych funkcjonalności serwisu, zgodnie z zasadą najmniejszych uprawnień \autocite{crowdstrike_polp}.
+Rejestracja konta w serwisie odbywa się poprzez formularz, gdzie użytkownik podaje podstawowe informacje, takie jak adres e-mail, na który jest wysyłany link aktywacyjny w celu sfinalizowania procesu.
+Anonimowi odwiedzający stronę, którzy nie zostali poddani autentykacji, są ograniczeni jedynie do przeglądania ogłoszeń o sprzedaży stworzonych przez innych użytkowników oraz zamieszczonych przez nich opinii.
+Po pomyślnym zalogowaniu, przy pomocy danych uwierzytelniających podanych w procesie rejestracji, użytkownicy uzyskują dostęp do rozszerzonej funkcjonalności systemu.
+Funkcjonalności te obejmują wystawianie ofert o sprzedaży, dodawanie komentarzy i ocen pod ogłoszeniami oraz zgłaszanie treści naruszających politykę serwisu.
+System autoryzacji jest oparty o model ról i uprawnień, gdzie niektórzy z użytkowników mają możliwość przeglądania nowych zgłoszeń i ewentualnego usuwania objętych nimi treści.
+
+\subsection{Zamieszczanie ogłoszeń o sprzedaży samochodów}
+
+Zalogowani użytkownicy posiadają możliwość publikacji ofert sprzedaży swoich pojazdów poprzez utworzenie ogłoszenia w dedykowanym panelu w aplikacji.
+Kreator ogłoszeń jest zestawem kolejno następujących po sobie formularzy, intuicyjnie kierując użytkownika przez cały proces.
+W pierwszym etapie użytkownik podaje parametry pojazdu, gdzie większość informacji podaje się w predefiniowanych polach wyboru, co znacząco usprawnia proces wypełniania formularza.
+Kolejnym etapem jest przekazanie metadanych ogłoszenia, takich jak tytuł, opis oferty lub cenę pojazdu.
+Ostatni z formularzy umożliwia dodanie zdjęć przedstawiających wygląd pojazdu wewnątrz oraz na zewnątrz.
+Jeżeli wszystkie dane zostaną uzupełnione poprawnie, użytkownik może opublikować ogłoszenie.
+Na tym etapie oferta będzie poddana weryfikacji przez osoby moderujące stronę i ostatecznie przez nich zatwierdzona pod względem zgodności z polityką strony oraz stanem faktycznym pojazdu.
+
+\subsection{Dodawanie i ocenianie opinii pod ofertami}
+
+Każde ogłoszenie zawiera dedykowaną sekcję komentarzy, w której użytkownicy dzielą się opiniami dotyczącymi pojazdu, bazując na treści samej oferty, jak również na podstawie własnych doświadczeń.
+Poszczególne komentarze są również poddawane ocenie poprzez zastosowanie binarnego systemu ocen opartego na pozytywnych i negatywnych reakcji użytkowników.
+Oceny te determinują wagę poszczególnych opinii w sumarycznej ocenie prezentowanej oferty oraz ograniczają wpływ niekonstruktywnych lub nawet szkodliwych komentarzy.
+System ten wspiera mniej doświadczonych kupującym na bardziej przemyślane decyzje, dzięki opiniom użytkowników o większym doświadczeniu, a jednocześnie pozwala na sprawniejszą identyfikację nieuczciwych ofert.
+
+\subsection{Wyszukiwarka ofert w oparciu o reputację sprzedawcy}
+
+Jednym z elementów systemu, dostępnym dla wszystkich użytkowników, jest wyszukiwarka ofert.
+Funkcjonalność ta jest dostępna bezpośrednio z poziomu ekranu głównego aplikacji i prezentuje listę skróconych wersji ofert w postaci interaktywnych kafelków.
+Głównym filtrem, o który oparte jest wyszukiwanie, jest pole tekstowe, które generuje listę ofert względem dopasowania ich treści do podanej sekwencji słów.
+Ponadto, dostępny jest wybór wielu predefiniowanych filtrów pozwalających na dokładne dostosowanie wyszukiwania, na przykład względem marki pojazdu lub przedziału cenowego.
+Kolejność wyników bazuje na aktualności ofert, ich ocenie oraz historycznej reputacji ich właściciela.
+Wybór konkretnego kafelka skutkuje przekierowaniem użytkownika do osobnej strony, zawierającej szczegółowe informacje dotyczące danej oferty.
+
+\subsection{System zgłoszeń dla ofert i komentarzy}
+
+Zarówno oferty, jak i komentarze mogą być zgłoszone przez użytkowników aplikacji za pośrednictwem dedykowanego przycisku.
+Jego naciśnięcie skutkuje wyświetleniem formularza zgłoszeniowego, gdzie istnieje możliwość wskazania przyczyny zgłoszenia wybranej treści.
+System raportowania oparty jest na wyselekcjonowanej grupie użytkowników, którzy pełnią rolę moderatorów treści i posiadają dostęp do gromadzonych przez serwis zgłoszeń.
+Poprzez stworzony dla nich panel administracyjny, mogą dokonywać oni zbiorczego przeglądu zgłoszeń i podejmować decyzje dotyczące dostępności oznaczonych treści.
+Zgłoszenia są prezentowane w postaci listy, gdzie zawarte są informacje o rodzaju objętej nimi treści, użytkowniku dokonującym zgłoszenia oraz dodatkowych informacjach przekazanych w formularzu.
+
+\subsection{Przechowywanie nieaktualnych ogłoszeń w archiwum}
+
+Kiedy ogłoszenie wygasa, na przykład na skutek zakończonej sprzedaży bądź anulowania oferty, nie jest kompletnie usuwane z systemu, lecz zostaje przeniesione do archiwum.
+Ogłoszenia oznaczone jako zarchiwizowane nie są dostępne z poziomu standardowej wyszukiwarki, natomiast pozostają one trwale przypisane do profili użytkowników, które je wystawiły.
+Użytkownik zainteresowany daną ofertą ma możliwość przejścia do widoku profilu jej właściciela i zapoznania się z pełną historią ogłoszeń w postaci listy, posortowanej według daty opublikowania od najnowszych.
+Zaimplementowane rozwiązanie znacznie zwiększa transparentność sprzedawców, uniemożliwiając manipulowanie historią ofert poprzez usuwanie niepożądanych przez nich wpisów.
+
+\section{Zrealizowane wymagania niefunkcjonalne}
+
+\subsection{Responsywność}
+
+Aplikacja automatycznie dostosowuje się do większości urządzeń konsumenckich, które obsługują popularne przeglądarki.
+Wszystkie komponenty aplikacji dynamicznie zmieniają swoje położenie, geometrię i wygląd w zależności od wymiarów ekranu oraz orientacji urządzenia.
+Responsywność zapewnia, że wszystkie składowe serwisu są czytelne i wygodne w użytkowaniu niezależnie od platformy, na którym jest uruchamiany.
+
+\subsection{Dostępność}
+
+Każda z funkcjonalności serwisu zostały zaprojektowane z możliwością obsługi klawiaturowej bez konieczności używania kursora.
+Kolory tekstu oraz tła zostały dobrane tak aby spełniać minimalne wymagania kontrastu WCAG \autocite{wcag_guidelines}.
+Wszystkie komponenty dostosowują swoją kolorystykę zależnie od wybranego przez użytkownika motywu, jasnego lub ciemnego.
+Wszystkie pola formularzy zapewniają podstawowe wsparcie dla czytników ekranowych, a obrazy posiadają teksty alternatywne, które są wyświetlane na wypadek braku możliwości wyświetlenia.
+Niezależnie od występujących ograniczeń większość użytkowników posiada możliwości korzystania z serwisu w podobny sposób.
+
+\subsection{Obsługa błędów}
+
+Podczas korzystania z aplikacji mogą występować błędy mające różne źródła.
+Mogą to być niepoprawne formaty danych w przesyłanych formularzach, komunikaty błędów zwracane z serwera lub nawet wewnętrzne błędy samej aplikacji.
+Niezależnie od pochodzenia każdy z błędów jest wyłapywany i przetwarzany na komunikat, który jest czytelny dla użytkownika oraz propozycja rozwiązania problemu.
+Kontrola nad błędami zapewnia poprawia doświadczenie użytkownika w korzystaniu z serwisu oraz zwiększa wydajność całego systemu.
