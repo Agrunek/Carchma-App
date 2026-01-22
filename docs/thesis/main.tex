@@ -19,6 +19,7 @@
 \usepackage{graphicx} % Add image handling
 \usepackage[hidelinks]{hyperref} % Add link references
 \usepackage{caption} % Allow modifications of captions
+\usepackage{amsmath} % Allow modifications of equation numbering
 \usepackage{csquotes} % Tame biblatex warnings
 \usepackage[
     backend=biber,
@@ -116,6 +117,11 @@
 \DeclareDelimFormat[bib]{nametitledelim}{\addspace}
 \renewcommand*{\bibinitdelim}{}
 \setlength{\bibitemsep}{1em}
+
+% Change equation numbering to global
+\counterwithout{equation}{chapter}
+\counterwithout{equation}{section}
+\counterwithout{equation}{subsection}
 
 % =================================================================================================
 % Document content

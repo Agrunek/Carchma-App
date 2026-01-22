@@ -11,11 +11,11 @@ Projekt został zrealizowany na podstawie modelu \emph{klient-serwer} \figref{fi
     \label{fig:clientserver}
 \end{figure}
 
-Komponenty komunikują się poprzez sieć za pomocą protokołu HTTP\footnote{Hypertext Transfer Protocol -- protokół komunikacyjny wykorzystywany przez przeglądarki}.
-Dostęp do zasobów serwera odbywa się poprzez interfejs programowania aplikacji zgodny z architekturą REST\footnote{Representational State Transfer -- styl architektoniczny identyfikujący elementy systemu jako zasoby}.
+Komponenty komunikują się poprzez sieć za pomocą protokołu HTTP\footnote{Hypertext Transfer Protocol -- protokół komunikacyjny wykorzystywany przez przeglądarki.}.
+Dostęp do zasobów serwera odbywa się poprzez interfejs programowania aplikacji zgodny z architekturą REST\footnote{Representational State Transfer -- styl architektoniczny identyfikujący elementy systemu jako zasoby.}.
 Komunikacja odbywa się w sposób \emph{bezstanowy}, czyli serwer nie zapisuje kontekstu komunikacji po swojej stronie.
 Wszystkie informacje dotyczące sesji muszą zostać przekazane łącznie z samym zapytaniem przez aplikację kliencką.
-Zasoby są identyfikowane jako unikalne adresy URL\footnote{Uniform Resource Locator -- adres zasobu dostępnego w sieci komputerowej}, a operacje na nich są zdefiniowane jako podstawowe metody protokołu HTTP: GET, POST, PATCH, DELETE \autocite{rest_tutorial}.
+Zasoby są identyfikowane jako unikalne adresy URL\footnote{Uniform Resource Locator -- adres zasobu dostępnego w sieci komputerowej.}, a operacje na nich są zdefiniowane jako podstawowe metody protokołu HTTP: GET, POST, PATCH, DELETE \autocite{rest_tutorial}.
 
 \section{Serwer}
 
@@ -37,7 +37,7 @@ Ponadto, przekazywanie zapytań pomiędzy kolejnymi warstwami przyczynia się do
 
 Aplikacja kliencka wysyła do serwera żądanie składające się z adresu URL oraz typu operacji.
 W zależności od zasobu dostępne operacje obejmują utworzenie, modyfikację, usunięcie lub pobranie danych.
-Do żądania mogą zostać dołączone parametry w adresie zapytania, a także dane zapisane w formacie JSON\footnote{JavaScript Object Notation -- tekstowy format zapisu danych, który jest zarówno czytelny dla człowieka jak i maszyny}.
+Do żądania mogą zostać dołączone parametry w adresie zapytania, a także dane zapisane w formacie JSON\footnote{JavaScript Object Notation -- tekstowy format zapisu danych, który jest zarówno czytelny dla człowieka jak i maszyny.}.
 Serwer zwraca wynik operacji, podając odpowiedni kod statusu HTTP \autocite{iana_httpcodes} oraz treść odpowiedzi w formacie JSON w przypadku powodzenia lub w formacie określonym przez typ błędu w przypadku niepowodzenia.
 
 \subsection{Walidacja danych}
@@ -50,7 +50,7 @@ Tak dokładna weryfikacja minimalizuje ryzyko wystąpienia nieprzewidzianych bł
 
 \subsection{Autentykacja za pośrednictwem ciasteczek}
 
-Po zalogowaniu, serwer generuje dwa tokeny JWT\footnote{JSON Web Token -- format zapisu zaszyfrowanych danych JSON}: dostępu oraz odświeżający.
+Po zalogowaniu, serwer generuje dwa tokeny JWT\footnote{JSON Web Token -- format zapisu zaszyfrowanych danych JSON.}: dostępu oraz odświeżający.
 Token dostępu służy do identyfikacji użytkownika i posiada krótki czas życia, wynoszący 15 minut.
 Natomiast token odświeżający jest ważny 30 dni i służy do odnowienia dostępu kiedy token dostępu wygaśnie.
 Serwer zwraca tokeny w \emph{plikach cookie}, czyli zestawie danych przetrzymywanych w pamięci przeglądarki i dołączanych do każdego zapytania.
@@ -59,11 +59,10 @@ Sesja użytkownika zapisywana jest jako dokument w bazie danych i weryfikowana w
 
 \subsection{Rozsyłanie maili}
 
-Bla, bla, bla...
-
-\subsection{Zarządzanie zdjęciami}
-
-Bla, bla, bla...
+W ramach weryfikacji lub dodatkowej formy interakcji z użytkownikiem, serwis posiada możliwość wysyłania wiadomości na adres poczty elektronicznej, podany podczas rejestracji.
+Przykładowo, operacja zmiany hasła opiera się na przesłaniu wiadomości zawierającej specjalny odnośnik z wygenerowanym losowo kluczem, zapewniając właścicielowi konta bezpieczny dostęp do dedykowanego formularza modyfikującego dotychczasowe hasło.
+Treść wiadomości generowana jest na podstawie predefiniowanych szablonów HTML\footnote{HyperText Markup Language -- język znaczników używany do tworzenia dokumentów generujących strony internetowe.}, które są następnie uzupełniane o dane kontekstowe, takie jak nazwa użytkownika.
+Do wysłania wiadomości, serwer wykorzystuje zewnętrzną platformę mailingową, której przekazuje tytuł, treść wiadomości oraz informacje o adresacie.
 
 \subsection{Przeliczanie reputacji sprzedawcy}
 
@@ -74,6 +73,10 @@ Bla, bla, bla...
 Bla, bla, bla...
 
 \subsection{Baza danych NoSQL}
+
+Bla, bla, bla...
+
+\subsection{Zarządzanie zdjęciami}
 
 Bla, bla, bla...
 
