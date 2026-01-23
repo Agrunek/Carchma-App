@@ -69,7 +69,7 @@ Do wysłania wiadomości, serwer wykorzystuje zewnętrzną platformę mailingow�
 Wskaźnik reputacji jest miarą poziomu zaufania społeczności względem danego sprzedawcy i bazuje na historii wystawianych przez niego ogłoszeń.
 Każda z ofert ma ukrytą wartość oceny, która jest wyznaczana na podstawie analizy komentarzy oraz reakcji.
 Wartość pojedynczego komentarza $v$ jest opisana wzorem:
-
+%
 \begin{equation}
     v =
     \begin{cases}
@@ -77,30 +77,30 @@ Wartość pojedynczego komentarza $v$ jest opisana wzorem:
         B_0                                                   & \text{dla } l + d = 0
     \end{cases}
 \end{equation}
-
+%
 gdzie:
-
+%
 \begin{itemize}
     \item $l$ -- liczba pozytywnych reakcji na komentarz,
     \item $d$ -- liczba negatywnych reakcji na komentarz,
     \item $B_0$ -- wartość bazowa dla komentarzy bez reakcji.
 \end{itemize}
-
+%
 Korzystając z wartości $v$ dla $n$ komentarzy można uzyskać ocenę ogłoszenia:
-
+%
 \begin{equation}
     Ocena = \max \left(\min \left(O_0 + \dfrac{\sum_{i = 1}^{n} v_i \cdot s_i}{n}, U\right), L\right)
 \end{equation}
-
+%
 gdzie:
-
+%
 \begin{itemize}
     \item $O_0$ -- wartość początkowa,
     \item $s_i$ -- zależnie od sentymentu komentarza: $s_i = 1$ dla pozytywnych, $s_i = -1$ dla negatywnych albo $s_i = 0$ dla neutralnych,
     \item $U$ -- górny limit oceny,
     \item $L$ -- dolny limit oceny.
 \end{itemize}
-
+%
 Na podstawie wartości wskaźnika reputacji oraz daty wystawienia ogłoszenia, algorytm sortujący decyduje o pozycjonowaniu oferty w wynikach wyszukiwania.
 Zaimplementowany system promuje sprzedawców o wysokim poziomie zaufania, jednocześnie umożliwiając widoczność ofert użytkowników rozpoczynających użytkowanie serwisu.
 
@@ -127,7 +127,11 @@ Ponadto skalowanie bazy polega na zwiększaniu ilości jej instancji co przyspie
 
 \subsection{Zarządzanie zdjęciami}
 
-Bla, bla, bla...
+System umożliwia wykonywanie operacji zapisu, usunięcia lub odczytu zdjęć, analogicznie jak w przypadku innych zasobów.
+Zdjęcia są walidowane pod względem typu, metadanych oraz ich ilości, a następnie zapisywane w bazie danych.
+Pliki są dzielone na małe pakiety i są zapisywane razem z nagłówkiem jako osobne dokumenty w oddzielnej kolekcji.
+W celu pobrania zdjęcia wyciągany jest z bazy rekord z danymi pliku, a następnie łączone są wszystkie fragmenty z nim powiązane.
+Rozwiązanie pozwala na łatwe i wydajne powiązanie innych dokumentów w bazie, na przykład ogłoszeń ze zdjęciami.
 
 \subsection{Opis użytych modeli danych}
 
