@@ -106,11 +106,24 @@ Zaimplementowany system promuje sprzedawców o wysokim poziomie zaufania, jednoc
 
 \subsection{Obsługa błędów}
 
-Bla, bla, bla...
+Punkty końcowe serwera są objęte modułem \emph{errorHandler}, który jest aktywowany za każdym razem, kiedy obsługa żądania klienta napotka na błąd.
+Zapewnia to kontrolowane reagowanie na błędy i zwrot klarownego komunikatu do aplikacji klienckiej, dlaczego działanie zostało przerwane.
+Format odpowiedzi jest tworzony na podstawie jednej z poniższych klas błędów:
+
+\begin{itemize}
+    \item \textbf{AppError} -- błąd informacji przekazanych w żądaniu wywołany przez warstwę biznesową,
+    \item \textbf{ZodError} -- niezgodność formatu dołączonych danych z odpowiadającym im schematem,
+    \item \textbf{MulterError} -- błąd związany z formatem plików przesłanych na serwer,
+    \item \textbf{Error} -- nierozpoznany błąd, najczęściej spowodowany niepoprawnym działaniem serwera.
+\end{itemize}
 
 \subsection{Baza danych NoSQL}
 
-Bla, bla, bla...
+W projekcie wykorzystano nierelacyjną bazę danych, przechowującą informacje w dokumentach o niezdefiniowanej strukturze.
+Dokumenty pełnią rolę rekordów i uporządkowują dane w postaci par klucz-wartość.
+Do podzielenia dokumentów na powiązane ze sobą grupy wykorzystują \emph{kolekcje}, które jednak nie wymagają zgodnej struktury pomiędzy nimi.
+Rozwiązanie jest proste w implementacji oraz dobrze radzi sobie z wprowadzanymi zmianami w sposobie zapisywania dokumentów.
+Ponadto skalowanie bazy polega na zwiększaniu ilości jej instancji co przyspiesza dalszy rozwój aplikacji \autocite{mongo_documentdb}.
 
 \subsection{Zarządzanie zdjęciami}
 
