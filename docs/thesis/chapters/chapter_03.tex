@@ -112,14 +112,26 @@ Zaimplementowany system promuje sprzedawców o wysokim poziomie zaufania, jednoc
 
 Punkty końcowe serwera są objęte modułem \emph{errorHandler}, który jest aktywowany za każdym razem, kiedy obsługa żądania klienta napotka na błąd.
 Zapewnia to kontrolowane reagowanie na błędy i zwrot klarownego komunikatu do aplikacji klienckiej, dlaczego działanie zostało przerwane.
-Format odpowiedzi jest tworzony na podstawie jednej z poniższych klas błędów:
+Format odpowiedzi jest tworzony na podstawie jednej z dostępnych klas błędów \tabref{tab:errorclass}:
 %
-\begin{itemize}
-    \item \textbf{AppError} -- błąd informacji przekazanych w żądaniu wywołany przez warstwę biznesową,
-    \item \textbf{ZodError} -- niezgodność formatu dołączonych danych z odpowiadającym im schematem,
-    \item \textbf{MulterError} -- błąd związany z formatem plików przesłanych na serwer,
-    \item \textbf{Error} -- nierozpoznany błąd, najczęściej spowodowany niepoprawnym działaniem serwera.
-\end{itemize}
+\begin{table}[h]
+    \centering
+    \tabcaption{Porównanie dostępnych klas błędów serwera}{Opracowanie własne}
+    \begin{tabular}{|c|p{0.4\textwidth}|c|p{0.25\textwidth}|}
+        \hline
+        \textit{\textbf{Klasa błędu}} & \textbf{Źródło błędu}                                       & \textbf{Kod} & \textbf{Format komunikatu} \\
+        \hline
+        \textit{AppError}             & Problem z procesowaniem żądania przez warstwę serwisową     & 4xx          & \{ [message], [type] \}    \\
+        \hline
+        \textit{ZodError}             & Niezgodność przełanych danych z odpowiadającym im schematem & 400          & \{ [message], [errors] \}  \\
+        \hline
+        \textit{MulterError}          & Nieprawidłowy format plików przesłanych na serwer           & 400          & \{ [message], [type] \}    \\
+        \hline
+        \textit{Error}                & Nierozpoznany błąd                                          & 500          & 'Internal server error'    \\
+        \hline
+    \end{tabular}
+    \label{tab:errorclass}
+\end{table}
 
 \subsection{Baza danych NoSQL}
 
