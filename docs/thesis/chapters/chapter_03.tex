@@ -55,7 +55,7 @@ Tak dokładna weryfikacja minimalizuje ryzyko wystąpienia nieprzewidzianych bł
 
 Po zalogowaniu, serwer generuje dwa tokeny JWT\footnote{JSON Web Token -- format zapisu zaszyfrowanych danych JSON.}: dostępu oraz odświeżający.
 Token dostępu służy do identyfikacji użytkownika i posiada krótki czas życia, wynoszący 15 minut.
-Natomiast token odświeżający jest ważny 30 dni i służy do odnowienia dostępu kiedy token dostępu wygaśnie \autocite{rfc7519}.
+Natomiast token odświeżający jest ważny 30 dni i służy do odnowienia dostępu, kiedy poprzedni token wygaśnie \autocite{rfc7519}.
 
 Serwer zwraca tokeny w \emph{plikach cookie}, czyli zestawie danych przetrzymywanych w pamięci przeglądarki i dołączanych do każdego zapytania.
 W ramach bezpieczeństwa, pliki te są niedostępne z poziomu skryptów oraz przesyłane jedynie z wykorzystaniem protokołu \emph{HTTPS}, czyli zaszyfrowanej wersji HTTP.
@@ -119,19 +119,25 @@ Format odpowiedzi jest tworzony na podstawie jednej z dostępnych klas błędów
     \tabcaption{Porównanie dostępnych klas błędów serwera}{Opracowanie własne}
     \begin{tabular}{|c|p{0.4\textwidth}|c|p{0.25\textwidth}|}
         \hline
-        \textit{\textbf{Klasa błędu}} & \textbf{Źródło błędu}                                       & \textbf{Kod} & \textbf{Format komunikatu} \\
+        \textit{\textbf{Klasa błędu}} & \textbf{Źródło błędu}                                        & \textbf{Kod} & \textbf{Format komunikatu} \\
         \hline
-        \textit{AppError}             & Problem z procesowaniem żądania przez warstwę serwisową     & 4xx          & \{ [message], [type] \}    \\
+        \textit{AppError}             & Problem z procesowaniem żądania przez warstwę serwisową      & 4xx          & \{ [message], [type] \}    \\
         \hline
-        \textit{ZodError}             & Niezgodność przełanych danych z odpowiadającym im schematem & 400          & \{ [message], [errors] \}  \\
+        \textit{ZodError}             & Niezgodność przesłanych danych z odpowiadającym im schematem & 400          & \{ [message], [errors] \}  \\
         \hline
-        \textit{MulterError}          & Nieprawidłowy format plików przesłanych na serwer           & 400          & \{ [message], [type] \}    \\
+        \textit{MulterError}          & Nieprawidłowy format plików przesłanych na serwer            & 400          & \{ [message], [type] \}    \\
         \hline
-        \textit{Error}                & Nierozpoznany błąd                                          & 500          & 'Internal server error'    \\
+        \textit{MongoError}           & Krytyczny błąd w działaniu sterownika bazy danych            & 418          & \{ [message], [type] \}    \\
+        \hline
+        \textit{Error}                & Nierozpoznany błąd                                           & 500          & 'Internal server error'    \\
         \hline
     \end{tabular}
     \label{tab:errorclass}
 \end{table}
+
+Wszystkie zdefiniowane błędy zawierają pole tekstowe \emph{message}, które aplikacja wyświetla użytkownikowi jako komunikat oraz rozpoznaje na jego podstawie z jakim błędem ma do czynienia.
+W przypadku pola tekstowego \emph{type} aplikacja rozpoznaje dokładną przyczynę błędu, na przykład nieważny token dostępu.
+Natomiast pole \emph{errors} jest tablicą obiektów, zawierającą informacje o nieprawidłowościach w wypełnionym formularzu, czyli treść błędu i identyfikator pola.
 
 \subsection{Baza danych NoSQL}
 
@@ -151,5 +157,23 @@ W celu pobrania zdjęcia, wyciągany jest z bazy rekord z metadanymi, a następn
 Rozwiązanie pozwala na łatwe i wydajne powiązanie plików relacjami z innymi dokumentami w bazie, na przykład ogłoszeń ze zdjęciami.
 
 \subsection{Opis użytych modeli danych}
+
+Wykorzystane w rozwiązaniu modele są bezpośrednio powiązane z kolekcjami w bazie danych i stanowią warstwę abstrakcji pomiędzy warstwą serwisową a sterownikiem bazy danych.
+Modele udostępniają zestaw dedykowanych funkcji do wykonywania atomowych operacji na kolekcjach, takich jak znajdowanie rekordów spełniających predykat.
+Kolekcje umożliwiają definiowanie indeksów na wybranych polach, co pozwala na optymalizację przeszukiwania dokumentów \autocite{mongo_index}.
+Ponadto, istnieje możliwość tworzenia unikalnych kluczy na zestawach pól oraz definiowania sygnatur czasowych, po których dany rekord będzie automatycznie usunięty z kolekcji \autocite{mongo_ttl}.
+W oparciu o te założenia zostały utworzone następujące modele danych:
+%
+\begin{itemize}
+    \item \textbf{Advert} -- zarządzanie ogłoszeniami oraz odpowiedzialność za logikę wyszukiwarki,
+    \item \textbf{Comment} -- obsługa komentarzy oraz zamieszczanie pod nimi reakcji przez użytkowników,
+    \item \textbf{Image} -- dodawanie, usuwanie i pobieranie zdjęć za pomocą dedykowanego strumienia danych,
+    \item \textbf{Interaction} -- podstawowe operacje na generycznych interakcjach z określonym typem, na przykład zgłoszeniach,
+    \item \textbf{Session} -- zarządzanie sesją użytkownika, która jest odnawiana lub automatycznie usuwana po określonym czasie,
+    \item \textbf{User} -- przeprowadzanie operacji na kontach użytkowników, w tym weryfikacja adresu poczty elektronicznej i zmiana hasła,
+    \item \textbf{VerificationCode} -- zarządzanie kodami weryfikacyjnymi przesyłanych drogą mailową z sygnaturami czasowymi, po których następuje ich wygaśnięcie.
+\end{itemize}
+
+\section{Aplikacja kliencka}
 
 Bla, bla, bla...
