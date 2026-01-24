@@ -31,7 +31,8 @@
     giveninits=true,
     alldates=comp,
     dashed=false,
-    uniquename=false
+    uniquename=false,
+    doi=false
 ]{biblatex} % Add advanced citations
 
 % =================================================================================================
@@ -102,6 +103,12 @@
     justification=centering,
     figurename=Rys.
 }
+
+% Adjust tables
+\renewcommand{\arraystretch}{1.3}
+\addto\captionspolish{\renewcommand{\listtablename}{Wykaz tabel}}
+\newcommand{\tabref}[1]{(Tabela~\ref{#1})}
+\newcommand{\tabcaption}[2]{\caption[#1]{#1\\\textbf{Źródło:} #2}}
 
 % Set chapters source folder
 \makeatletter
@@ -194,5 +201,8 @@
 
 \listoffigures
 \addcontentsline{toc}{chapter}{\listfigurename}
+
+\listoftables
+\addcontentsline{toc}{chapter}{\listtablename}
 
 \end{document}
