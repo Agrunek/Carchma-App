@@ -1,9 +1,10 @@
 Projekt został zrealizowany na podstawie modelu \emph{klient-serwer} \figref{fig:clientserver}, polegającego na rozproszeniu aplikacji na dwa główne komponenty:
+%
 \begin{itemize}
     \item \textbf{backend} (serwer) -- odpowiedzialny za przetwarzanie żądań klientów, obsługę logiki biznesowej oraz komunikację z zewnętrznymi usługami,
     \item \textbf{frontend} (aplikacja kliencka) -- interaktywny interfejs, który wysyła zapytania do serwera oraz prezentuje odpowiednio sformatowane dane użytkownikowi.
 \end{itemize}
-
+%
 \begin{figure}[h]
     \centering
     \includegraphics[width=0.8\textwidth]{client-server_model}
@@ -22,6 +23,7 @@ Zasoby są identyfikowane jako unikalne adresy URL\footnote{Uniform Resource Loc
 \subsection{Warstwowy system}
 
 Architektura serwera została zaprojektowana w oparciu o wyraźnie rozdzielone warstwy, z których każda pełni ściśle określoną rolę:
+%
 \begin{itemize}
     \item \textbf{routes} -- definiuje punkty końcowe serwera oraz przekierowuje żądania do odpowiednich kontrolerów,
     \item \textbf{controllers} -- przetwarza metadane żądania, przekazuje je do kolejnych warstw oraz tworzy odpowiedź dla klienta,
@@ -29,6 +31,7 @@ Architektura serwera została zaprojektowana w oparciu o wyraźnie rozdzielone w
     \item \textbf{services} -- obsługuje logikę biznesową oraz w razie potrzeby komunikuje się z zewnętrznymi usługami,
     \item \textbf{models} -- odpowiada za komunikację z bazą danych, udostępniając zestaw atomowych funkcji do przeprowadzania operacji na niej.
 \end{itemize}
+%
 Takie podejście zapewnia wysoką czytelność kodu, umożliwiając sprawne lokalizowanie źródeł błędów oraz wprowadzanie modyfikacji bez wpływania na pozostałe elementy systemu.
 Rozwiązanie naturalnie się skaluje, ponieważ pozwala na rozszerzanie funkcjonalności poprzez dodawanie nowych modułów.
 Ponadto, przekazywanie zapytań pomiędzy kolejnymi warstwami przyczynia się do znacznego podniesienia bezpieczeństwa całego systemu.
@@ -52,7 +55,8 @@ Tak dokładna weryfikacja minimalizuje ryzyko wystąpienia nieprzewidzianych bł
 
 Po zalogowaniu, serwer generuje dwa tokeny JWT\footnote{JSON Web Token -- format zapisu zaszyfrowanych danych JSON.}: dostępu oraz odświeżający.
 Token dostępu służy do identyfikacji użytkownika i posiada krótki czas życia, wynoszący 15 minut.
-Natomiast token odświeżający jest ważny 30 dni i służy do odnowienia dostępu kiedy token dostępu wygaśnie.
+Natomiast token odświeżający jest ważny 30 dni i służy do odnowienia dostępu kiedy token dostępu wygaśnie \autocite{rfc7519}.
+
 Serwer zwraca tokeny w \emph{plikach cookie}, czyli zestawie danych przetrzymywanych w pamięci przeglądarki i dołączanych do każdego zapytania.
 W ramach bezpieczeństwa, pliki te są niedostępne z poziomu skryptów oraz przesyłane jedynie z wykorzystaniem protokołu \emph{HTTPS}, czyli zaszyfrowanej wersji HTTP.
 Sesja użytkownika zapisywana jest jako dokument w bazie danych i weryfikowana w przypadku jej odświeżenia.
@@ -96,7 +100,7 @@ gdzie:
 %
 \begin{itemize}
     \item $O_0$ -- wartość początkowa,
-    \item $s_i$ -- zależnie od sentymentu komentarza: $s_i = 1$ dla pozytywnych, $s_i = -1$ dla negatywnych albo $s_i = 0$ dla neutralnych,
+    \item $s$ -- wartość sentymentu komentarza: $s = 1$ dla pozytywnych, $s = -1$ dla negatywnych albo $s = 0$ dla neutralnych,
     \item $U$ -- górny limit oceny,
     \item $L$ -- dolny limit oceny.
 \end{itemize}
@@ -109,7 +113,7 @@ Zaimplementowany system promuje sprzedawców o wysokim poziomie zaufania, jednoc
 Punkty końcowe serwera są objęte modułem \emph{errorHandler}, który jest aktywowany za każdym razem, kiedy obsługa żądania klienta napotka na błąd.
 Zapewnia to kontrolowane reagowanie na błędy i zwrot klarownego komunikatu do aplikacji klienckiej, dlaczego działanie zostało przerwane.
 Format odpowiedzi jest tworzony na podstawie jednej z poniższych klas błędów:
-
+%
 \begin{itemize}
     \item \textbf{AppError} -- błąd informacji przekazanych w żądaniu wywołany przez warstwę biznesową,
     \item \textbf{ZodError} -- niezgodność formatu dołączonych danych z odpowiadającym im schematem,
@@ -128,10 +132,11 @@ Ponadto skalowanie bazy polega na zwiększaniu ilości jej instancji co przyspie
 \subsection{Zarządzanie zdjęciami}
 
 System umożliwia wykonywanie operacji zapisu, usunięcia lub odczytu zdjęć, analogicznie jak w przypadku innych zasobów.
-Zdjęcia są walidowane pod względem typu, metadanych oraz ich ilości, a następnie zapisywane w bazie danych.
-Pliki są dzielone na małe pakiety i są zapisywane razem z nagłówkiem jako osobne dokumenty w oddzielnej kolekcji.
-W celu pobrania zdjęcia wyciągany jest z bazy rekord z danymi pliku, a następnie łączone są wszystkie fragmenty z nim powiązane.
-Rozwiązanie pozwala na łatwe i wydajne powiązanie innych dokumentów w bazie, na przykład ogłoszeń ze zdjęciami.
+Przesłane pliki są walidowane względem ich typu, metadanych oraz ilości, a następnie przekazane do sterownika bazy danych.
+Pierwszym krokiem jest wyciągnięcie wszystkich metadanych i zapisanie ich w kolekcji zdjęć.
+Następnie binarna zawartość pliku jest dzielona na małe fragmenty i wszystkie są umieszczone w osobnej kolekcji z odnośnikiem do dokumentu z metadanymi \autocite{mongo_gridfs}.
+W celu pobrania zdjęcia, wyciągany jest z bazy rekord z metadanymi, a następnie łączone są wszystkie fragmenty z nim powiązane.
+Rozwiązanie pozwala na łatwe i wydajne powiązanie plików relacjami z innymi dokumentami w bazie, na przykład ogłoszeń ze zdjęciami.
 
 \subsection{Opis użytych modeli danych}
 
