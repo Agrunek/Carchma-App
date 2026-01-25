@@ -226,3 +226,16 @@ Zastosowanie tej metodologii zachowuje spójność interfejsu użytkownika, zwi�
     \end{tabular}
     \label{tab:atomicats}
 \end{table}
+
+\subsection{Kompozycja elementów interfejsu}
+
+Przy tworzeniu komponentów wykorzystano kompozycję, czyli budowanie funkcjonalności poprzez składanie modułów aplikacji ze sobą.
+Ze względu na wynikającą z budowania stron internetowych architekturę drzewa, komponenty mogą przyjmować elementy interfejsu jako jego zawartość.
+Taki komponent nie posiada informacji o tym, jakie elementy są przez niego kontrolowane, natomiast decyduje o tym, gdzie wewnątrz swojej struktury je umieści.
+Ponadto analogicznie do funkcji, komponenty mogą przyjmować argumenty, które mogą modyfikować generowany przez nich fragment strony.
+
+Oprócz tworzenia interfejsu, kompozycja występuje również na poziomie konstruowania logiki, dzięki współdzielonym funkcjom rozszerzania logiki komponentów.
+Poprzez ich podłączenie komponent przykładowo może korzystać z informacji kontekstowych bez podawania ich w argumentach.
+
+Zarówno kompozycja interfejsu, jak i logiki, znacząco zwiększa reużywalność elementów aplikacji pozwalając łączyć ich funkcje w nowych komponentach.
+Zmniejszona jest również zależność elementów rozwiązania od siebie, co upraszcza pracę z kodem źródłowym oraz naturalnie skaluje się z rozmiarem aplikacji \autocite{medium_reactcomposition}.
