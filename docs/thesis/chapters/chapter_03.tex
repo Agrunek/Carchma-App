@@ -283,3 +283,28 @@ Przy próbie nawigacji użytkownika do widoku, który wymaga autentykacji w celu
 Po udanym logowaniu nastąpi automatyczne przekierowanie na pierwotną stronę, do której było wymagane uwierzytelnienie użytkownika.
 Stan autentykacji przetrzymywany jest w globalnym kontekście, więc jest synchronizowany pomiędzy wszystkimi widokami i skryptami ładującymi.
 Skutecznie ograniczany jest dostęp do chronionych widoków oraz zapewnia poprawny przebieg procesu uwierzytelnienia użytkownika w przypadku kiedy jest on wymagany \autocite{tanstack_routeroverview}.
+
+\subsection{Formularze}
+
+Większość akcji realizowanych w aplikacji klienckiej polega na wypełnianiu formularzy, na przykład podczas tworzenia ogłoszenia.
+W celu ograniczenia obciążenia serwera związanego z przetwarzaniem nieprawidłowych danych, po stronie klienta zaimplementowano mechanizmy ich walidacji.
+Podobnie jak w przypadku backendu, walidacja odbywa się na podstawie porównania wprowadzonych danych z predefiniowanymi schematami.
+Proces walidacji uruchamiany jest przy pierwszej próbie wysłania formularza, a następnie przy każdej zmianie jego zawartości.
+Po pomyślnym przesłaniu formularza zostaje on zablokowany, a aplikacja inicjuje operację asynchroniczną, taką jak nawigacja do strony utworzonego ogłoszenia.
+
+Część pól formularzy stanowią pola wyboru zawierające wiele opcji pobieranych dynamicznie z serwera.
+Przykładowo, podczas tworzenia ogłoszenia, po wybraniu przez użytkownika marki pojazdu wysyłane jest zapytanie do serwera o listę dostępnych modeli.
+Po otrzymaniu odpowiedzi pole wyboru modelu pojazdu zostaje odblokowane i uzupełnione o pozyskane dane.
+Zastosowane rozwiązania zwiększają interaktywność aplikacji oraz wspierają użytkownika w procesie wypełniania formularzy.
+
+\subsection{Wygląd}
+
+Aplikacja kliencka charakteryzuje się prostym i spójnym interfejsem użytkownika, zaprojektowanym z myślą o czytelności i łatwości obsługi.
+Komponenty atomowe występują w wielu wariantach, które są dobierane w zależności od kontekstu ich użycia.
+Elementy interaktywne, takie jak przyciski oraz pola tekstowe, zmieniają swój wygląd w odpowiedzi na stan komponentu lub interakcję z użytkownikiem.
+Zmiany te obejmują między innymi najechanie kursorem, aktywację elementu, jego dezaktywację oraz stan ładowania treści.
+
+Zastosowana kolorystyka interfejsu zapewnia wysoki kontrast pomiędzy tłem a treścią, co pozytywnie wpływa na czytelność.
+Wszystkie komponenty aplikacji obsługują zarówno tryb jasny, jak i ciemny, który jest automatycznie dostosowywany do ustawień systemowych użytkownika.
+Dodatkowo aplikacja umożliwia ręczną zmianę trybu za pomocą przełącznika umieszczonego w nagłówku strony.
+Nagłówek jest dostępny na każdej podstronie i zapewnia szybki dostęp do elementów nawigacyjnych.
