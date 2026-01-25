@@ -176,4 +176,20 @@ W oparciu o te założenia zostały utworzone następujące modele danych:
 
 \section{Aplikacja kliencka}
 
-Bla, bla, bla...
+\subsection{Generowanie widoku po stronie klienta}
+
+Do generacji aplikacji internetowej wykorzystywana jest przeglądarka użytkownika.
+Po wejściu na stronę serwer przekazuje minimalny dokument HTML, który zawiera jedynie punkt wejściowy aplikacji \lstref{lst:htmlindex}.
+Następnie pobrany zostaje plik z kodem \emph{JavaScript}, czyli skryptowym i dynamicznym językiem programowania, który jest wspierany przez przeglądarki.
+Skrypt jest odpowiedzialny za dalszą komunikację z serwerem oraz dynamiczne generowanie interfejsu użytkownika.
+Takie podejście umożliwia tworzenie interaktywnych aplikacji internetowych przy minimalnym wykorzystaniu zasobów serwera \autocite{mdn_csr}.
+%
+\lstinputlisting[
+    language=HTML,
+    caption={[Wygenerowany minimalny dokument HTML]\lstcaption{Wygenerowany minimalny dokument HTML}{Opracowanie własne}},
+    label={lst:htmlindex}
+]{index.html}
+
+Ponadto, w przypadku nawigacji w obrębie strony nie jest pobierany z serwera nowy dokument HTML, ponieważ pobrany JavaScript odpowiada za dynamiczną wymianę całej treści.
+W ten sposób nie następuje przeładowanie całej strony, a pobranie wymaganych danych z punktów końcowych udostępnianych przez serwer, które są użyte do zaktualizowania interfejsu użytkownika.
+Eliminowane są opóźnienia, które wynikałyby z konieczności ładowania nowej strony od podstaw oraz istnieje możliwość prezentacji użytkownikowi ciągłego dostarczania usługi w trakcie nawigacji.

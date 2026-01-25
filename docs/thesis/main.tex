@@ -20,6 +20,7 @@
 \usepackage[hidelinks]{hyperref} % Add link references
 \usepackage{caption} % Allow modifications of captions
 \usepackage{amsmath} % Allow modifications of equation numbering
+\usepackage{listings} % Allow modifications of code listing
 \usepackage{csquotes} % Tame biblatex warnings
 \usepackage[
     backend=biber,
@@ -131,6 +132,23 @@
 \counterwithout{equation}{section}
 \counterwithout{equation}{subsection}
 
+% Modify code listings
+\renewcommand{\lstlistlistingname}{Wykaz listingów}
+\newcommand{\lstref}[1]{(Listing~\ref{#1})}
+\newcommand{\lstcaption}[2]{#1\\\textbf{Źródło:} #2}
+\lstset{
+    inputpath=snippets/,
+    float=h,
+    aboveskip=2em,
+    showstringspaces=false,
+    numbers=left,
+    captionpos=b,
+    xleftmargin=2em,
+    breaklines,
+    breakatwhitespace,
+    frame=single
+}
+
 % =================================================================================================
 % Document content
 % =================================================================================================
@@ -205,5 +223,8 @@
 
 \listoftables
 \addcontentsline{toc}{chapter}{\listtablename}
+
+\lstlistoflistings
+\addcontentsline{toc}{chapter}{\lstlistlistingname}
 
 \end{document}
