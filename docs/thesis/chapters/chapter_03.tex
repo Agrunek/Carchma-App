@@ -208,7 +208,7 @@ Zastosowanie tej metodologii zachowuje spójność interfejsu użytkownika, zwi�
 %
 \begin{table}[h]
     \centering
-    \tabcaption{Porównanie dostępnych klas błędów serwera}{Opracowanie własne na podstawie \citetitle{atomicdesign} \space \autocite{atomicdesign}}
+    \tabcaption{Omówienie poszczególnych kategorii komponentów interfejsu użytkownika}{Opracowanie własne na podstawie \citetitle{atomicdesign} \space \autocite{atomicdesign}}
     \begin{tabular}{|c|p{0.5\textwidth}|l|}
         \hline
         \textit{\textbf{Kategoria}} & \textbf{Charakterystyka}                                                           & \textbf{Przykład w projekcie} \\
@@ -308,3 +308,26 @@ Zastosowana kolorystyka interfejsu zapewnia wysoki kontrast pomiędzy tłem a tr
 Wszystkie komponenty aplikacji obsługują zarówno tryb jasny, jak i ciemny, który jest automatycznie dostosowywany do ustawień systemowych użytkownika.
 Dodatkowo aplikacja umożliwia ręczną zmianę trybu za pomocą przełącznika umieszczonego w nagłówku strony.
 Nagłówek jest dostępny na każdej podstronie i zapewnia szybki dostęp do elementów nawigacyjnych.
+
+\subsection{Wyświetlanie komunikatów}
+
+Podczas korzystania z aplikacji użytkownik może napotkać różnego rodzaju błędy, które są obsługiwane przez interfejsu użytkownika i prezentowane w postaci odpowiednich komunikatów.
+Problemy te mogą wynikać z nieprawidłowego wypełnienia formularzy, odpowiedzi serwera lub wewnętrznych błędów aplikacji, takich jak próba nawigacji do nieistniejącej strony.
+W zależności od kontekstu zdarzenia stosowane są różne mechanizmy generowania komunikatów o błędach \tabref{tab:frontendresponses}:
+%
+\begin{table}[h]
+    \centering
+    \tabcaption{Dostępne sposoby wyświetlania komunikatów w aplikacji klienckiej}{Opracowanie własne}
+    \begin{tabular}{|c|p{0.35\textwidth}|p{0.3\textwidth}|}
+        \hline
+        \textit{\textbf{Kontekst wystąpienia}} & \textbf{Powód błędu}                                                       & \textbf{Sposób wyświetlania}                                        \\
+        \hline
+        \textit{Formularz}                     & Nieprawidłowo wypełniony formularz został zatwierdzony przez użytkownika   & Pod błędnie wypełnionym polem czerwony napis co należy poprawić     \\
+        \hline
+        \textit{Odpowiedź serwera}             & Serwer zwrócił komunikat o błędzie w odpowiedzi dla przetwarzanego żądania & Komunikat wyświetlony jest w rogu ekranu jako notyfikacja o błędzie \\
+        \hline
+        \textit{Błąd aplikacji}                & Krytyczne błędy w logice aplikacji lub nawigacja do nieistniejącego widoku & Specjalny widok z treścią błędu i odnośnikiem do strony głównej     \\
+        \hline
+    \end{tabular}
+    \label{tab:frontendresponses}
+\end{table}
