@@ -193,3 +193,36 @@ Takie podejście umożliwia tworzenie interaktywnych aplikacji internetowych prz
 Ponadto, w przypadku nawigacji w obrębie strony nie jest pobierany z serwera nowy dokument HTML, ponieważ pobrany JavaScript odpowiada za dynamiczną wymianę całej treści.
 W ten sposób nie następuje przeładowanie całej strony, a pobranie wymaganych danych z punktów końcowych udostępnianych przez serwer, które są użyte do zaktualizowania interfejsu użytkownika.
 Eliminowane są opóźnienia, które wynikałyby z konieczności ładowania nowej strony od podstaw oraz istnieje możliwość prezentacji użytkownikowi ciągłego dostarczania usługi w trakcie nawigacji.
+
+\subsection{Podejście atomowe w tworzeniu komponentów}
+
+W budowaniu widoku strony wykorzystano \emph{komponenty}, czyli wyizolowane fragmenty interfejsu użytkownika.
+Budowa komponentów opiera się na tworzeniu niezależnych modułów, z własną strukturą, logiką oraz warstwą wizualną.
+Rozwiązanie to znacząco poprawia organizację oraz czytelność kodu źródłowego.
+Możliwość wielokrotnego wykorzystania tych fragmentów przyspiesza proces tworzenia aplikacji oraz zapewnia, że wprowadzone zmiany i poprawki będą propagowane wszędzie, gdzie zostały one zaimplementowane.
+
+W projektowaniu komponentów wykorzystano metodologię \emph{Atomic Design}, opierającą się na analogii elementów interfejsu użytkownika do konceptów znanych z chemii \autocite{atomicdesign}.
+Komponenty są uporządkowane hierarchicznie w ramach określonych kategorii, które różnią się zakresem odpowiedzialności, stopniem złożoności oraz rozmiarem.
+W zależności od implementacji kryteria oraz liczba kategorii mogą się różnić, natomiast zrealizowany projekt wykorzystuje pełen zestaw dostępnych poziomów \tabref{tab:atomicats}.
+Zastosowanie tej metodologii zachowuje spójność interfejsu użytkownika, zwiększa reużywalność komponentów oraz ułatwia skalowanie projektu.
+%
+\begin{table}[h]
+    \centering
+    \tabcaption{Porównanie dostępnych klas błędów serwera}{Opracowanie własne na podstawie \citetitle{atomicdesign} \space \autocite{atomicdesign}}
+    \begin{tabular}{|c|p{0.5\textwidth}|l|}
+        \hline
+        \textit{\textbf{Kategoria}} & \textbf{Charakterystyka}                                                           & \textbf{Przykład w projekcie} \\
+        \hline
+        \textit{Atoms}              & Niepodzielne elementy interfejsu, często bezstanowe, związane z tagami HTML        & <Button />                    \\
+        \hline
+        \textit{Molecules}          & Złożone z atomów, wyspecjalizowane do konkretnych zadań, często posiadają stany    & <Pagination />                \\
+        \hline
+        \textit{Organisms}          & Kompleksowe zbiory elementów interfejsu, wielozadaniowe, posiadają własny kontekst & <Header />                    \\
+        \hline
+        \textit{Templates}          & Definiuje rozmieszczenie komponentów na stronie bez ingerencji danych              & <SimpleFeedback />            \\
+        \hline
+        \textit{Pages}              & Pełne widoki stworzone z komponentów, uzupełnione o pozyskane dane                 & <Login />                     \\
+        \hline
+    \end{tabular}
+    \label{tab:atomicats}
+\end{table}
