@@ -239,3 +239,47 @@ Poprzez ich podłączenie komponent przykładowo może korzystać z informacji k
 
 Zarówno kompozycja interfejsu, jak i logiki, znacząco zwiększa reużywalność elementów aplikacji pozwalając łączyć ich funkcje w nowych komponentach.
 Zmniejszona jest również zależność elementów rozwiązania od siebie, co upraszcza pracę z kodem źródłowym oraz naturalnie skaluje się z rozmiarem aplikacji \autocite{medium_reactcomposition}.
+
+\subsection{Komunikacja z backendem}
+
+Komunikacja z serwerem realizowana jest za pomocą asynchronicznych zapytań HTTP, zgodnie z architekturą REST.
+W przypadku poprawnego przetworzenia żądania zwracana jest odpowiedź w formacie JSON, której struktura zależy od wywołanego punktu końcowego oraz zastosowanej metody HTTP.
+Zależnie od typu żądania aplikacja kliencka może otrzymać dane potrzebne do generowania interfejsu, bądź informację o udanym przeprocesowaniu zapytania, którą może wyświetlić użytkownikowi.
+
+Dane zwracane przez serwer, wykorzystywane do generowania interfejsu użytkownika, są zapisywane w pamięci podręcznej aplikacji klienckiej na określony czas.
+Mechanizm ten umożliwia ograniczenie liczby redundantnych żądań wysyłanych do serwera oraz zapewnia natychmiastowy dostęp do wymaganych danych.
+Czas przechowywania wyników poszczególnych zapytań jest konfigurowany indywidualnie, w zależności od oczekiwanej częstotliwości ich odświeżania.
+Ponadto pamięć podręczna jest globalna, dzięki czemu jej zawartość nie jest tracona w trakcie działania aplikacji i może być współdzielona pomiędzy wieloma widokami.
+
+Do każdego żądania dołączana jest zawartość plików cookie, która może zawierać token dostępu wymagany do wykonania większości operacji.
+Token generowany jest w procesie logowania i pozostaje ważny do momentu jego wygaśnięcia, umożliwiając wywoływanie żądań zgodnie z uprawnieniami przypisanymi do roli użytkownika.
+W przypadku wygaśnięcia tokenu dostępu kolejne żądanie zostaje odrzucone przez serwer, który zwraca odpowiedź błędu zawierającą informację o nieprawidłowym lub nieważnym tokenie.
+W takiej sytuacji aplikacja kliencka automatycznie wysyła żądanie do punktu końcowego odpowiedzialnego za odświeżanie tokenu \figref{fig:jwtrefresh}.
+W zależności od rezultatu tej operacji użytkownik otrzymuje informację o konieczności ponownego uwierzytelnienia lub w przypadku powodzenia, pierwotne żądanie zostaje wysłane ponownie i przetworzone w standardowy sposób.
+%
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.8\textwidth]{jwt-refresh_process}
+    \figcaption{Przykładowy proces wykorzystania tokenu odświeżającego, gdzie: SPA - aplikacja kliencka, RS - serwer zasobów, AS - serwer autentykacyjny, AT - token dostępu, RT - token odświeżający}{\cite{auth0_jwtrefresh}}
+    \label{fig:jwtrefresh}
+\end{figure}
+
+\subsection{Nawigacja}
+
+Nawigacja użytkownika odbywa się w obrębie jednej strony, której widok i adres URL jest kontrolowany przez JavaScript, stwarzając wrażenie przechodzenia pomiędzy widokami bez przeładowywania dokumentu.
+Adres URL jest traktowany jako stan aplikacji, który jest modyfikowany poprzez korzystanie z linków przez użytkownika lub przekierowanie wynikające z asynchronicznego procesu, takiego jak udane logowanie.
+Pozwala to traktować nawigację analogicznie do innych form obsługi stanu w aplikacji i tworzenia wyświetlanego widoku jako jego wynik.
+
+Lista dostępnych adresów jest definiowana na podstawie hierarchii w kodzie źródłowym, gdzie foldery są traktowane jako ścieżki, a pliki jako podstrony.
+Aktualny adres URL jest wykorzystywany do znajdywania odpowiednich definicji tras zawierających komponenty, które są generowane w interfejsie użytkownika, jeżeli odpowiadają aktualnemu adresowi URL.
+Widoki nie są wysyłane do użytkownika razem z resztą kodu podczas inicjalizacji aplikacji, tylko są pobierane wraz z rozpoczęciem nawigacji lub kiedy użytkownik najedzie kursorem na link.
+To rozwiązanie zmniejsza rozmiar pobieranego kodu JavaScript, co skutkuje skróceniem czasu pierwszego ładowania aplikacji.
+
+Kiedy następuje nawigacja do strony lub użytkownik najedzie kursorem na link, uruchamiane są skrypty ładujące, które pobierają dane z serwera potrzebne do wygenerowania widoku.
+Wyniki skryptów ładujących są zapisywane w pamięci podręcznej, co pozwala na ich wykorzystanie bez ponownego pobierania, w przypadku kiedy nastąpi ponowna nawigacja do tej strony.
+Takie podejście znacząco przyspiesza proces przygotowywania widoku oraz zapewnia, że gdy nawigacja się zakończy, komponenty będą miały wszystkie wymagane dane.
+
+Przy próbie nawigacji użytkownika do widoku, który wymaga autentykacji w celu pobrania danych, nastąpi przekierowanie do strony logowania.
+Po udanym logowaniu nastąpi automatyczne przekierowanie na pierwotną stronę, do której było wymagane uwierzytelnienie użytkownika.
+Stan autentykacji przetrzymywany jest w globalnym kontekście, więc jest synchronizowany pomiędzy wszystkimi widokami i skryptami ładującymi.
+Skutecznie ograniczany jest dostęp do chronionych widoków oraz zapewnia poprawny przebieg procesu uwierzytelnienia użytkownika w przypadku kiedy jest on wymagany \autocite{tanstack_routeroverview}.
