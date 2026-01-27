@@ -137,6 +137,22 @@
 \counterwithout{footnote}{chapter}
 
 % Modify code listings
+\lstdefinelanguage{JavaScript}{
+  morekeywords={
+    break, case, catch, class, const, continue, debugger, default,
+    delete, do, else, export, extends, finally, for, function, if,
+    import, in, instanceof, let, new, return, super, switch, this,
+    throw, try, typeof, var, void, while, with, yield, await,
+    enum, implements, interface, package, private, protected, public,
+    static
+  },
+  sensitive=true,
+  morecomment=[l]{//},
+  morecomment=[s]{/*}{*/},
+  morestring=[b]',
+  morestring=[b]",
+  morestring=[b]`,
+}
 \renewcommand{\lstlistlistingname}{Wykaz listingów}
 \newcommand{\lstref}[1]{(Listing~\ref{#1})}
 \newcommand{\lstcaption}[2]{#1\\\textbf{Źródło:} #2}
