@@ -5,7 +5,48 @@ W niniejszym rozdziale technologie te zostały skategoryzowane według kontekstu
 
 \section{Język i środowisko uruchomieniowe}
 
-JavaScript, TypeScript, Vite, Node.js...
+Zarówno warstwa frontendowa, jak i backendowa aplikacji zostały zaimplementowane z wykorzystaniem języka programowania \emph{JavaScript}.
+Zakres dostępnych funkcjonalności języka różni się w zależności od środowiska uruchomieniowego, w którym jest on wykorzystywany.
+W kontekście przeglądarek internetowych JavaScript umożliwia tworzenie dynamicznych i interaktywnych stron internetowych, na przykład poprzez interfejsy pozwalające na modyfikację generowanej treści.
+Niezależnie od środowiska, podstawowy zakres języka opiera się na standardzie ECMA-262 \autocite{ecma262}, który definiuje rdzeń jego funkcjonalności.
+JavaScript jako język programowania jest \autocite{mdn_javascript}:
+%
+\begin{itemize}
+    \item \textbf{wysokopoziomowy} -- opiera się na wysokim poziomie abstrakcji, który ukrywa właściwości architektury sprzętu,
+    \item \textbf{interpretowany} -- kod jest wykonywany bezpośrednio przez silnik, bez potrzeby jego kompilacji do pliku binarnego,
+    \item \textbf{dynamiczny} -- typy zmiennych są określane w czasie działania programu,
+    \item \textbf{oparty na prototypach} -- obiekty mogą dziedziczyć właściwości bezpośrednio od innych obiektów, bez potrzeby definiowania nowej klasy,
+    \item \textbf{z automatycznym zarządzaniem pamięcią} -- silnik samodzielnie zajmuje się obsługą pamięci, usuwając z niej zmienne, które nie są używane,
+    \item \textbf{wieloparadygmatowy} -- spełnia założenia języków: imperatywnych (program jest wykonywany sekwencyjnie), funkcyjnych (oparty o funkcje) i obiektowych (pozwala na tworzenie obiektów, przechowujących dane oraz metody).
+\end{itemize}
+
+Dynamiczne typowanie w języku JavaScript znacząco przyspiesza proces tworzenia oprogramowania oraz umożliwia elastyczne modyfikowanie struktur danych w trakcie działania programu.
+Jednocześnie takie podejście może prowadzić do zwiększonego ryzyka występowania błędów trudnych do zlokalizowania, wynikających z ograniczonej możliwości śledzenia wszystkich potencjalnych scenariuszy wykonania aplikacji.
+Dodatkowo kod źródłowy bywa mniej czytelny bez odpowiednio przygotowanej dokumentacji, której tworzenie jest czasochłonne, a jej jakość zależy od doświadczenia oraz staranności programisty.
+Problemy te nasilają się wraz ze wzrostem rozmiaru oraz stopnia złożoności projektu.
+Jednym z rozwiązań dla tych zagrożeń jest \emph{TypeScript}, czyli nadzbiór języka JavaScript, który wprowadza statyczne typowanie oraz mechanizmy jego weryfikacji na etapie kompilacji.
+Dodanie definicji typów nie powoduje istotnego zwiększenia objętości kodu źródłowego, ponieważ TypeScript wykorzystuje mechanizm inferencji typów, pozwalający na automatyczne wnioskowanie o typach zmiennych na podstawie ich kontekstu.
+W przypadku deklarowania obiektów lub parametrów funkcji możliwe jest jawne określenie typów, których zgodność jest sprawdzana przy każdym wywołaniu kompilacji \lstref{lst:tstheme}.
+TypeScript oferuje również narzędzia do definiowania zaawansowanych struktur typów, takich jak typy generyczne czy unie typów, równocześnie porównując je strukturalnie, dzięki czemu nie trzeba za każdym razem korzystać z pierwotnej definicji.
+Zastosowanie tej technologii umożliwia wykrycie znacznej części potencjalnych błędów jeszcze przed uruchomieniem programu, przy jednoczesnym zachowaniu oryginalnego rozmiaru i funkcjonowania kodu JavaScript generowanym na etapie końcowym \autocite{typescript_intro}.
+%
+\lstinputlisting[
+    language=JavaScript,
+    caption={[Funkcja zmieniająca motyw kolorystyczny aplikacji ze zdefiniowanym typem jej argumentu]\lstcaption{Funkcja zmieniająca motyw kolorystyczny aplikacji ze zdefiniowanym typem jej argumentu}{Opracowanie własne}},
+    label={lst:tstheme},
+    morekeywords={type, Theme}
+]{theme.ts}
+
+Przeglądarki internetowe posiadają wbudowane silniki umożliwiające wykonywanie kodu JavaScript po stronie klienta, bez konieczności stosowania dodatkowych narzędzi.
+W warstwie serwerowej projektu wykorzystano środowisko uruchomieniowe \emph{Node.js}, które charakteryzuje się asynchronicznym modelem przetwarzania opartym na pętli zdarzeń.
+Node.js jest wykorzystywany do tworzenia aplikacji sieciowych i umożliwia definiowanie punktów końcowych serwera oraz przypisywanie im funkcji obsługujących przychodzące żądania.
+Zaletą tego środowiska jest efektywne zarządzanie zasobami systemowymi, wynikające z nieblokującego modelu wejścia-wyjścia oraz braku konieczności tworzenia osobnego wątku dla każdego połączenia.
+Komunikacja z klientem odbywa się za pomocą protokołu HTTP, natomiast przesyłanie większych ilości danych, takich jak pliki, realizowane jest przy użyciu mechanizmu strumieni \autocite{node_about}.
+
+Tworzenie części klienckiej projektu zostało oparte na narzędziu \emph{Vite}, służącym do budowania aplikacji frontendowych.
+Jego główną zaletą jest szybkie uruchamianie się środowiska deweloperskiego, osiągane dzięki priorytetyzacji ładowania wymaganych modułów oraz przeniesieniu części pracy do przeglądarki.
+Ponadto w przypadku aktualizacji kodu źródłowego nie następuje ponowne załadowanie całej aplikacji, lecz jedynie modułów, które podlegały zmianom, niezależnie od rozmiaru projektu.
+Na etapie budowania rozwiązania do wydania produkcyjnego, Vite dzieli kod na fragmenty oraz poddaje go optymalizacji, co przekłada się na wysoką wydajność finalnej aplikacji \autocite{vite_why}.
 
 \section{Struktura aplikacji}
 
