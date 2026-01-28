@@ -50,7 +50,64 @@ Na etapie budowania rozwiązania do wydania produkcyjnego, Vite dzieli kod na fr
 
 \section{Struktura aplikacji}
 
-React, Express, Tanstack Router...
+W celu uproszczenia pracy z serwerem korzystającym z Node.js wykorzystano bibliotekę \emph{Express}, która dostarcza narzędzia do tworzenia serwerów HTTP.
+Biblioteka ta umożliwia mapowanie punktów końcowych serwera na funkcje obsługujące żądania oraz stosowanie funkcji pośredniczących \lstref{lst:jsadvert}.
+Mapowanie realizowane jest poprzez definiowanie tras na podstawie typu żądania HTTP oraz adresu URL, co pozwala na modułowe podejście do tworzenia aplikacji.
+Adresy tras mogą zawierać parametry, które są automatycznie przekształcane przez Express w zmienne dostępne w funkcjach obsługujących żądania.
+Funkcje pośredniczące są wykonywane sekwencyjnie, zgodnie z kolejnością ich definicji, przed wywołaniem właściwej funkcji przetwarzającej żądanie.
+Dostępnych jest wiele predefiniowanych funkcji w postaci bibliotek, przykładowo akceptująca tylko te zapytania, które przesyłają dane w formacie JSON, lub przechwytująca informacje zawarte w plikach cookie i umieszczająca je w łatwo dostępnych zmiennych \autocite{express_readme}.
+%
+\lstinputlisting[
+    language=JavaScript,
+    caption={[Zdefiniowany punkt końcowy dla aktualizacji ogłoszenia z wykorzystaniem Express]\lstcaption{Zdefiniowany punkt końcowy dla aktualizacji ogłoszenia z wykorzystaniem Express}{Opracowanie własne}},
+    label={lst:jsadvert},
+]{advert.js}
+
+Frontend aplikacji został zrealizowany przy użyciu biblioteki \emph{React}, przeznaczonej do budowy interfejsów użytkownika w oparciu o komponenty.
+React wykorzystuje podejście deklaratywne, to znaczy wyłączające skutki uboczne z procesu generowania wyniku jakim jest strona.
+Finalny widok stanowi wynik działania funkcji generującej, której argumentem jest aktualny zestaw stanów.
+Programista nie manipuluje bezpośrednio strukturą interfejsu użytkownika, lecz zarządza dostępnymi stanami, a biblioteka React odpowiada za odpowiednią aktualizację widoku.
+Skutki uboczne, takie jak sprawdzenie wygenerowanego drzewa HTML lub wywołanie operacji asynchronicznej, mogą być wywoływane na skutek zmiany stanu, a ich wynikiem może być nowy stan \figref{fig:reactlifecycle}:
+%
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.95\textwidth]{react_lifecycle}
+    \figcaption{Schemat aktualizacji widoku poprzez stan w React}{Opracowanie własne}
+    \label{fig:reactlifecycle}
+\end{figure}
+
+Widok w React jest budowany z komponentów, czyli wydzielonych fragmentów interfejsu użytkownika z własną logiką oraz wyglądem.
+Komponenty są modyfikowane poprzez zmianę ich wewnętrznego stanu lub przekazanie go w argumencie \emph{props}.
+Wynikiem działania komponentu jest wygenerowanie kodu HTML, dlatego React wykorzystuje specjalną składnię JSX\footnote{JSX -- nakładka na kod JavaScript, wykorzystująca czytelne tagi HTML do opisywania elementów i komponentów, ukrywająca tym samym modyfikacje drzewa poprzez natywne funkcje.}.
+W celu tworzenia większych struktur z komponentów, wystarczy zagnieździć jeden we wnętrzu drugiego i przekazać wymagane argumenty props, wtedy będzie dostępny z poziomu pola \emph{children} \lstref{lst:jsxcomponent}:
+%
+\lstinputlisting[
+    language=JavaScript,
+    caption={[Prosty komponent przyjmujący argument props, w którego skład wchodzi pole children]\lstcaption{Prosty komponent przyjmujący argument props, w którego skład wchodzi pole children}{Opracowanie własne}},
+    label={lst:jsxcomponent},
+]{Input.jsx}
+
+Komponenty mogą być modyfikowane poprzez \emph{hooks}, czyli funkcjom rozszerzania logiki komponentów, umieszczanym na początku definicji komponentu, a najważniejsze z nich to:
+%
+\begin{itemize}
+    \item \textbf{useState} -- zwraca aktualną wartość stanu oraz funkcję wywołującą jego zmianę,
+    \item \textbf{useEffect} -- przyjmuje funkcję, którą ma wywołać jako skutek uboczny i listę stanów, przy których zmianie zostanie wywołana,
+    \item \textbf{useContext} -- przyjmuje definicję kontekstu, do którego ma się odwołać i zwraca wartości przez niego przechowywane,
+    \item \textbf{useRef} -- zwraca obiekt służący do obserwowania elementów niewykorzystywanych w budowaniu interfejsu użytkownika.
+\end{itemize}
+%
+Istnieje również możliwość tworzenia własnych hooks w celu stworzenia modułu poszerzającego logikę komponentów, natomiast muszą one opierać swoje działanie o te podstawowe \lstref{lst:jsxhook}.
+Silnik React przy każdej zmianie stanu tworzy odzwierciedlenie prawdziwego drzewa HTML w JavaScript nazywany \emph{Virtual DOM}.
+Drzewo to jest następnie porównywane z wygenerowanym faktycznym drzewem HTML i na podstawie różnic, są wymieniane tylko te fragmenty, które uległy zmianie.
+Taki proces jest znacznie bardziej wydajny, niż podmiana całego drzewa na stronie \autocite{react_doc}.
+%
+\lstinputlisting[
+    language=JavaScript,
+    caption={[Własny hook do wykrywania widoczności elementu HTML w oknie przeglądarki]\lstcaption{Własny hook do wykrywania widoczności elementu HTML w oknie przeglądarki}{Opracowanie własne}},
+    label={lst:jsxhook},
+]{useViewportVisibility.js}
+
+Tanstack Router...
 
 \section{Komunikacja klient-serwer}
 
