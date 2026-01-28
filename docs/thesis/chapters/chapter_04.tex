@@ -107,7 +107,14 @@ Taki proces jest znacznie bardziej wydajny, niż podmiana całego drzewa na stro
     label={lst:jsxhook},
 ]{useViewportVisibility.js}
 
-Tanstack Router...
+Aplikacja kliencka jest jednostronicowa, co oznacza, że nawigacja nie odbywa się poprzez wysyłanie zapytań HTTP o nowy dokument HTML.
+Narzędziem wykorzystanym w projekcie w ramach obsługi nawigacji jest \emph{Tanstack Router}.
+Biblioteka ta oferuje pełne wsparcie TypeScript, dzięki czemu definicje tras, parametrów i wyszukiwania są zgodne w interfejsie nawigacyjnym na całym projekcie.
+Wraz z tworzeniem aplikacji, działa skrypt przeszukujący pliki podstron w folderze \emph{rotues} i na podstawie ich ścieżek, generuje ich definicje w środowisku.
+Komponenty tras są automatycznie oddzielane od ich definicji i są ładowane dynamicznie, kiedy istnieje taka potrzeba, dzięki czemu zmniejsza się rozmiar pierwszego pliku JavaScript.
+Parametry wyszukiwania są parsowane jako JSON, przez co dostęp do ich wartości i ich walidacja odbywa się bez nieprzewidzianych błędów.
+Można definiować warunki ładowania tras oraz korzystać z opcji przechowywania ich w pamięci podręcznej, co skutkuje szybszym działaniem aplikacji.
+Każdy z tych elementów znacząco się przykłada do pozytywnego doświadczenia dewelopera pracującego z narzędziem i co za tym idzie skuteczniejszego tworzenia kodu źródłowego \autocite{tanstack_routeroverview}.
 
 \section{Komunikacja klient-serwer}
 
