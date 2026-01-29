@@ -154,7 +154,7 @@ Komponenty mogą być modyfikowane poprzez \emph{hooks}, czyli funkcjom rozszerz
     \item \textbf{useRef} -- zwraca obiekt służący do obserwowania elementów niewykorzystywanych w budowaniu interfejsu użytkownika.
 \end{itemize}
 %
-Istnieje również możliwość tworzenia własnych hooks w celu stworzenia modułu poszerzającego logikę komponentów, natomiast muszą one opierać swoje działanie o te podstawowe \lstref{lst:jsxhook}.
+Istnieje również możliwość tworzenia własnych hooks w celu stworzenia modułu poszerzającego logikę komponentów, natomiast muszą one opierać swoje działanie o te podstawowe \lstref{lst:jshook}.
 Silnik React przy każdej zmianie stanu tworzy odzwierciedlenie prawdziwego drzewa HTML w JavaScript nazywany \emph{Virtual DOM}.
 Drzewo to jest następnie porównywane z wygenerowanym faktycznym drzewem HTML i na podstawie różnic, są wymieniane tylko te fragmenty, które uległy zmianie.
 Taki proces jest znacznie bardziej wydajny niż podmiana całego drzewa na stronie \autocite{react_doc}.
@@ -162,7 +162,7 @@ Taki proces jest znacznie bardziej wydajny niż podmiana całego drzewa na stron
 \lstinputlisting[
     language=JavaScript,
     caption={[Własny hook do wykrywania widoczności elementu HTML w oknie przeglądarki]\lstcaption{Własny hook do wykrywania widoczności elementu HTML w oknie przeglądarki}{Opracowanie własne}},
-    label={lst:jsxhook},
+    label={lst:jshook},
 ]{useViewportVisibility.js}
 
 Aplikacja kliencka jest jednostronicowa, co oznacza, że nawigacja nie odbywa się poprzez wysyłanie zapytań HTTP o nowy dokument HTML.
@@ -196,7 +196,23 @@ Pozwala to na ograniczenie ilości zbędnych zapytań i jest w pełni konfigurow
 
 \subsection{Walidacja formularzy i bezpieczeństwo danych}
 
-Zod, Bcrypt, Tanstack Form...
+Jedną z form zapewnienia bezpieczeństwa w systemie jest odpowiednie przetwarzanie danych, tak aby zapobiec niespodziewanym błędom w czasie ich procesowania.
+Zarówno na frontendzie, jaki i na backendzie dane są parsowane za pomocą lekkiej biblioteki walidacyjnej \emph{zod}.
+Przy jej pomocy można tworzyć zaawansowane schematy, z którymi są porównywane dane wynikające z formularzy \lstref{lst:jszod}.
+Przy nieudanym parsowaniu danych tworzona jest informacja zwrotna co się nie zgadzało w każdym z nieprawidłowych pól.
+Niewielki rozmiar, prostota tworzenia schematów oraz szerokie możliwości parsowania danych, pozwalają zapobiec wielu krytycznym problemom \autocite{zod_intro}.
+Dodatkowo wykorzystano algorytm szyfrujący \emph{bcrypt}, w celu dodatkowego zabezpieczenia haseł przechowywanych w bazie danych \autocite{bcrypt_readme}.
+%
+\lstinputlisting[
+    language=JavaScript,
+    caption={[Wykorzystanie biblioteki zod do zwalidowania danych przekazanych w żądaniu]\lstcaption{Wykorzystanie biblioteki zod do zwalidowania danych przekazanych w żądaniu}{Opracowanie własne}},
+    label={lst:jszod},
+]{auth.js}
+
+Do obsługi formularzy wykorzystano nowoczesne oraz elastyczne narzędzie \emph{Tanstack Form}.
+Biblioteka ta pozwala na obsługę pól formularzy o złożonej strukturze danych, co jest wymagane w przypadku bardziej skomplikowanych projektów.
+Poprzez udostępniony hook pozyskiwane są komponenty oraz stany pozwalające uzależnić widok od stanu walidacji formularza.
+Biblioteka dobrze integruje się z zod co pozwala na łatwe stworzenie zaawansowanych formularzy z profesjonalną obsługą błędów \autocite{tanstack_formoverview}.
 
 \subsection{Interfejs użytkownika}
 
