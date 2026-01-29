@@ -1,79 +1,195 @@
-W ramach projektu została zrealizowana aplikacja internetowa, będąca serwisem z ogłoszeniami o sprzedaży samochodów.
-Użytkownicy mają możliwość wystawiania swoich pojazdów na sprzedaż oraz przeglądania istniejących ofert.
-Aplikacja opatrzona jest możliwością publikacji komentarzy oraz wystawiania ocen pod ogłoszeniami.
-W celu zapewnienia bezpieczeństwa społeczności, do rozwiązania włączony jest system moderowania treściami dostępnymi w serwisie.
+Projekt został zrealizowany na podstawie modelu \emph{klient-serwer} \figref{fig:clientserver}, polegającego na rozproszeniu aplikacji na dwa główne komponenty:
+%
+\begin{itemize}
+    \item \textbf{backend} (serwer) -- odpowiedzialny za przetwarzanie żądań klientów, obsługę logiki biznesowej oraz komunikację z zewnętrznymi usługami,
+    \item \textbf{frontend} (aplikacja kliencka) -- interaktywny interfejs, który wysyła zapytania do serwera oraz prezentuje odpowiednio sformatowane dane użytkownikowi.
+\end{itemize}
+%
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.8\textwidth]{client-server_model}
+    \figcaption{Przykładowy schemat modelu klient-serwer}{\cite{wikipedia_clientserver}}
+    \label{fig:clientserver}
+\end{figure}
 
-\section{Zrealizowane wymagania funkcjonalne}
+Komponenty komunikują się poprzez sieć za pomocą protokołu HTTP\footnote{Hypertext Transfer Protocol -- protokół komunikacyjny wykorzystywany przez przeglądarki.}.
+Dostęp do zasobów serwera odbywa się poprzez interfejs programowania aplikacji zgodny z architekturą REST\footnote{Representational State Transfer -- styl architektoniczny identyfikujący elementy systemu jako zasoby.}.
+Komunikacja odbywa się w sposób \emph{bezstanowy}, czyli serwer nie zapisuje kontekstu komunikacji po swojej stronie.
+Wszystkie informacje dotyczące sesji muszą zostać przekazane łącznie z samym zapytaniem przez aplikację kliencką.
+Zasoby są identyfikowane jako unikalne adresy URL\footnote{Uniform Resource Locator -- adres zasobu dostępnego w sieci komputerowej.}, a operacje na nich są zdefiniowane jako podstawowe metody protokołu HTTP: GET, POST, PUT, PATCH, DELETE \autocite{rest_tutorial}.
 
-\subsection{Autentykacja i autoryzacja użytkowników}
+\section{Role i uprawnienia}
 
-Proces autentykacji i autoryzacji użytkowników zapewnia w sposób kontrolowany dostęp do poszczególnych funkcjonalności serwisu, zgodnie z zasadą najmniejszych uprawnień \autocite{crowdstrike_polp}.
-Rejestracja konta w serwisie odbywa się poprzez formularz, gdzie użytkownik podaje podstawowe informacje, takie jak adres e-mail, na który jest wysyłany link aktywacyjny w celu sfinalizowania procesu.
-Anonimowi odwiedzający stronę, którzy nie zostali poddani autentykacji, są ograniczeni jedynie do przeglądania ogłoszeń o sprzedaży stworzonych przez innych użytkowników oraz zamieszczonych przez nich opinii.
-Po pomyślnym zalogowaniu, przy pomocy danych uwierzytelniających podanych w procesie rejestracji, użytkownicy uzyskują dostęp do rozszerzonej funkcjonalności systemu.
-Funkcjonalności te obejmują wystawianie ofert o sprzedaży, dodawanie komentarzy i ocen pod ogłoszeniami oraz zgłaszanie treści naruszających politykę serwisu.
-System autoryzacji jest oparty o model ról i uprawnień, gdzie niektórzy z użytkowników mają możliwość przeglądania nowych zgłoszeń i ewentualnego usuwania objętych nimi treści.
+Projekt wymagał stworzenia systemu ról i uprawnień, który byłby wykorzystywany zarówno przez część kliencką w celu odpowiedniego dostosowywania widoków i nawigacji, jak i również przez serwer do udostępniania swoich punktów końcowych.
+W zależności od statusu autentykacji użytkownika oraz przypisanych do niego ról, można wyróżnić kilka poziomów dostępów, w którym ilość dostępnych uprawnień jest odpowiednio zwiększana.
 
-\subsection{Zamieszczanie ogłoszeń o sprzedaży samochodów}
+Użytkownik \emph{niezalogowany} posiada najmniejszą ilość uprawnień i ma status osoby przeglądającej istniejące treści.
+Wynika to z faktu, że serwis nie jest w stanie go rozpoznać i przeprowadzić poprawnie większości operacji.
+Do czynności, które taki użytkownik może wykonać zalicza się:
+%
+\begin{itemize}
+    \item przeglądanie dostępnych ofert za pomocą wyszukiwarki,
+    \item zaznajamianie się ze szczegółami ofert oraz opiniami innych użytkowników na ich temat,
+    \item sprawdzanie profili sprzedawców, wraz z archiwum ich ogłoszeń.
+\end{itemize}
 
-Zalogowani użytkownicy posiadają możliwość publikacji ofert sprzedaży swoich pojazdów poprzez utworzenie ogłoszenia w dedykowanym panelu w aplikacji.
-Kreator ogłoszeń jest zestawem kolejno następujących po sobie formularzy, intuicyjnie kierując użytkownika przez cały proces.
-W pierwszym etapie użytkownik podaje parametry pojazdu, gdzie większość informacji podaje się w predefiniowanych polach wyboru, co znacząco usprawnia proces wypełniania formularza.
-Kolejnym etapem jest przekazanie metadanych ogłoszenia, takich jak tytuł, opis oferty lub cenę pojazdu.
-Ostatni z formularzy umożliwia dodanie zdjęć przedstawiających wygląd pojazdu wewnątrz oraz na zewnątrz.
-Jeżeli wszystkie dane zostaną uzupełnione poprawnie, użytkownik może opublikować ogłoszenie.
-Na tym etapie oferta będzie poddana weryfikacji przez osoby moderujące stronę i ostatecznie przez nich zatwierdzona pod względem zgodności z polityką strony oraz stanem faktycznym pojazdu.
+Po poprawnym przejściu przez proces autentykacji, użytkownik jest identyfikowany przez serwis i ma dostęp do większej ilości funkcjonalności.
+Każdy zalogowany użytkownik jest w systemie określany jako \emph{standardowy}.
+Taki użytkownik może podejmować akcje dozwolone dla niezalogowanych klientów oraz:
+%
+\begin{itemize}
+    \item wystawianie nowych ogłoszeń oraz ich edycja,
+    \item zamieszczanie opinii pod istniejącymi ofertami,
+    \item zostawianie reakcji pod komentarzami innych klientów,
+    \item korzystanie z serwisu zgłoszeń dla ofert oraz opinii,
+    \item zarządzanie własnym profilem dostępnym dla innych użytkowników.
+\end{itemize}
 
-\subsection{Dodawanie i ocenianie opinii pod ofertami}
+Niektórzy użytkownicy posiadają uprawnienia, które pozwalają im moderować zamieszczane w serwisie treści i posiadają rolę \emph{recenzenta}.
+Oprócz uprawnień należących do dwóch poprzednich ról, recenzenci są odpowiedzialni za:
+%
+\begin{itemize}
+    \item przeglądanie zgłoszeń od użytkowników w postaci listy,
+    \item sprawdzanie szczegółów zgłoszenia wliczając to dane klienta, który je poczynił,
+    \item podejmować działania względem zgłoszonych treści takich jak ich usunięcie.
+\end{itemize}
 
-Każde ogłoszenie zawiera dedykowaną sekcję komentarzy, w której użytkownicy dzielą się opiniami dotyczącymi pojazdu, bazując na treści samej oferty, jak również na podstawie własnych doświadczeń.
-Poszczególne komentarze są również poddawane ocenie poprzez zastosowanie binarnego systemu ocen opartego na pozytywnych i negatywnych reakcji użytkowników.
-Oceny te determinują wagę poszczególnych opinii w sumarycznej ocenie prezentowanej oferty oraz ograniczają wpływ niekonstruktywnych lub nawet szkodliwych komentarzy.
-System ten wspiera mniej doświadczonych kupującym na bardziej przemyślane decyzje, dzięki opiniom użytkowników o większym doświadczeniu, a jednocześnie pozwala na sprawniejszą identyfikację nieuczciwych ofert.
+\section{Wykorzystane technologie}
 
-\subsection{Wyszukiwarka ofert w oparciu o reputację sprzedawcy}
+Realizacja założeń projektowych, obejmująca zaprojektowanie oraz implementację serwera i aplikacji klienckiej, wymagała zastosowania szeregu różnorodnych technologii.
+Dobór narzędzi oparty został o kryteria stabilności i sprawdzenia w praktyce, przy jednoczesnym uwzględnieniu nowoczesnych i aktualnie rozwijanych rozwiązań.
+Wykorzystane technologie są powszechnie dostępne, posiadają rozbudowaną dokumentację techniczną oraz mają charakter open source\footnote{Open source -- model wytwarzania oprogramowania, którego kod źródłowy jest publicznie dostępny.}.
+W niniejszym rozdziale technologie te zostały skategoryzowane według kontekstu ich zastosowania w procesie tworzenia funkcjonalnego rozwiązania.
 
-Jednym z elementów systemu, dostępnym dla wszystkich użytkowników, jest wyszukiwarka ofert.
-Funkcjonalność ta jest dostępna bezpośrednio z poziomu ekranu głównego aplikacji i prezentuje listę skróconych wersji ofert w postaci interaktywnych kafelków.
-Głównym filtrem, o który oparte jest wyszukiwanie, jest pole tekstowe, które generuje listę ofert względem dopasowania ich treści do podanej sekwencji słów.
-Ponadto, dostępny jest wybór wielu predefiniowanych filtrów pozwalających na dokładne dostosowanie wyszukiwania, na przykład względem marki pojazdu lub przedziału cenowego.
-Kolejność wyników bazuje na aktualności ofert, ich ocenie oraz historycznej reputacji ich właściciela.
-Wybór konkretnego kafelka skutkuje przekierowaniem użytkownika do osobnej strony, zawierającej szczegółowe informacje dotyczące danej oferty.
+\subsection{Język i środowisko uruchomieniowe}
 
-\subsection{System zgłoszeń dla ofert i komentarzy}
+Zarówno warstwa frontendowa, jak i backendowa aplikacji zostały zaimplementowane z wykorzystaniem języka programowania \emph{JavaScript}.
+Zakres dostępnych funkcjonalności języka różni się w zależności od środowiska uruchomieniowego, w którym jest on wykorzystywany.
+W kontekście przeglądarek internetowych JavaScript umożliwia tworzenie dynamicznych i interaktywnych stron internetowych, na przykład poprzez interfejsy pozwalające na modyfikację generowanej treści.
+Niezależnie od środowiska, podstawowy zakres języka opiera się na standardzie ECMA-262 \autocite{ecma262}, który definiuje rdzeń jego funkcjonalności.
+JavaScript jako język programowania jest \autocite{mdn_javascript}:
+%
+\begin{itemize}
+    \item \textbf{wysokopoziomowy} -- opiera się na wysokim poziomie abstrakcji, który ukrywa właściwości architektury sprzętu,
+    \item \textbf{interpretowany} -- kod jest wykonywany bezpośrednio przez silnik, bez potrzeby jego kompilacji do pliku binarnego,
+    \item \textbf{dynamiczny} -- typy zmiennych są określane w czasie działania programu,
+    \item \textbf{oparty na prototypach} -- obiekty mogą dziedziczyć właściwości bezpośrednio od innych obiektów, bez potrzeby definiowania nowej klasy,
+    \item \textbf{z automatycznym zarządzaniem pamięcią} -- silnik samodzielnie zajmuje się obsługą pamięci, usuwając z niej zmienne, które nie są używane,
+    \item \textbf{wieloparadygmatowy} -- spełnia założenia języków: imperatywnych (program jest wykonywany sekwencyjnie), funkcyjnych (oparty o funkcje) i obiektowych (pozwala na tworzenie obiektów, przechowujących dane oraz metody).
+\end{itemize}
 
-Zarówno oferty, jak i komentarze mogą być zgłoszone przez użytkowników aplikacji za pośrednictwem dedykowanego przycisku.
-Jego naciśnięcie skutkuje wyświetleniem formularza zgłoszeniowego, gdzie istnieje możliwość wskazania przyczyny zgłoszenia wybranej treści.
-System raportowania oparty jest na wyselekcjonowanej grupie użytkowników, którzy pełnią rolę moderatorów treści i posiadają dostęp do gromadzonych przez serwis zgłoszeń.
-Poprzez stworzony dla nich panel administracyjny, mogą dokonywać oni zbiorczego przeglądu zgłoszeń i podejmować decyzje dotyczące dostępności oznaczonych treści.
-Zgłoszenia są prezentowane w postaci listy, gdzie zawarte są informacje o rodzaju objętej nimi treści, użytkowniku dokonującym zgłoszenia oraz dodatkowych informacjach przekazanych w formularzu.
+Dynamiczne typowanie w języku JavaScript znacząco przyspiesza proces tworzenia oprogramowania oraz umożliwia elastyczne modyfikowanie struktur danych w trakcie działania programu.
+Jednocześnie takie podejście może prowadzić do zwiększonego ryzyka występowania błędów trudnych do zlokalizowania, wynikających z ograniczonej możliwości śledzenia wszystkich potencjalnych scenariuszy wykonania aplikacji.
+Dodatkowo kod źródłowy bywa mniej czytelny bez odpowiednio przygotowanej dokumentacji, której tworzenie jest czasochłonne, a jej jakość zależy od doświadczenia oraz staranności programisty.
+Problemy te nasilają się wraz ze wzrostem rozmiaru oraz stopnia złożoności projektu.
+Jednym z rozwiązań dla tych zagrożeń jest \emph{TypeScript}, czyli nadzbiór języka JavaScript, który wprowadza statyczne typowanie oraz mechanizmy jego weryfikacji na etapie kompilacji.
+Dodanie definicji typów nie powoduje istotnego zwiększenia objętości kodu źródłowego, ponieważ TypeScript wykorzystuje mechanizm inferencji typów, pozwalający na automatyczne wnioskowanie o typach zmiennych na podstawie ich kontekstu.
+W przypadku deklarowania obiektów lub parametrów funkcji możliwe jest jawne określenie typów, których zgodność jest sprawdzana przy każdym wywołaniu kompilacji \lstref{lst:tstheme}.
+TypeScript oferuje również narzędzia do definiowania zaawansowanych struktur typów, takich jak typy generyczne czy unie typów, równocześnie porównując je strukturalnie, dzięki czemu nie trzeba za każdym razem korzystać z pierwotnej definicji.
+Zastosowanie tej technologii umożliwia wykrycie znacznej części potencjalnych błędów jeszcze przed uruchomieniem programu, przy jednoczesnym zachowaniu oryginalnego rozmiaru i funkcjonowania kodu JavaScript generowanym na etapie końcowym \autocite{typescript_intro}.
+%
+\lstinputlisting[
+    language=JavaScript,
+    caption={[Funkcja zmieniająca motyw kolorystyczny aplikacji ze zdefiniowanym typem jej argumentu]\lstcaption{Funkcja zmieniająca motyw kolorystyczny aplikacji ze zdefiniowanym typem jej argumentu}{Opracowanie własne}},
+    label={lst:tstheme},
+    morekeywords={type, Theme}
+]{theme.ts}
 
-\subsection{Przechowywanie nieaktualnych ogłoszeń w archiwum}
+Przeglądarki internetowe posiadają wbudowane silniki umożliwiające wykonywanie kodu JavaScript po stronie klienta, bez konieczności stosowania dodatkowych narzędzi.
+W warstwie serwerowej projektu wykorzystano środowisko uruchomieniowe \emph{Node.js}, które charakteryzuje się asynchronicznym modelem przetwarzania opartym na pętli zdarzeń.
+Node.js jest wykorzystywany do tworzenia aplikacji sieciowych i umożliwia definiowanie punktów końcowych serwera oraz przypisywanie im funkcji obsługujących przychodzące żądania.
+Zaletą tego środowiska jest efektywne zarządzanie zasobami systemowymi, wynikające z nieblokującego modelu wejścia-wyjścia oraz braku konieczności tworzenia osobnego wątku dla każdego połączenia.
+Komunikacja z klientem odbywa się za pomocą protokołu HTTP, natomiast przesyłanie większych ilości danych, takich jak pliki, realizowane jest przy użyciu mechanizmu strumieni \autocite{node_about}.
 
-Kiedy ogłoszenie wygasa, na przykład na skutek zakończonej sprzedaży bądź anulowania oferty, nie jest kompletnie usuwane z systemu, lecz zostaje przeniesione do archiwum.
-Ogłoszenia oznaczone jako zarchiwizowane nie są dostępne z poziomu standardowej wyszukiwarki, natomiast pozostają one trwale przypisane do profili użytkowników, które je wystawiły.
-Użytkownik zainteresowany daną ofertą ma możliwość przejścia do widoku profilu jej właściciela i zapoznania się z pełną historią ogłoszeń w postaci listy, posortowanej według daty opublikowania od najnowszych.
-Zaimplementowane rozwiązanie znacznie zwiększa transparentność sprzedawców, uniemożliwiając manipulowanie historią ofert poprzez usuwanie niepożądanych przez nich wpisów.
+Tworzenie części klienckiej projektu zostało oparte na narzędziu \emph{Vite}, służącym do budowania aplikacji frontendowych.
+Jego główną zaletą jest szybkie uruchamianie się środowiska deweloperskiego, osiągane dzięki priorytetyzacji ładowania wymaganych modułów oraz przeniesieniu części pracy do przeglądarki.
+Ponadto w przypadku aktualizacji kodu źródłowego nie następuje ponowne załadowanie całej aplikacji, lecz jedynie modułów, które podlegały zmianom, niezależnie od rozmiaru projektu.
+Na etapie budowania rozwiązania do wydania produkcyjnego, Vite dzieli kod na fragmenty oraz poddaje go optymalizacji, co przekłada się na wysoką wydajność finalnej aplikacji \autocite{vite_why}.
 
-\section{Zrealizowane wymagania niefunkcjonalne}
+\subsection{Struktura aplikacji}
 
-\subsection{Responsywność}
+W celu uproszczenia pracy z serwerem korzystającym z Node.js wykorzystano bibliotekę \emph{Express}, która dostarcza narzędzia do tworzenia serwerów HTTP.
+Biblioteka ta umożliwia mapowanie punktów końcowych serwera na funkcje obsługujące żądania oraz stosowanie funkcji pośredniczących \lstref{lst:jsadvert}.
+Mapowanie realizowane jest poprzez definiowanie tras na podstawie typu żądania HTTP oraz adresu URL, co pozwala na modułowe podejście do tworzenia aplikacji.
+Adresy tras mogą zawierać parametry, które są automatycznie przekształcane przez Express w zmienne dostępne w funkcjach obsługujących żądania.
+Funkcje pośredniczące są wykonywane sekwencyjnie, zgodnie z kolejnością ich definicji, przed wywołaniem właściwej funkcji przetwarzającej żądanie.
+Dostępnych jest wiele predefiniowanych funkcji w postaci bibliotek, przykładowo akceptująca tylko te zapytania, które przesyłają dane w formacie JSON, lub przechwytująca informacje zawarte w plikach cookie i umieszczająca je w łatwo dostępnych zmiennych \autocite{express_readme}.
+%
+\lstinputlisting[
+    language=JavaScript,
+    caption={[Zdefiniowany punkt końcowy dla aktualizacji ogłoszenia z wykorzystaniem Express]\lstcaption{Zdefiniowany punkt końcowy dla aktualizacji ogłoszenia z wykorzystaniem Express}{Opracowanie własne}},
+    label={lst:jsadvert},
+]{advert.js}
 
-Aplikacja automatycznie dostosowuje się do większości urządzeń konsumenckich, które obsługują popularne przeglądarki.
-Wszystkie komponenty aplikacji dynamicznie zmieniają swoje położenie, geometrię i wygląd w zależności od wymiarów ekranu oraz orientacji urządzenia.
-Responsywność zapewnia, że wszystkie składowe serwisu są czytelne i wygodne w użytkowaniu niezależnie od platformy, na którym jest uruchamiany.
+Frontend aplikacji został zrealizowany przy użyciu biblioteki \emph{React}, przeznaczonej do budowy interfejsów użytkownika w oparciu o komponenty.
+React wykorzystuje podejście deklaratywne, to znaczy wyłączające skutki uboczne z procesu generowania wyniku jakim jest strona.
+Finalny widok stanowi wynik działania funkcji generującej, której argumentem jest aktualny zestaw stanów.
+Programista nie manipuluje bezpośrednio strukturą interfejsu użytkownika, lecz zarządza dostępnymi stanami, a biblioteka React odpowiada za odpowiednią aktualizację widoku.
+Skutki uboczne, takie jak sprawdzenie wygenerowanego drzewa HTML lub wywołanie operacji asynchronicznej, mogą być wywoływane na skutek zmiany stanu, a ich wynikiem może być nowy stan \figref{fig:reactlifecycle}:
+%
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.95\textwidth]{react_lifecycle}
+    \figcaption{Schemat aktualizacji widoku poprzez stan w React}{Opracowanie własne}
+    \label{fig:reactlifecycle}
+\end{figure}
 
-\subsection{Dostępność}
+Widok w React jest budowany z komponentów, czyli wydzielonych fragmentów interfejsu użytkownika z własną logiką oraz wyglądem.
+Komponenty są modyfikowane poprzez zmianę ich wewnętrznego stanu lub przekazanie go w argumencie \emph{props}.
+Wynikiem działania komponentu jest wygenerowanie kodu HTML, dlatego React wykorzystuje specjalną składnię JSX\footnote{JSX -- nakładka na kod JavaScript, wykorzystująca czytelne tagi HTML do opisywania elementów i komponentów, ukrywająca tym samym modyfikacje drzewa poprzez natywne funkcje.}.
+W celu tworzenia większych struktur z komponentów, wystarczy zagnieździć jeden we wnętrzu drugiego i przekazać wymagane argumenty props, wtedy będzie dostępny z poziomu pola \emph{children} \lstref{lst:jsxcomponent}:
+%
+\lstinputlisting[
+    language=JavaScript,
+    caption={[Prosty komponent przyjmujący argument props, w którego skład wchodzi pole children]\lstcaption{Prosty komponent przyjmujący argument props, w którego skład wchodzi pole children}{Opracowanie własne}},
+    label={lst:jsxcomponent},
+]{Input.jsx}
 
-Każda z funkcjonalności serwisu zostały zaprojektowane z możliwością obsługi klawiaturowej bez konieczności używania kursora.
-Kolory tekstu oraz tła zostały dobrane tak aby spełniać minimalne wymagania kontrastu WCAG \autocite{wcag_guidelines}.
-Wszystkie komponenty dostosowują swoją kolorystykę zależnie od wybranego przez użytkownika motywu, jasnego lub ciemnego.
-Wszystkie pola formularzy zapewniają podstawowe wsparcie dla czytników ekranowych, a obrazy posiadają teksty alternatywne, które są wyświetlane na wypadek braku możliwości wyświetlenia.
-Niezależnie od występujących ograniczeń większość użytkowników posiada możliwości korzystania z serwisu w podobny sposób.
+Komponenty mogą być modyfikowane poprzez \emph{hooks}, czyli funkcjom rozszerzania logiki komponentów, umieszczanym na początku definicji komponentu, a najważniejsze z nich to:
+%
+\begin{itemize}
+    \item \textbf{useState} -- zwraca aktualną wartość stanu oraz funkcję wywołującą jego zmianę,
+    \item \textbf{useEffect} -- przyjmuje funkcję, którą ma wywołać jako skutek uboczny i listę stanów, przy których zmianie zostanie wywołana,
+    \item \textbf{useContext} -- przyjmuje definicję kontekstu, do którego ma się odwołać i zwraca wartości przez niego przechowywane,
+    \item \textbf{useRef} -- zwraca obiekt służący do obserwowania elementów niewykorzystywanych w budowaniu interfejsu użytkownika.
+\end{itemize}
+%
+Istnieje również możliwość tworzenia własnych hooks w celu stworzenia modułu poszerzającego logikę komponentów, natomiast muszą one opierać swoje działanie o te podstawowe \lstref{lst:jsxhook}.
+Silnik React przy każdej zmianie stanu tworzy odzwierciedlenie prawdziwego drzewa HTML w JavaScript nazywany \emph{Virtual DOM}.
+Drzewo to jest następnie porównywane z wygenerowanym faktycznym drzewem HTML i na podstawie różnic, są wymieniane tylko te fragmenty, które uległy zmianie.
+Taki proces jest znacznie bardziej wydajny niż podmiana całego drzewa na stronie \autocite{react_doc}.
+%
+\lstinputlisting[
+    language=JavaScript,
+    caption={[Własny hook do wykrywania widoczności elementu HTML w oknie przeglądarki]\lstcaption{Własny hook do wykrywania widoczności elementu HTML w oknie przeglądarki}{Opracowanie własne}},
+    label={lst:jsxhook},
+]{useViewportVisibility.js}
 
-\subsection{Obsługa błędów}
+Aplikacja kliencka jest jednostronicowa, co oznacza, że nawigacja nie odbywa się poprzez wysyłanie zapytań HTTP o nowy dokument HTML.
+Narzędziem wykorzystanym w projekcie w ramach obsługi nawigacji jest \emph{Tanstack Router}.
+Biblioteka ta oferuje pełne wsparcie TypeScript, dzięki czemu definicje tras, parametrów i wyszukiwania są zgodne w interfejsie nawigacyjnym na całym projekcie.
+Wraz z tworzeniem aplikacji, działa skrypt przeszukujący pliki podstron w folderze \emph{rotues} i na podstawie ich ścieżek, generuje ich definicje w środowisku.
+Komponenty tras są automatycznie oddzielane od ich definicji i są ładowane dynamicznie, kiedy istnieje taka potrzeba, dzięki czemu zmniejsza się rozmiar pierwszego pliku JavaScript.
+Parametry wyszukiwania są parsowane jako JSON, przez co dostęp do ich wartości i ich walidacja odbywa się bez nieprzewidzianych błędów.
+Można definiować warunki ładowania tras oraz korzystać z opcji przechowywania ich w pamięci podręcznej, co skutkuje szybszym działaniem aplikacji.
+Każdy z tych elementów znacząco się przykłada do pozytywnego doświadczenia dewelopera pracującego z narzędziem i co za tym idzie skuteczniejszego tworzenia kodu źródłowego \autocite{tanstack_routeroverview}.
 
-Podczas korzystania z aplikacji mogą występować błędy mające różne źródła.
-Mogą to być niepoprawne formaty danych w przesyłanych formularzach, komunikaty błędów zwracane z serwera lub nawet wewnętrzne błędy samej aplikacji.
-Niezależnie od pochodzenia każdy z błędów jest wyłapywany i przetwarzany na komunikat, który jest czytelny dla użytkownika oraz propozycja rozwiązania problemu.
-Kontrola nad błędami zapewnia poprawia doświadczenie użytkownika w korzystaniu z serwisu oraz zwiększa wydajność całego systemu.
+\subsection{Komunikacja klient-serwer}
+
+Axios, JWT Token, Multer, Tanstack Query...
+
+\subsection{Walidacja formularzy i bezpieczeństwo danych}
+
+Zod, Bcrypt, Tanstack Form...
+
+\subsection{Interfejs użytkownika}
+
+Headless UI, Tailwind CSS...
+
+\subsection{Przechowywanie danych i integracje zewnętrzne}
+
+Resend, MongoDB (Atlas)...
+
+\subsection{Narzędzia wspomagające tworzenie projektu}
+
+VSCode, Prettier, ESLint, Git, Postman...

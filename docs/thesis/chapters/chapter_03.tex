@@ -1,26 +1,4 @@
-Projekt został zrealizowany na podstawie modelu \emph{klient-serwer} \figref{fig:clientserver}, polegającego na rozproszeniu aplikacji na dwa główne komponenty:
-%
-\begin{itemize}
-    \item \textbf{backend} (serwer) -- odpowiedzialny za przetwarzanie żądań klientów, obsługę logiki biznesowej oraz komunikację z zewnętrznymi usługami,
-    \item \textbf{frontend} (aplikacja kliencka) -- interaktywny interfejs, który wysyła zapytania do serwera oraz prezentuje odpowiednio sformatowane dane użytkownikowi.
-\end{itemize}
-%
-\begin{figure}[h]
-    \centering
-    \includegraphics[width=0.8\textwidth]{client-server_model}
-    \figcaption{Przykładowy schemat modelu klient-serwer}{\cite{wikipedia_clientserver}}
-    \label{fig:clientserver}
-\end{figure}
-
-Komponenty komunikują się poprzez sieć za pomocą protokołu HTTP\footnote{Hypertext Transfer Protocol -- protokół komunikacyjny wykorzystywany przez przeglądarki.}.
-Dostęp do zasobów serwera odbywa się poprzez interfejs programowania aplikacji zgodny z architekturą REST\footnote{Representational State Transfer -- styl architektoniczny identyfikujący elementy systemu jako zasoby.}.
-Komunikacja odbywa się w sposób \emph{bezstanowy}, czyli serwer nie zapisuje kontekstu komunikacji po swojej stronie.
-Wszystkie informacje dotyczące sesji muszą zostać przekazane łącznie z samym zapytaniem przez aplikację kliencką.
-Zasoby są identyfikowane jako unikalne adresy URL\footnote{Uniform Resource Locator -- adres zasobu dostępnego w sieci komputerowej.}, a operacje na nich są zdefiniowane jako podstawowe metody protokołu HTTP: GET, POST, PATCH, DELETE \autocite{rest_tutorial}.
-
-\section{Serwer}
-
-\subsection{Warstwowy system}
+\section{Warstwowy system}
 
 Architektura serwera została zaprojektowana w oparciu o wyraźnie rozdzielone warstwy, z których każda pełni ściśle określoną rolę:
 %
@@ -36,14 +14,14 @@ Takie podejście zapewnia wysoką czytelność kodu, umożliwiając sprawne loka
 Rozwiązanie naturalnie się skaluje, ponieważ pozwala na rozszerzanie funkcjonalności poprzez dodawanie nowych modułów.
 Ponadto, przekazywanie zapytań pomiędzy kolejnymi warstwami przyczynia się do znacznego podniesienia bezpieczeństwa całego systemu.
 
-\subsection{Obsługa żądań}
+\section{Obsługa żądań}
 
 Aplikacja kliencka wysyła do serwera żądanie składające się z adresu URL oraz typu operacji.
 W zależności od zasobu dostępne operacje obejmują utworzenie, modyfikację, usunięcie lub pobranie danych.
 Do żądania mogą zostać dołączone parametry w adresie zapytania, a także dane zapisane w formacie JSON\footnote{JavaScript Object Notation -- tekstowy format zapisu danych, który jest zarówno czytelny dla człowieka jak i maszyny.}.
 Serwer zwraca wynik operacji, podając odpowiedni kod statusu HTTP \autocite{iana_httpcodes} oraz treść odpowiedzi w formacie JSON w przypadku powodzenia lub w formacie określonym przez typ błędu w przypadku niepowodzenia.
 
-\subsection{Walidacja danych}
+\section{Walidacja danych}
 
 Przesyłane dane są przetwarzane przez warstwę walidacyjną zawierającą predefiniowane schematy, z którymi są porównywane.
 Wszystkie dane wejściowe muszą być obiektem złożonego z par \emph{klucz-wartość}.
@@ -51,7 +29,7 @@ Każde pole obiektu musi się zgadzać z jego odpowiednikiem w schemacie.
 W przypadku wartości liczbowych mogą być określone ograniczenia dotyczące zakresu, dla tekstów minimalna długość, a dla typów wyliczeniowych czy znajdują się one w liście dopuszczalnych wartości.
 Tak dokładna weryfikacja minimalizuje ryzyko wystąpienia nieprzewidzianych błędów, wynikających z niepoprawnego działania kolejnych etapów przetwarzania danych.
 
-\subsection{Autentykacja za pośrednictwem ciasteczek}
+\section{Autentykacja za pośrednictwem ciasteczek}
 
 Po zalogowaniu, serwer generuje dwa tokeny JWT\footnote{JSON Web Token -- format zapisu zaszyfrowanych danych JSON.}: dostępu oraz odświeżający.
 Token dostępu służy do identyfikacji użytkownika i posiada krótki czas życia, wynoszący 15 minut.
@@ -61,14 +39,14 @@ Serwer zwraca tokeny w \emph{plikach cookie}, czyli zestawie danych przetrzymywa
 W ramach bezpieczeństwa, pliki te są niedostępne z poziomu skryptów oraz przesyłane jedynie z wykorzystaniem protokołu \emph{HTTPS}, czyli zaszyfrowanej wersji HTTP.
 Sesja użytkownika zapisywana jest jako dokument w bazie danych i weryfikowana w przypadku jej odświeżenia.
 
-\subsection{Rozsyłanie maili}
+\section{Rozsyłanie maili}
 
 W ramach weryfikacji lub dodatkowej formy interakcji z użytkownikiem, serwis posiada możliwość wysyłania wiadomości na adres poczty elektronicznej, podany podczas rejestracji.
 Przykładowo, operacja zmiany hasła opiera się na przesłaniu wiadomości zawierającej specjalny odnośnik z wygenerowanym losowo kluczem, zapewniając właścicielowi konta bezpieczny dostęp do dedykowanego formularza modyfikującego dotychczasowe hasło.
 Treść wiadomości generowana jest na podstawie predefiniowanych szablonów HTML\footnote{HyperText Markup Language -- język znaczników używany do tworzenia dokumentów generujących strony internetowe.}, które są następnie uzupełniane o dane kontekstowe, takie jak nazwa użytkownika.
 Do wysłania wiadomości, serwer wykorzystuje zewnętrzną platformę mailingową, której przekazuje tytuł, treść wiadomości oraz informacje o adresacie.
 
-\subsection{Przeliczanie reputacji sprzedawcy}
+\section{Przeliczanie reputacji sprzedawcy}
 
 Wskaźnik reputacji jest miarą poziomu zaufania społeczności względem danego sprzedawcy i bazuje na historii wystawianych przez niego ogłoszeń.
 Każda z ofert ma ukrytą wartość oceny, która jest wyznaczana na podstawie analizy komentarzy oraz reakcji.
@@ -108,7 +86,7 @@ gdzie:
 Na podstawie wartości wskaźnika reputacji oraz daty wystawienia ogłoszenia, algorytm sortujący decyduje o pozycjonowaniu oferty w wynikach wyszukiwania.
 Zaimplementowany system promuje sprzedawców o wysokim poziomie zaufania, jednocześnie umożliwiając widoczność ofert użytkowników rozpoczynających użytkowanie serwisu.
 
-\subsection{Obsługa błędów}
+\section{Obsługa błędów}
 
 Punkty końcowe serwera są objęte modułem \emph{errorHandler}, który jest aktywowany za każdym razem, kiedy obsługa żądania klienta napotka na błąd.
 Zapewnia to kontrolowane reagowanie na błędy i zwrot klarownego komunikatu do aplikacji klienckiej, dlaczego działanie zostało przerwane.
@@ -139,7 +117,7 @@ Wszystkie zdefiniowane błędy zawierają pole tekstowe \emph{message}, które a
 W przypadku pola tekstowego \emph{type} aplikacja rozpoznaje dokładną przyczynę błędu, na przykład nieważny token dostępu.
 Natomiast pole \emph{errors} jest tablicą obiektów, zawierającą informacje o nieprawidłowościach w wypełnionym formularzu, czyli treść błędu i identyfikator pola.
 
-\subsection{Baza danych NoSQL}
+\section{Baza danych NoSQL}
 
 W projekcie wykorzystano nierelacyjną bazę danych, przechowującą informacje w dokumentach o niezdefiniowanej strukturze.
 Dokumenty pełnią rolę rekordów i uporządkowują dane w postaci par klucz-wartość.
@@ -147,7 +125,7 @@ Do podzielenia dokumentów na powiązane ze sobą grupy wykorzystują \emph{kole
 Rozwiązanie jest proste w implementacji oraz dobrze radzi sobie z wprowadzanymi zmianami w sposobie zapisywania dokumentów.
 Ponadto skalowanie bazy polega na zwiększaniu ilości jej instancji co przyspiesza dalszy rozwój aplikacji \autocite{mongo_documentdb}.
 
-\subsection{Zarządzanie zdjęciami}
+\section{Zarządzanie zdjęciami}
 
 System umożliwia wykonywanie operacji zapisu, usunięcia lub odczytu zdjęć, analogicznie jak w przypadku innych zasobów.
 Przesłane pliki są walidowane względem ich typu, metadanych oraz ilości, a następnie przekazane do sterownika bazy danych.
@@ -156,7 +134,7 @@ Następnie binarna zawartość pliku jest dzielona na małe fragmenty i wszystki
 W celu pobrania zdjęcia, wyciągany jest z bazy rekord z metadanymi, a następnie łączone są wszystkie fragmenty z nim powiązane.
 Rozwiązanie pozwala na łatwe i wydajne powiązanie plików relacjami z innymi dokumentami w bazie, na przykład ogłoszeń ze zdjęciami.
 
-\subsection{Opis użytych modeli danych}
+\section{Opis użytych modeli danych}
 
 Wykorzystane w rozwiązaniu modele są bezpośrednio powiązane z kolekcjami w bazie danych i stanowią warstwę abstrakcji pomiędzy warstwą serwisową a sterownikiem bazy danych.
 Modele udostępniają zestaw dedykowanych funkcji do wykonywania atomowych operacji na kolekcjach, takich jak znajdowanie rekordów spełniających predykat.
@@ -174,166 +152,10 @@ W oparciu o te założenia zostały utworzone następujące modele danych:
     \item \textbf{verificationCode} -- zarządzanie kodami weryfikacyjnymi przesyłanych drogą mailową z sygnaturami czasowymi, po których następuje ich wygaśnięcie.
 \end{itemize}
 
-\section{Aplikacja kliencka}
+\section{Diagram bazy danych}
 
-\subsection{Generowanie widoku po stronie klienta}
+Lorem ipusm
 
-Do generacji aplikacji internetowej wykorzystywana jest przeglądarka użytkownika.
-Po wejściu na stronę serwer przekazuje minimalny dokument HTML, który zawiera jedynie punkt wejściowy aplikacji \lstref{lst:htmlindex}.
-Następnie pobrany zostaje plik z kodem \emph{JavaScript}, czyli skryptowym i dynamicznym językiem programowania, który jest wspierany przez przeglądarki.
-Skrypt jest odpowiedzialny za dalszą komunikację z serwerem oraz dynamiczne generowanie interfejsu użytkownika.
-Takie podejście umożliwia tworzenie interaktywnych aplikacji internetowych przy minimalnym wykorzystaniu zasobów serwera \autocite{mdn_csr}.
-%
-\lstinputlisting[
-    language=HTML,
-    caption={[Wygenerowany minimalny dokument HTML]\lstcaption{Wygenerowany minimalny dokument HTML}{Opracowanie własne}},
-    label={lst:htmlindex}
-]{index.html}
+\section{Spis punktów końcowych}
 
-Ponadto, w przypadku nawigacji w obrębie strony nie jest pobierany z serwera nowy dokument HTML, ponieważ pobrany JavaScript odpowiada za dynamiczną wymianę całej treści.
-W ten sposób nie następuje przeładowanie całej strony, a pobranie wymaganych danych z punktów końcowych udostępnianych przez serwer, które są użyte do zaktualizowania interfejsu użytkownika.
-Eliminowane są opóźnienia, które wynikałyby z konieczności ładowania nowej strony od podstaw oraz istnieje możliwość prezentacji użytkownikowi ciągłego dostarczania usługi w trakcie nawigacji.
-
-\subsection{Podejście atomowe w tworzeniu komponentów}
-
-W budowaniu widoku strony wykorzystano \emph{komponenty}, czyli wyizolowane fragmenty interfejsu użytkownika.
-Budowa komponentów opiera się na tworzeniu niezależnych modułów, z własną strukturą, logiką oraz warstwą wizualną.
-Rozwiązanie to znacząco poprawia organizację oraz czytelność kodu źródłowego.
-Możliwość wielokrotnego wykorzystania tych fragmentów przyspiesza proces tworzenia aplikacji oraz zapewnia, że wprowadzone zmiany i poprawki będą propagowane wszędzie, gdzie zostały one zaimplementowane.
-
-W projektowaniu komponentów wykorzystano metodologię \emph{Atomic Design}, opierającą się na analogii elementów interfejsu użytkownika do konceptów znanych z chemii \autocite{atomicdesign}.
-Komponenty są uporządkowane hierarchicznie w ramach określonych kategorii, które różnią się zakresem odpowiedzialności, stopniem złożoności oraz rozmiarem.
-W zależności od implementacji kryteria oraz liczba kategorii mogą się różnić, natomiast zrealizowany projekt wykorzystuje pełen zestaw dostępnych poziomów \tabref{tab:atomicats}.
-Zastosowanie tej metodologii zachowuje spójność interfejsu użytkownika, zwiększa reużywalność komponentów oraz ułatwia skalowanie projektu.
-%
-\begin{table}[h]
-    \centering
-    \tabcaption{Omówienie poszczególnych kategorii komponentów interfejsu użytkownika}{Opracowanie własne na podstawie \citetitle{atomicdesign} \space \autocite{atomicdesign}}
-    \begin{tabular}{|c|p{0.5\textwidth}|l|}
-        \hline
-        \textit{\textbf{Kategoria}} & \textbf{Charakterystyka}                                                           & \textbf{Przykład w projekcie} \\
-        \hline
-        \textit{Atoms}              & Niepodzielne elementy interfejsu, często bezstanowe, związane z tagami HTML        & <Button />                    \\
-        \hline
-        \textit{Molecules}          & Złożone z atomów, wyspecjalizowane do konkretnych zadań, często posiadają stany    & <Pagination />                \\
-        \hline
-        \textit{Organisms}          & Kompleksowe zbiory elementów interfejsu, wielozadaniowe, posiadają własny kontekst & <Header />                    \\
-        \hline
-        \textit{Templates}          & Definiuje rozmieszczenie komponentów na stronie bez ingerencji danych              & <SimpleFeedback />            \\
-        \hline
-        \textit{Pages}              & Pełne widoki stworzone z komponentów, uzupełnione o pozyskane dane                 & <Login />                     \\
-        \hline
-    \end{tabular}
-    \label{tab:atomicats}
-\end{table}
-
-\subsection{Kompozycja elementów interfejsu}
-
-Przy tworzeniu komponentów wykorzystano kompozycję, czyli budowanie funkcjonalności poprzez składanie modułów aplikacji ze sobą.
-Ze względu na wynikającą z budowania stron internetowych architekturę drzewa, komponenty mogą przyjmować elementy interfejsu jako jego zawartość.
-Taki komponent nie posiada informacji o tym, jakie elementy są przez niego kontrolowane, natomiast decyduje o tym, gdzie wewnątrz swojej struktury je umieści.
-Ponadto analogicznie do funkcji, komponenty mogą przyjmować argumenty, które mogą modyfikować generowany przez nich fragment strony.
-
-Oprócz tworzenia interfejsu, kompozycja występuje również na poziomie konstruowania logiki, dzięki współdzielonym funkcjom rozszerzania logiki komponentów.
-Poprzez ich podłączenie komponent przykładowo może korzystać z informacji kontekstowych bez podawania ich w argumentach.
-
-Zarówno kompozycja interfejsu, jak i logiki, znacząco zwiększa reużywalność elementów aplikacji pozwalając łączyć ich funkcje w nowych komponentach.
-Zmniejszona jest również zależność elementów rozwiązania od siebie, co upraszcza pracę z kodem źródłowym oraz naturalnie skaluje się z rozmiarem aplikacji \autocite{medium_reactcomposition}.
-
-\subsection{Komunikacja z backendem}
-
-Komunikacja z serwerem realizowana jest za pomocą asynchronicznych zapytań HTTP, zgodnie z architekturą REST.
-W przypadku poprawnego przetworzenia żądania zwracana jest odpowiedź w formacie JSON, której struktura zależy od wywołanego punktu końcowego oraz zastosowanej metody HTTP.
-Zależnie od typu żądania aplikacja kliencka może otrzymać dane potrzebne do generowania interfejsu, bądź informację o udanym przeprocesowaniu zapytania, którą może wyświetlić użytkownikowi.
-
-Dane zwracane przez serwer, wykorzystywane do generowania interfejsu użytkownika, są zapisywane w pamięci podręcznej aplikacji klienckiej na określony czas.
-Mechanizm ten umożliwia ograniczenie liczby redundantnych żądań wysyłanych do serwera oraz zapewnia natychmiastowy dostęp do wymaganych danych.
-Czas przechowywania wyników poszczególnych zapytań jest konfigurowany indywidualnie, w zależności od oczekiwanej częstotliwości ich odświeżania.
-Ponadto pamięć podręczna jest globalna, dzięki czemu jej zawartość nie jest tracona w trakcie działania aplikacji i może być współdzielona pomiędzy wieloma widokami.
-
-Do każdego żądania dołączana jest zawartość plików cookie, która może zawierać token dostępu wymagany do wykonania większości operacji.
-Token generowany jest w procesie logowania i pozostaje ważny do momentu jego wygaśnięcia, umożliwiając wywoływanie żądań zgodnie z uprawnieniami przypisanymi do roli użytkownika.
-W przypadku wygaśnięcia tokenu dostępu kolejne żądanie zostaje odrzucone przez serwer, który zwraca odpowiedź błędu zawierającą informację o nieprawidłowym lub nieważnym tokenie.
-W takiej sytuacji aplikacja kliencka automatycznie wysyła żądanie do punktu końcowego odpowiedzialnego za odświeżanie tokenu \figref{fig:jwtrefresh}.
-W zależności od rezultatu tej operacji użytkownik otrzymuje informację o konieczności ponownego uwierzytelnienia lub w przypadku powodzenia, pierwotne żądanie zostaje wysłane ponownie i przetworzone w standardowy sposób.
-%
-\begin{figure}[h]
-    \centering
-    \includegraphics[width=0.8\textwidth]{jwt-refresh_process}
-    \figcaption{Przykładowy proces wykorzystania tokenu odświeżającego, gdzie: SPA - aplikacja kliencka, RS - serwer zasobów, AS - serwer autentykacyjny, AT - token dostępu, RT - token odświeżający}{\cite{auth0_jwtrefresh}}
-    \label{fig:jwtrefresh}
-\end{figure}
-
-\subsection{Nawigacja}
-
-Nawigacja użytkownika odbywa się w obrębie jednej strony, której widok i adres URL jest kontrolowany przez JavaScript, stwarzając wrażenie przechodzenia pomiędzy widokami bez przeładowywania dokumentu.
-Adres URL jest traktowany jako stan aplikacji, który jest modyfikowany poprzez korzystanie z linków przez użytkownika lub przekierowanie wynikające z asynchronicznego procesu, takiego jak udane logowanie.
-Pozwala to traktować nawigację analogicznie do innych form obsługi stanu w aplikacji i tworzenia wyświetlanego widoku jako jego wynik.
-
-Lista dostępnych adresów jest definiowana na podstawie hierarchii w kodzie źródłowym, gdzie foldery są traktowane jako ścieżki, a pliki jako podstrony.
-Aktualny adres URL jest wykorzystywany do znajdywania odpowiednich definicji tras zawierających komponenty, które są generowane w interfejsie użytkownika, jeżeli odpowiadają aktualnemu adresowi URL.
-Widoki nie są wysyłane do użytkownika razem z resztą kodu podczas inicjalizacji aplikacji, tylko są pobierane wraz z rozpoczęciem nawigacji lub kiedy użytkownik najedzie kursorem na link.
-To rozwiązanie zmniejsza rozmiar pobieranego kodu JavaScript, co skutkuje skróceniem czasu pierwszego ładowania aplikacji.
-
-Kiedy następuje nawigacja do strony lub użytkownik najedzie kursorem na link, uruchamiane są skrypty ładujące, które pobierają dane z serwera potrzebne do wygenerowania widoku.
-Wyniki skryptów ładujących są zapisywane w pamięci podręcznej, co pozwala na ich wykorzystanie bez ponownego pobierania, w przypadku kiedy nastąpi ponowna nawigacja do tej strony.
-Takie podejście znacząco przyspiesza proces przygotowywania widoku oraz zapewnia, że gdy nawigacja się zakończy, komponenty będą miały wszystkie wymagane dane.
-
-Przy próbie nawigacji użytkownika do widoku, który wymaga autentykacji w celu pobrania danych, nastąpi przekierowanie do strony logowania.
-Po udanym logowaniu nastąpi automatyczne przekierowanie na pierwotną stronę, do której było wymagane uwierzytelnienie użytkownika.
-Stan autentykacji przetrzymywany jest w globalnym kontekście, więc jest synchronizowany pomiędzy wszystkimi widokami i skryptami ładującymi.
-Skutecznie ograniczany jest dostęp do chronionych widoków oraz zapewnia poprawny przebieg procesu uwierzytelnienia użytkownika w przypadku kiedy jest on wymagany \autocite{tanstack_routeroverview}.
-
-\subsection{Formularze}
-
-Większość akcji realizowanych w aplikacji klienckiej polega na wypełnianiu formularzy, na przykład podczas tworzenia ogłoszenia.
-W celu ograniczenia obciążenia serwera związanego z przetwarzaniem nieprawidłowych danych, po stronie klienta zaimplementowano mechanizmy ich walidacji.
-Podobnie jak w przypadku backendu, walidacja odbywa się na podstawie porównania wprowadzonych danych z predefiniowanymi schematami.
-Proces walidacji uruchamiany jest przy pierwszej próbie wysłania formularza, a następnie przy każdej zmianie jego zawartości.
-Po pomyślnym przesłaniu formularza zostaje on zablokowany, a aplikacja inicjuje operację asynchroniczną, taką jak nawigacja do strony utworzonego ogłoszenia.
-
-Część pól formularzy stanowią pola wyboru zawierające wiele opcji pobieranych dynamicznie z serwera.
-Przykładowo, podczas tworzenia ogłoszenia, po wybraniu przez użytkownika marki pojazdu wysyłane jest zapytanie do serwera o listę dostępnych modeli.
-Po otrzymaniu odpowiedzi pole wyboru modelu pojazdu zostaje odblokowane i uzupełnione o pozyskane dane.
-Zastosowane rozwiązania zwiększają interaktywność aplikacji oraz wspierają użytkownika w procesie wypełniania formularzy.
-
-\subsection{Wygląd}
-
-Aplikacja kliencka charakteryzuje się prostym i spójnym interfejsem użytkownika, zaprojektowanym z myślą o czytelności i łatwości obsługi.
-Komponenty atomowe występują w wielu wariantach, które są dobierane w zależności od kontekstu ich użycia.
-Elementy interaktywne, takie jak przyciski oraz pola tekstowe, zmieniają swój wygląd w odpowiedzi na stan komponentu lub interakcję z użytkownikiem.
-Zmiany te obejmują między innymi najechanie kursorem, aktywację elementu, jego dezaktywację oraz stan ładowania treści.
-
-Zastosowana kolorystyka interfejsu zapewnia wysoki kontrast pomiędzy tłem a treścią, co pozytywnie wpływa na czytelność.
-Wszystkie komponenty aplikacji obsługują zarówno tryb jasny, jak i ciemny, który jest automatycznie dostosowywany do ustawień systemowych użytkownika.
-Dodatkowo aplikacja umożliwia ręczną zmianę trybu za pomocą przełącznika umieszczonego w nagłówku strony.
-Nagłówek jest dostępny na każdej podstronie i zapewnia szybki dostęp do elementów nawigacyjnych.
-
-\subsection{Wyświetlanie komunikatów}
-
-Podczas korzystania z aplikacji użytkownik może napotkać różnego rodzaju błędy, które są obsługiwane przez interfejsu użytkownika i prezentowane w postaci odpowiednich komunikatów.
-Problemy te mogą wynikać z nieprawidłowego wypełnienia formularzy, odpowiedzi serwera lub wewnętrznych błędów aplikacji, takich jak próba nawigacji do nieistniejącej strony.
-W zależności od kontekstu zdarzenia stosowane są różne mechanizmy generowania komunikatów o błędach \tabref{tab:frontendresponses}:
-%
-\begin{table}[h]
-    \centering
-    \tabcaption{Dostępne sposoby wyświetlania komunikatów w aplikacji klienckiej}{Opracowanie własne}
-    \begin{tabular}{|c|p{0.35\textwidth}|p{0.3\textwidth}|}
-        \hline
-        \textit{\textbf{Kontekst wystąpienia}} & \textbf{Powód błędu}                                                       & \textbf{Sposób wyświetlania}                                        \\
-        \hline
-        \textit{Formularz}                     & Nieprawidłowo wypełniony formularz został zatwierdzony przez użytkownika   & Pod błędnie wypełnionym polem czerwony napis co należy poprawić     \\
-        \hline
-        \textit{Odpowiedź serwera}             & Serwer zwrócił komunikat o błędzie w odpowiedzi dla przetwarzanego żądania & Komunikat wyświetlony jest w rogu ekranu jako notyfikacja o błędzie \\
-        \hline
-        \textit{Błąd aplikacji}                & Krytyczne błędy w logice aplikacji lub nawigacja do nieistniejącego widoku & Specjalny widok z treścią błędu i odnośnikiem do strony głównej     \\
-        \hline
-    \end{tabular}
-    \label{tab:frontendresponses}
-\end{table}
-
-\subsection{Wieloplatformowość}
-
-Aplikacja kliencka jest uruchamiana przez większość aktualnych przeglądarek internetowych.
-Każdy widok oraz zawarte w nich komponenty są responsywne, to znaczy dostosowują swój wygląd w zależności od wymiarów ekranu oraz orientacji urządzenia.
-Szczególną uwagę przywiązano do prawidłowej obsługi aplikacji na smartfonach, które są jedną z najczęściej wykorzystywanych platform przez użytkowników do przeglądania Internetu \autocite{statcounter_deviceshare}.
+Lorem ipusm

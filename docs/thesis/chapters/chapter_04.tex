@@ -1,137 +1,165 @@
-Realizacja założeń projektowych, obejmująca zaprojektowanie oraz implementację serwera i aplikacji klienckiej, wymagała zastosowania szeregu różnorodnych technologii.
-Dobór narzędzi oparty został o kryteria stabilności i sprawdzenia w praktyce, przy jednoczesnym uwzględnieniu nowoczesnych i aktualnie rozwijanych rozwiązań.
-Wykorzystane technologie są powszechnie dostępne, posiadają rozbudowaną dokumentację techniczną oraz mają charakter open source\footnote{Open source -- model wytwarzania oprogramowania, którego kod źródłowy jest publicznie dostępny.}.
-W niniejszym rozdziale technologie te zostały skategoryzowane według kontekstu ich zastosowania w procesie tworzenia funkcjonalnego rozwiązania.
+\section{Generowanie widoku po stronie klienta}
 
-\section{Język i środowisko uruchomieniowe}
-
-Zarówno warstwa frontendowa, jak i backendowa aplikacji zostały zaimplementowane z wykorzystaniem języka programowania \emph{JavaScript}.
-Zakres dostępnych funkcjonalności języka różni się w zależności od środowiska uruchomieniowego, w którym jest on wykorzystywany.
-W kontekście przeglądarek internetowych JavaScript umożliwia tworzenie dynamicznych i interaktywnych stron internetowych, na przykład poprzez interfejsy pozwalające na modyfikację generowanej treści.
-Niezależnie od środowiska, podstawowy zakres języka opiera się na standardzie ECMA-262 \autocite{ecma262}, który definiuje rdzeń jego funkcjonalności.
-JavaScript jako język programowania jest \autocite{mdn_javascript}:
-%
-\begin{itemize}
-    \item \textbf{wysokopoziomowy} -- opiera się na wysokim poziomie abstrakcji, który ukrywa właściwości architektury sprzętu,
-    \item \textbf{interpretowany} -- kod jest wykonywany bezpośrednio przez silnik, bez potrzeby jego kompilacji do pliku binarnego,
-    \item \textbf{dynamiczny} -- typy zmiennych są określane w czasie działania programu,
-    \item \textbf{oparty na prototypach} -- obiekty mogą dziedziczyć właściwości bezpośrednio od innych obiektów, bez potrzeby definiowania nowej klasy,
-    \item \textbf{z automatycznym zarządzaniem pamięcią} -- silnik samodzielnie zajmuje się obsługą pamięci, usuwając z niej zmienne, które nie są używane,
-    \item \textbf{wieloparadygmatowy} -- spełnia założenia języków: imperatywnych (program jest wykonywany sekwencyjnie), funkcyjnych (oparty o funkcje) i obiektowych (pozwala na tworzenie obiektów, przechowujących dane oraz metody).
-\end{itemize}
-
-Dynamiczne typowanie w języku JavaScript znacząco przyspiesza proces tworzenia oprogramowania oraz umożliwia elastyczne modyfikowanie struktur danych w trakcie działania programu.
-Jednocześnie takie podejście może prowadzić do zwiększonego ryzyka występowania błędów trudnych do zlokalizowania, wynikających z ograniczonej możliwości śledzenia wszystkich potencjalnych scenariuszy wykonania aplikacji.
-Dodatkowo kod źródłowy bywa mniej czytelny bez odpowiednio przygotowanej dokumentacji, której tworzenie jest czasochłonne, a jej jakość zależy od doświadczenia oraz staranności programisty.
-Problemy te nasilają się wraz ze wzrostem rozmiaru oraz stopnia złożoności projektu.
-Jednym z rozwiązań dla tych zagrożeń jest \emph{TypeScript}, czyli nadzbiór języka JavaScript, który wprowadza statyczne typowanie oraz mechanizmy jego weryfikacji na etapie kompilacji.
-Dodanie definicji typów nie powoduje istotnego zwiększenia objętości kodu źródłowego, ponieważ TypeScript wykorzystuje mechanizm inferencji typów, pozwalający na automatyczne wnioskowanie o typach zmiennych na podstawie ich kontekstu.
-W przypadku deklarowania obiektów lub parametrów funkcji możliwe jest jawne określenie typów, których zgodność jest sprawdzana przy każdym wywołaniu kompilacji \lstref{lst:tstheme}.
-TypeScript oferuje również narzędzia do definiowania zaawansowanych struktur typów, takich jak typy generyczne czy unie typów, równocześnie porównując je strukturalnie, dzięki czemu nie trzeba za każdym razem korzystać z pierwotnej definicji.
-Zastosowanie tej technologii umożliwia wykrycie znacznej części potencjalnych błędów jeszcze przed uruchomieniem programu, przy jednoczesnym zachowaniu oryginalnego rozmiaru i funkcjonowania kodu JavaScript generowanym na etapie końcowym \autocite{typescript_intro}.
+Do generacji aplikacji internetowej wykorzystywana jest przeglądarka użytkownika.
+Po wejściu na stronę serwer przekazuje minimalny dokument HTML, który zawiera jedynie punkt wejściowy aplikacji \lstref{lst:htmlindex}.
+Następnie pobrany zostaje plik z kodem \emph{JavaScript}, czyli skryptowym i dynamicznym językiem programowania, który jest wspierany przez przeglądarki.
+Skrypt jest odpowiedzialny za dalszą komunikację z serwerem oraz dynamiczne generowanie interfejsu użytkownika.
+Takie podejście umożliwia tworzenie interaktywnych aplikacji internetowych przy minimalnym wykorzystaniu zasobów serwera \autocite{mdn_csr}.
 %
 \lstinputlisting[
-    language=JavaScript,
-    caption={[Funkcja zmieniająca motyw kolorystyczny aplikacji ze zdefiniowanym typem jej argumentu]\lstcaption{Funkcja zmieniająca motyw kolorystyczny aplikacji ze zdefiniowanym typem jej argumentu}{Opracowanie własne}},
-    label={lst:tstheme},
-    morekeywords={type, Theme}
-]{theme.ts}
+    language=HTML,
+    caption={[Wygenerowany minimalny dokument HTML]\lstcaption{Wygenerowany minimalny dokument HTML}{Opracowanie własne}},
+    label={lst:htmlindex}
+]{index.html}
 
-Przeglądarki internetowe posiadają wbudowane silniki umożliwiające wykonywanie kodu JavaScript po stronie klienta, bez konieczności stosowania dodatkowych narzędzi.
-W warstwie serwerowej projektu wykorzystano środowisko uruchomieniowe \emph{Node.js}, które charakteryzuje się asynchronicznym modelem przetwarzania opartym na pętli zdarzeń.
-Node.js jest wykorzystywany do tworzenia aplikacji sieciowych i umożliwia definiowanie punktów końcowych serwera oraz przypisywanie im funkcji obsługujących przychodzące żądania.
-Zaletą tego środowiska jest efektywne zarządzanie zasobami systemowymi, wynikające z nieblokującego modelu wejścia-wyjścia oraz braku konieczności tworzenia osobnego wątku dla każdego połączenia.
-Komunikacja z klientem odbywa się za pomocą protokołu HTTP, natomiast przesyłanie większych ilości danych, takich jak pliki, realizowane jest przy użyciu mechanizmu strumieni \autocite{node_about}.
+Ponadto, w przypadku nawigacji w obrębie strony nie jest pobierany z serwera nowy dokument HTML, ponieważ pobrany JavaScript odpowiada za dynamiczną wymianę całej treści.
+W ten sposób nie następuje przeładowanie całej strony, a pobranie wymaganych danych z punktów końcowych udostępnianych przez serwer, które są użyte do zaktualizowania interfejsu użytkownika.
+Eliminowane są opóźnienia, które wynikałyby z konieczności ładowania nowej strony od podstaw oraz istnieje możliwość ciągłego dostarczania usługi użytkownikowi w trakcie nawigacji.
 
-Tworzenie części klienckiej projektu zostało oparte na narzędziu \emph{Vite}, służącym do budowania aplikacji frontendowych.
-Jego główną zaletą jest szybkie uruchamianie się środowiska deweloperskiego, osiągane dzięki priorytetyzacji ładowania wymaganych modułów oraz przeniesieniu części pracy do przeglądarki.
-Ponadto w przypadku aktualizacji kodu źródłowego nie następuje ponowne załadowanie całej aplikacji, lecz jedynie modułów, które podlegały zmianom, niezależnie od rozmiaru projektu.
-Na etapie budowania rozwiązania do wydania produkcyjnego, Vite dzieli kod na fragmenty oraz poddaje go optymalizacji, co przekłada się na wysoką wydajność finalnej aplikacji \autocite{vite_why}.
+\section{Podejście atomowe w tworzeniu komponentów}
 
-\section{Struktura aplikacji}
+W budowaniu widoku strony wykorzystano \emph{komponenty}, czyli wyizolowane fragmenty interfejsu użytkownika.
+Budowa komponentów opiera się na tworzeniu niezależnych modułów, z własną strukturą, logiką oraz warstwą wizualną.
+Rozwiązanie to znacząco poprawia organizację oraz czytelność kodu źródłowego.
+Możliwość wielokrotnego wykorzystania tych fragmentów przyspiesza proces tworzenia aplikacji oraz zapewnia, że wprowadzone zmiany i poprawki będą propagowane wszędzie, gdzie zostały one zaimplementowane.
 
-W celu uproszczenia pracy z serwerem korzystającym z Node.js wykorzystano bibliotekę \emph{Express}, która dostarcza narzędzia do tworzenia serwerów HTTP.
-Biblioteka ta umożliwia mapowanie punktów końcowych serwera na funkcje obsługujące żądania oraz stosowanie funkcji pośredniczących \lstref{lst:jsadvert}.
-Mapowanie realizowane jest poprzez definiowanie tras na podstawie typu żądania HTTP oraz adresu URL, co pozwala na modułowe podejście do tworzenia aplikacji.
-Adresy tras mogą zawierać parametry, które są automatycznie przekształcane przez Express w zmienne dostępne w funkcjach obsługujących żądania.
-Funkcje pośredniczące są wykonywane sekwencyjnie, zgodnie z kolejnością ich definicji, przed wywołaniem właściwej funkcji przetwarzającej żądanie.
-Dostępnych jest wiele predefiniowanych funkcji w postaci bibliotek, przykładowo akceptująca tylko te zapytania, które przesyłają dane w formacie JSON, lub przechwytująca informacje zawarte w plikach cookie i umieszczająca je w łatwo dostępnych zmiennych \autocite{express_readme}.
+W projektowaniu komponentów wykorzystano metodologię \emph{Atomic Design}, opierającą się na analogii elementów interfejsu użytkownika do konceptów znanych z chemii \autocite{atomicdesign}.
+Komponenty są uporządkowane hierarchicznie w ramach określonych kategorii, które różnią się zakresem odpowiedzialności, stopniem złożoności oraz rozmiarem.
+W zależności od implementacji kryteria oraz liczba kategorii mogą się różnić, natomiast zrealizowany projekt wykorzystuje pełen zestaw dostępnych poziomów \tabref{tab:atomicats}.
+Zastosowanie tej metodologii zachowuje spójność interfejsu użytkownika, zwiększa reużywalność komponentów oraz ułatwia skalowanie projektu.
 %
-\lstinputlisting[
-    language=JavaScript,
-    caption={[Zdefiniowany punkt końcowy dla aktualizacji ogłoszenia z wykorzystaniem Express]\lstcaption{Zdefiniowany punkt końcowy dla aktualizacji ogłoszenia z wykorzystaniem Express}{Opracowanie własne}},
-    label={lst:jsadvert},
-]{advert.js}
+\begin{table}[h]
+    \centering
+    \tabcaption{Omówienie poszczególnych kategorii komponentów interfejsu użytkownika}{Opracowanie własne na podstawie \citetitle{atomicdesign} \space \autocite{atomicdesign}}
+    \begin{tabular}{|c|p{0.5\textwidth}|l|}
+        \hline
+        \textit{\textbf{Kategoria}} & \textbf{Charakterystyka}                                                           & \textbf{Przykład w projekcie} \\
+        \hline
+        \textit{Atoms}              & Niepodzielne elementy interfejsu, często bezstanowe, związane z tagami HTML        & <Button />                    \\
+        \hline
+        \textit{Molecules}          & Złożone z atomów, wyspecjalizowane do konkretnych zadań, często posiadają stany    & <Pagination />                \\
+        \hline
+        \textit{Organisms}          & Kompleksowe zbiory elementów interfejsu, wielozadaniowe, posiadają własny kontekst & <Header />                    \\
+        \hline
+        \textit{Templates}          & Definiuje rozmieszczenie komponentów na stronie bez ingerencji danych              & <SimpleFeedback />            \\
+        \hline
+        \textit{Pages}              & Pełne widoki stworzone z komponentów, uzupełnione o pozyskane dane                 & <Login />                     \\
+        \hline
+    \end{tabular}
+    \label{tab:atomicats}
+\end{table}
 
-Frontend aplikacji został zrealizowany przy użyciu biblioteki \emph{React}, przeznaczonej do budowy interfejsów użytkownika w oparciu o komponenty.
-React wykorzystuje podejście deklaratywne, to znaczy wyłączające skutki uboczne z procesu generowania wyniku jakim jest strona.
-Finalny widok stanowi wynik działania funkcji generującej, której argumentem jest aktualny zestaw stanów.
-Programista nie manipuluje bezpośrednio strukturą interfejsu użytkownika, lecz zarządza dostępnymi stanami, a biblioteka React odpowiada za odpowiednią aktualizację widoku.
-Skutki uboczne, takie jak sprawdzenie wygenerowanego drzewa HTML lub wywołanie operacji asynchronicznej, mogą być wywoływane na skutek zmiany stanu, a ich wynikiem może być nowy stan \figref{fig:reactlifecycle}:
+\section{Kompozycja elementów interfejsu}
+
+Przy tworzeniu komponentów wykorzystano kompozycję, czyli budowanie funkcjonalności poprzez składanie modułów aplikacji ze sobą.
+Ze względu na wynikającą z budowania stron internetowych architekturę drzewa, komponenty mogą przyjmować elementy interfejsu jako jego zawartość.
+Taki komponent nie posiada informacji o tym, jakie elementy są przez niego kontrolowane, natomiast decyduje o tym, gdzie wewnątrz swojej struktury je umieści.
+Ponadto analogicznie do funkcji, komponenty mogą przyjmować argumenty, które mogą modyfikować generowany przez nich fragment strony.
+
+Oprócz tworzenia interfejsu, kompozycja występuje również na poziomie konstruowania logiki, dzięki współdzielonym funkcjom rozszerzania logiki komponentów.
+Poprzez ich podłączenie komponent przykładowo może korzystać z informacji kontekstowych bez podawania ich w argumentach.
+
+Zarówno kompozycja interfejsu, jak i logiki, znacząco zwiększa reużywalność elementów aplikacji pozwalając łączyć ich funkcje w nowych komponentach.
+Zmniejszona jest również zależność elementów rozwiązania od siebie, co upraszcza pracę z kodem źródłowym oraz naturalnie skaluje się z rozmiarem aplikacji \autocite{medium_reactcomposition}.
+
+\section{Komunikacja z backendem}
+
+Komunikacja z serwerem realizowana jest za pomocą asynchronicznych zapytań HTTP, zgodnie z architekturą REST.
+W przypadku poprawnego przetworzenia żądania zwracana jest odpowiedź w formacie JSON, której struktura zależy od wywołanego punktu końcowego oraz zastosowanej metody HTTP.
+Zależnie od typu żądania aplikacja kliencka może otrzymać dane potrzebne do generowania interfejsu bądź informację o udanym przeprocesowaniu zapytania, którą może wyświetlić użytkownikowi.
+
+Dane zwracane przez serwer, wykorzystywane do generowania interfejsu użytkownika, są zapisywane w pamięci podręcznej aplikacji klienckiej na określony czas.
+Mechanizm ten umożliwia ograniczenie liczby redundantnych żądań wysyłanych do serwera oraz zapewnia natychmiastowy dostęp do wymaganych danych.
+Czas przechowywania wyników poszczególnych zapytań jest konfigurowany indywidualnie, w zależności od oczekiwanej częstotliwości ich odświeżania.
+Ponadto pamięć podręczna jest globalna, dzięki czemu jej zawartość nie jest tracona w trakcie działania aplikacji i może być współdzielona pomiędzy wieloma widokami.
+
+Do każdego żądania dołączana jest zawartość plików cookie, która może zawierać token dostępu wymagany do wykonania większości operacji.
+Token generowany jest w procesie logowania i pozostaje ważny do momentu jego wygaśnięcia, umożliwiając wywoływanie żądań zgodnie z uprawnieniami przypisanymi do roli użytkownika.
+W przypadku wygaśnięcia tokenu dostępu kolejne żądanie zostaje odrzucone przez serwer, który zwraca odpowiedź błędu zawierającą informację o nieprawidłowym lub nieważnym tokenie.
+W takiej sytuacji aplikacja kliencka automatycznie wysyła żądanie do punktu końcowego odpowiedzialnego za odświeżanie tokenu \figref{fig:jwtrefresh}.
+W zależności od rezultatu tej operacji użytkownik otrzymuje informację o konieczności ponownego uwierzytelnienia lub w przypadku powodzenia, pierwotne żądanie zostaje wysłane ponownie i przetworzone w standardowy sposób.
 %
 \begin{figure}[h]
     \centering
-    \includegraphics[width=0.95\textwidth]{react_lifecycle}
-    \figcaption{Schemat aktualizacji widoku poprzez stan w React}{Opracowanie własne}
-    \label{fig:reactlifecycle}
+    \includegraphics[width=0.8\textwidth]{jwt-refresh_process}
+    \figcaption{Przykładowy proces wykorzystania tokenu odświeżającego, gdzie: SPA - aplikacja kliencka, RS - serwer zasobów, AS - serwer autentykacyjny, AT - token dostępu, RT - token odświeżający}{\cite{auth0_jwtrefresh}}
+    \label{fig:jwtrefresh}
 \end{figure}
 
-Widok w React jest budowany z komponentów, czyli wydzielonych fragmentów interfejsu użytkownika z własną logiką oraz wyglądem.
-Komponenty są modyfikowane poprzez zmianę ich wewnętrznego stanu lub przekazanie go w argumencie \emph{props}.
-Wynikiem działania komponentu jest wygenerowanie kodu HTML, dlatego React wykorzystuje specjalną składnię JSX\footnote{JSX -- nakładka na kod JavaScript, wykorzystująca czytelne tagi HTML do opisywania elementów i komponentów, ukrywająca tym samym modyfikacje drzewa poprzez natywne funkcje.}.
-W celu tworzenia większych struktur z komponentów, wystarczy zagnieździć jeden we wnętrzu drugiego i przekazać wymagane argumenty props, wtedy będzie dostępny z poziomu pola \emph{children} \lstref{lst:jsxcomponent}:
+\section{Nawigacja}
+
+Nawigacja użytkownika odbywa się w obrębie jednej strony, której widok i adres URL jest kontrolowany przez JavaScript, stwarzając wrażenie przechodzenia pomiędzy widokami bez przeładowywania dokumentu.
+Adres URL jest traktowany jako stan aplikacji, który jest modyfikowany poprzez korzystanie z linków przez użytkownika lub przekierowanie wynikające z asynchronicznego procesu, takiego jak udane logowanie.
+Pozwala to traktować nawigację analogicznie do innych form obsługi stanu w aplikacji i tworzenia wyświetlanego widoku jako jego wynik.
+
+Lista dostępnych adresów jest definiowana na podstawie hierarchii w kodzie źródłowym, gdzie foldery są traktowane jako ścieżki, a pliki jako podstrony.
+Aktualny adres URL jest wykorzystywany do znajdywania odpowiednich definicji tras zawierających komponenty, które są generowane w interfejsie użytkownika, jeżeli odpowiadają aktualnemu adresowi URL.
+Widoki nie są wysyłane do użytkownika razem z resztą kodu podczas inicjalizacji aplikacji, tylko są pobierane wraz z rozpoczęciem nawigacji lub kiedy użytkownik najedzie kursorem na link.
+To rozwiązanie zmniejsza rozmiar pobieranego kodu JavaScript, co skutkuje skróceniem czasu pierwszego ładowania aplikacji.
+
+Kiedy następuje nawigacja do strony lub użytkownik najedzie kursorem na link, uruchamiane są skrypty ładujące, które pobierają dane z serwera potrzebne do wygenerowania widoku.
+Wyniki skryptów ładujących są zapisywane w pamięci podręcznej, co pozwala na ich wykorzystanie bez ponownego pobierania, w przypadku kiedy, nastąpi ponowna nawigacja do tej strony.
+Takie podejście znacząco przyspiesza proces przygotowywania widoku oraz zapewnia, że gdy nawigacja się zakończy, komponenty będą miały wszystkie wymagane dane.
+
+Przy próbie nawigacji użytkownika do widoku, który wymaga autentykacji w celu pobrania danych, nastąpi przekierowanie do strony logowania.
+Po udanym logowaniu nastąpi automatyczne przekierowanie na pierwotną stronę, do której było wymagane uwierzytelnienie użytkownika.
+Stan autentykacji przetrzymywany jest w globalnym kontekście, więc jest synchronizowany pomiędzy wszystkimi widokami i skryptami ładującymi.
+Skutecznie ograniczany jest dostęp do chronionych widoków oraz zapewnia poprawny przebieg procesu uwierzytelnienia użytkownika w przypadku, kiedy jest on wymagany \autocite{tanstack_routeroverview}.
+
+\section{Formularze}
+
+Większość akcji realizowanych w aplikacji klienckiej polega na wypełnianiu formularzy, na przykład podczas tworzenia ogłoszenia.
+W celu ograniczenia obciążenia serwera związanego z przetwarzaniem nieprawidłowych danych, po stronie klienta zaimplementowano mechanizmy ich walidacji.
+Podobnie jak w przypadku backendu, walidacja odbywa się na podstawie porównania wprowadzonych danych z predefiniowanymi schematami.
+Proces walidacji uruchamiany jest przy pierwszej próbie wysłania formularza, a następnie przy każdej zmianie jego zawartości.
+Po pomyślnym przesłaniu formularza zostaje on zablokowany, a aplikacja inicjuje operację asynchroniczną, taką jak nawigacja do strony utworzonego ogłoszenia.
+
+Część pól formularzy stanowią pola wyboru zawierające wiele opcji pobieranych dynamicznie z serwera.
+Przykładowo, podczas tworzenia ogłoszenia, po wybraniu przez użytkownika marki pojazdu wysyłane jest zapytanie do serwera o listę dostępnych modeli.
+Po otrzymaniu odpowiedzi pole wyboru modelu pojazdu zostaje odblokowane i uzupełnione o pozyskane dane.
+Zastosowane rozwiązania zwiększają interaktywność aplikacji oraz wspierają użytkownika w wypełnianiu formularzy.
+
+\section{Wygląd}
+
+Aplikacja kliencka charakteryzuje się prostym i spójnym interfejsem użytkownika, zaprojektowanym z myślą o czytelności i łatwości obsługi.
+Komponenty atomowe występują w wielu wariantach, które są dobierane w zależności od kontekstu ich użycia.
+Elementy interaktywne, takie jak przyciski oraz pola tekstowe, zmieniają swój wygląd w odpowiedzi na stan komponentu lub interakcję z użytkownikiem.
+Zmiany te obejmują między innymi najechanie kursorem, aktywację elementu, jego dezaktywację oraz stan ładowania treści.
+
+Zastosowana kolorystyka interfejsu zapewnia wysoki kontrast pomiędzy tłem a treścią, co pozytywnie wpływa na czytelność.
+Wszystkie komponenty aplikacji obsługują zarówno tryb jasny, jak i ciemny, który jest automatycznie dostosowywany do ustawień systemowych użytkownika.
+Dodatkowo aplikacja umożliwia ręczną zmianę trybu za pomocą przełącznika umieszczonego w nagłówku strony.
+Nagłówek jest dostępny na każdej podstronie i zapewnia szybki dostęp do elementów nawigacyjnych.
+
+\section{Wyświetlanie komunikatów}
+
+Podczas korzystania z aplikacji użytkownik może napotkać różnego rodzaju błędy, które są obsługiwane przez interfejsu użytkownika i prezentowane w postaci odpowiednich komunikatów.
+Problemy te mogą wynikać z nieprawidłowego wypełnienia formularzy, odpowiedzi serwera lub wewnętrznych błędów aplikacji, takich jak próba nawigacji do nieistniejącej strony.
+W zależności od kontekstu zdarzenia stosowane są różne mechanizmy generowania komunikatów o błędach \tabref{tab:frontendresponses}:
 %
-\lstinputlisting[
-    language=JavaScript,
-    caption={[Prosty komponent przyjmujący argument props, w którego skład wchodzi pole children]\lstcaption{Prosty komponent przyjmujący argument props, w którego skład wchodzi pole children}{Opracowanie własne}},
-    label={lst:jsxcomponent},
-]{Input.jsx}
+\begin{table}[h]
+    \centering
+    \tabcaption{Dostępne sposoby wyświetlania komunikatów w aplikacji klienckiej}{Opracowanie własne}
+    \begin{tabular}{|c|p{0.35\textwidth}|p{0.3\textwidth}|}
+        \hline
+        \textit{\textbf{Kontekst wystąpienia}} & \textbf{Powód błędu}                                                       & \textbf{Sposób wyświetlania}                                        \\
+        \hline
+        \textit{Formularz}                     & Nieprawidłowo wypełniony formularz został zatwierdzony przez użytkownika   & Pod błędnie wypełnionym polem czerwony napis co należy poprawić     \\
+        \hline
+        \textit{Odpowiedź serwera}             & Serwer zwrócił komunikat o błędzie w odpowiedzi dla przetwarzanego żądania & Komunikat wyświetlony jest w rogu ekranu jako notyfikacja o błędzie \\
+        \hline
+        \textit{Błąd aplikacji}                & Krytyczne błędy w logice aplikacji lub nawigacja do nieistniejącego widoku & Specjalny widok z treścią błędu i odnośnikiem do strony głównej     \\
+        \hline
+    \end{tabular}
+    \label{tab:frontendresponses}
+\end{table}
 
-Komponenty mogą być modyfikowane poprzez \emph{hooks}, czyli funkcjom rozszerzania logiki komponentów, umieszczanym na początku definicji komponentu, a najważniejsze z nich to:
-%
-\begin{itemize}
-    \item \textbf{useState} -- zwraca aktualną wartość stanu oraz funkcję wywołującą jego zmianę,
-    \item \textbf{useEffect} -- przyjmuje funkcję, którą ma wywołać jako skutek uboczny i listę stanów, przy których zmianie zostanie wywołana,
-    \item \textbf{useContext} -- przyjmuje definicję kontekstu, do którego ma się odwołać i zwraca wartości przez niego przechowywane,
-    \item \textbf{useRef} -- zwraca obiekt służący do obserwowania elementów niewykorzystywanych w budowaniu interfejsu użytkownika.
-\end{itemize}
-%
-Istnieje również możliwość tworzenia własnych hooks w celu stworzenia modułu poszerzającego logikę komponentów, natomiast muszą one opierać swoje działanie o te podstawowe \lstref{lst:jsxhook}.
-Silnik React przy każdej zmianie stanu tworzy odzwierciedlenie prawdziwego drzewa HTML w JavaScript nazywany \emph{Virtual DOM}.
-Drzewo to jest następnie porównywane z wygenerowanym faktycznym drzewem HTML i na podstawie różnic, są wymieniane tylko te fragmenty, które uległy zmianie.
-Taki proces jest znacznie bardziej wydajny, niż podmiana całego drzewa na stronie \autocite{react_doc}.
-%
-\lstinputlisting[
-    language=JavaScript,
-    caption={[Własny hook do wykrywania widoczności elementu HTML w oknie przeglądarki]\lstcaption{Własny hook do wykrywania widoczności elementu HTML w oknie przeglądarki}{Opracowanie własne}},
-    label={lst:jsxhook},
-]{useViewportVisibility.js}
+\section{Wieloplatformowość}
 
-Aplikacja kliencka jest jednostronicowa, co oznacza, że nawigacja nie odbywa się poprzez wysyłanie zapytań HTTP o nowy dokument HTML.
-Narzędziem wykorzystanym w projekcie w ramach obsługi nawigacji jest \emph{Tanstack Router}.
-Biblioteka ta oferuje pełne wsparcie TypeScript, dzięki czemu definicje tras, parametrów i wyszukiwania są zgodne w interfejsie nawigacyjnym na całym projekcie.
-Wraz z tworzeniem aplikacji, działa skrypt przeszukujący pliki podstron w folderze \emph{rotues} i na podstawie ich ścieżek, generuje ich definicje w środowisku.
-Komponenty tras są automatycznie oddzielane od ich definicji i są ładowane dynamicznie, kiedy istnieje taka potrzeba, dzięki czemu zmniejsza się rozmiar pierwszego pliku JavaScript.
-Parametry wyszukiwania są parsowane jako JSON, przez co dostęp do ich wartości i ich walidacja odbywa się bez nieprzewidzianych błędów.
-Można definiować warunki ładowania tras oraz korzystać z opcji przechowywania ich w pamięci podręcznej, co skutkuje szybszym działaniem aplikacji.
-Każdy z tych elementów znacząco się przykłada do pozytywnego doświadczenia dewelopera pracującego z narzędziem i co za tym idzie skuteczniejszego tworzenia kodu źródłowego \autocite{tanstack_routeroverview}.
+Aplikacja kliencka jest uruchamiana przez większość aktualnych przeglądarek internetowych.
+Każdy widok oraz zawarte w nich komponenty są responsywne, to znaczy dostosowują swój wygląd w zależności od wymiarów ekranu oraz orientacji urządzenia.
+Szczególną uwagę przywiązano do prawidłowej obsługi aplikacji na smartfonach, które są jedną z najczęściej wykorzystywanych platform przez użytkowników do przeglądania Internetu \autocite{statcounter_deviceshare}.
 
-\section{Komunikacja klient-serwer}
+\section{Spis ekranów}
 
-Axios, JWT Token, Multer, Tanstack Query...
-
-\section{Walidacja formularzy i bezpieczeństwo danych}
-
-Zod, Bcrypt, Tanstack Form...
-
-\section{Interfejs użytkownika}
-
-Headless UI, Tailwind CSS...
-
-\section{Przechowywanie danych i integracje zewnętrzne}
-
-Resend, MongoDB (Atlas)...
-
-\section{Narzędzia wspomagające tworzenie projektu}
-
-VSCode, Prettier, ESLint, Git, Postman...
+Lorem ipusm
