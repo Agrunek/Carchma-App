@@ -1,1 +1,79 @@
-Lorem ipsum
+\section{Tło projektu}
+
+Rynek motoryzacyjny jest jednym z kluczowych sektorów, wywierających wpływ na polską gospodarkę, a jego znaczenie rośnie co roku.
+W samym 2025 liczba zarejestrowanych samochodów osobowych w Polsce wyniosła 4\,249\,151 sztuk, czyli o 3\% więcej niż w roku 2024 \autocite{otomoto_2025}.
+Istotną część polskiej branży motoryzacyjnej pełni rynek wtórny, na którym sprzedano łącznie 3\,345\,928 używanych samochodów w 2025 roku \figref{fig:automotivemarket}.
+Średni wiek pojazdu osobowego sprzedanego na takim rynku wynosił 11 lat, a średni przebieg ponad 168 tysięcy kilometrów.
+Rynek ten jest bardzo dynamiczny, ponieważ średni czas sprzedaży samochodu osobowego zajmował około 40 dni \autocite{aaaauto_2025}.
+%
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.8\textwidth]{automotive-secondary-market_2025}
+    \figcaption{Wysokość sprzedaży oraz średniej ceny samochodów na polskim rynku wtórnym w 2025 roku}{\cite{aaaauto_2025}}
+    \label{fig:automotivemarket}
+\end{figure}
+
+W celu znalezienia auta nadającego się do zakupu, Polacy często wybierają serwisy internetowe z ogłoszeniami o sprzedaży samochodów.
+Przykładowo serwis OtoMoto odnotował, w grudniu 2025 roku, ponad 11 milionów unikalnych odwiedzin witryny \autocite{otomoto_2025}.
+Pomimo popularności tych serwisów, większość kupujących wyraża chęć osobistej inspekcji auta przed zakupem.
+Badanie przeprowadzone przez \emph{carVertical} wskazuje na to, że ponad 80\% polskich respondentów przyznało, że nie ufa sprzedawcom.
+Wynika to często z negatywnych doświadczeń, w których pojazdy miały cofane liczniki przebytych kilometrów lub zatajone szkody \autocite{motofaktor_trust}.
+
+\section{Istniejące serwisy}
+
+\subsection{OtoMoto}
+
+Serwis \emph{OtoMoto} jest liderem w sektorze kupna i sprzedaży pojazdów, zarówno nowych jak i używanych.
+Ogłoszenia tam mogą wystawiać osoby prywatne, komisy oraz autoryzowani dealerzy marek.
+Serwis cechuje się zaawansowaną wyszukiwarką z licznymi filtrami, które pozwalają dokładnie przeglądać dostępne ogłoszenia.
+Dodatkowym atutem jest fakt, że ogłoszenia mogą zostać oznaczone jako zweryfikowane pod względem zgodności danych ze stanem faktycznym.
+Większość ogłoszeń jednak jej nie podlega, przez co kupujący często spotykają się z ogłoszeniami, które wykorzystują nieuczciwe praktyki.
+Ponadto serwis w wynikach wyszukiwania wyróżnia oferty, które nie są w pełni zgodne z filtrami, ale zostały odpowiednio opłacone przez podmioty je wystawiające.
+Sam wymóg uiszczenia opłaty za listowanie ogłoszenia na serwisie, jest wątpliwe w skuteczności zapobiegania nieuczciwym praktykom.
+Użytkownicy nie mają narzędzi do przeciwstawiania się takim ofertom innych niż zgłoszenie ogłoszenia, które posiada wątpliwą skuteczność.
+Sprzedający są anonimowi, a użytkownicy nie mają dostępu do historii wystawianych przez nich ofert.
+
+\subsection{OLX}
+
+Jednym z najpopularniejszych serwisów do wystawiania ogłoszeń o sprzedaży jest portal \emph{OLX}.
+Nie jest to w pełni skoncentrowany na motoryzacji serwis, natomiast są na nim kategorie obejmujące sprzedaż pojazdów mechanicznych.
+Serwis posiada rozbudowany zakres filtrów dla ogłoszeń, w tym zakładki pozwalające podzielić wyniki wyszukiwania na prywatnych sprzedawców oraz firmy.
+Możliwości weryfikacji ogłoszeń są ograniczone do zera, a zespół moderujący treści na stronie jest nieskuteczny w usuwaniu nieuczciwych ofert.
+Serwis również stosuje wyróżnianie wyników, zależne od wniesionych przez sprzedawców opłaty, jednak stawki są niezależne od wartości sprzedawanego pojazdu i niższe niż w przypadku OtoMoto.
+Sprzedawcy posiadają profile, w których można sprawdzić aktualne oferty, ale ich archiwum nie jest udostępniane.
+Serwis natomiast posiada możliwość wystawiania ocen, jednak tylko po zakończeniu atrakcji, co jest znacząco niewystarczające w kontekście motoryzacyjnym.
+Problemem serwisu jest również fakt, że udostępnia on ogłoszenia z portalu OtoMoto, przez co przeglądanie wyników wyszukiwania jest wolniejsze ze względu na przenoszenie do zewnętrznego serwisu.
+Ponadto, takie działanie skutkuje tym, że kupujący widzą to samo ogłoszenie ponownie, co utrudnia szukanie odpowiedniej oferty.
+
+\subsection{Allegro}
+
+Popularną internetową platformą handlową jest serwis \emph{Allegro}, który posiada specjalną kategorię dla ogłoszeń motoryzacyjnych.
+W przeciwieństwie do innych produktów, platforma nie pośredniczy w transakcjach pomiędzy sprzedawcą i kupującym, a udostępnia jedynie możliwość publikowania ofert.
+Z tego też powodu, działający na serwisie system ochrony kupujących nie obejmuje zakupu pojazdów i wsparcia w przypadku oszustwa.
+Podobnie jak w przypadku innych serwisów, wystawianie ogłoszeń jest odpłatne z dodatkowymi ofertami promocji.
+Serwis udostępnia wiele filtrów dla manipulacji wynikami wyszukiwania zgodnych z innymi kategoriami, natomiast w przypadku motoryzacji są bardzo niewygodne w użyciu.
+Zespół moderujący nie weryfikuje ogłoszeń pod względem ich zgodności ze stanem faktycznym, natomiast występują tam rozbudowane narzędzia do tworzenia zgłoszeń.
+Analogicznie jak na serwisie OLX, kupujący mogą wystawiać opinie dopiero po zakupie, co nie sprawdza się dla samochodów osobowych.
+
+\section{Cel i zakres pracy}
+
+Celem niniejszej pracy jest wytworzenie rozwiązania, które skupiałoby się na poprawieniu obecnej sytuacji kupujących, na rynku wtórnym sprzedaży pojazdów mechanicznych.
+Wymienione serwisy nie posiadają wystarczających narzędzi, aby kupujący mogli ochronić się przed nieuczciwymi praktykami sprzedających.
+Równocześnie istniejące systemy moderowania treści nie są w stanie zapewnić im wymaganego bezpieczeństwa.
+
+Pierwotnym założeniem projektu było stworzenie nakładki, rozszerzającej funkcjonalności obecnych serwisów o system wystawiania opinii z poziomu odrębnej platformy.
+Klienci docelowi mogliby wyszukiwać oferty z poziomu takiej nakładki, połączonej interfejsem programowania aplikacji z portalami ogłoszeń o sprzedaży samochodów, a następnie sprawdzać opinie innych użytkowników na ich temat.
+Jeżeli społeczność serwisu nie miałaby zastrzeżeń co do wystawionej oferty, wtedy można by było wybrać dane ogłoszenie i zostać przekierowanym na właściwy serwis, na którym zostało ono wystawione.
+Jednak serwisy te nie wystawiają swoich interfejsów publicznie do sieci, a dostęp do nich albo nie jest darmowy albo w ogóle nie udostępniany dla prywatnych podmiotów, więc projekt w tej postaci nie mógł zostać zrealizowany.
+
+Niniejsza praca polega na stworzeniu serwisu z ogłoszeniami o sprzedaży samochodów, który będzie posiadał narzędzia ułatwiające przeciwdziałanie oszustom.
+Realizacja tego rozwiązania opiera się na spełnieniu poniższych wymagań funkcjonalnych:
+%
+\begin{itemize}
+    \item możliwość zamieszczania komentarzy oraz ocen pod ofertami,
+    \item system reputacji bazujący na wszystkich dotychczasowych ofertach sprzedawcy oraz pozycjonowanie ogłoszeń na jego podstawie,
+    \item archiwum ogłoszeń danego sprzedającego, które jest publicznie dostępne,
+    \item pozycjonowanie opinii na podstawie czynników takich jak, czy użytkownik był na oględzinach pojazdu,
+    \item skuteczna wyszukiwarka ofert, które interesują użytkowników,
+    \item system weryfikowania, moderowania oraz zgłaszania ofert oraz opinii.
+\end{itemize}
