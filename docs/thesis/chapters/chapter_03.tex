@@ -154,7 +154,22 @@ W oparciu o te założenia zostały utworzone następujące modele danych:
 
 \section{Diagram bazy danych}
 
-Lorem ipusm
+Poniższy diagram przedstawia wszystkie kolekcje przechowywane w bazie danych oraz relacje między nimi \figref{fig:dbdiagram}:
+%
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.95\textwidth]{db_diagram}
+    \figcaption{Wygenerowany diagram na podstawie wykorzystanej bazy danych}{Opracowanie własne}
+    \label{fig:dbdiagram}
+\end{figure}
+
+Większość modeli jest bezpośrednio związane z poszczególnymi kolekcjami, poza jedną.
+Wyjątkiem są zdjęcia, które przechowywane są w dwóch kolekcjach:
+%
+\begin{itemize}
+    \item \textbf{fs.files} -- nazwa pliku, jego rozmiar oraz inne metadane,
+    \item \textbf{fs.chunks} -- sfragmentaryzowana zawartość w formacie binarnym.
+\end{itemize}
 
 \section{Spis punktów końcowych}
 
