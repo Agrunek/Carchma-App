@@ -216,7 +216,13 @@ Biblioteka dobrze integruje się z zod co pozwala na łatwe stworzenie zaawansow
 
 \subsection{Interfejs użytkownika}
 
-Headless UI, Tailwind CSS...
+Budowanie odpowiedniego interfejsu użytkownika opiera się nie tylko na warstwie wizualnej, lecz również na zapewnieniu zgodności z wymaganiami dotyczącymi dostępności.
+W tym celu wykorzystano bibliotekę \emph{Headless UI}, której główną zaletą są w pełni nieostylowane komponenty, skupione na dostępności oraz poprawnej obsłudze interakcji.
+Biblioteka nie narzuca wyglądu komponentów, co umożliwia ich łatwe dostosowanie do docelowej aplikacji, przy jednoczesnym wykorzystaniu udostępnianych przez nią stanów komponentów.
+Headless UI udostępnia również komponent \emph{Transition}, pozwalający na implementację prostych animacji związanych z pojawianiem się oraz ukrywaniem elementów w interfejsie użytkownika.
+W celu nadania warstwy wizualnej zastosowano bibliotekę \emph{Tailwind CSS}, która umożliwia stylowanie komponentów bez konieczności korzystania z tradycyjnych arkuszy stylów.
+Wykorzystywany jest mechanizm nadawania atomowych klas bezpośrednio w poziomu kodu komponentów oraz łączenia ich ze sobą.
+Ponadto biblioteka posiada wbudowaną obsługę responsywności poprzez system prefiksów, a rozmiar generowanego arkusza stylów sprawnie skaluje się wraz z rozmiarem projektu \autocite{tailwind_doc}.
 
 \subsection{Przechowywanie danych i integracje zewnętrzne}
 
