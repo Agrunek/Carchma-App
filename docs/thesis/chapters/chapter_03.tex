@@ -173,4 +173,171 @@ Wyjątkiem są zdjęcia, które przechowywane są w dwóch kolekcjach:
 
 \section{Spis punktów końcowych}
 
-Lorem ipusm
+Utworzony w ramach projektu serwer udostępnia łącznie 30 punktów końcowych, które pozwalają aplikacji klienckiej na komunikacje z nim.
+Wszystkie zostały opisane w tabelach poniżej, skategoryzowane na podstawie ich adresu bazowego.
+Parametry podawane w treści zapytania oraz po adresie URL zostały celowo pominięte dla czytelności.
+
+\subsection{Autentykacja}
+
+Punkty końcowe do obsługi autentykacji \tabref{tab:authendpoints}:
+%
+\begin{table}[h]
+    \centering
+    \tabcaption{Dostępne punkty końcowe udostępniane przez serwer do obsługi autentykacji}{Opracowanie własne}
+    \begin{tabular}{|p{0.105\textwidth}|p{0.41\textwidth}|p{0.4\textwidth}|}
+        \hline
+        \textbf{Metoda} & \textbf{Adres URL}                     & \textbf{Zastosowanie}            \\
+        \hline
+        POST            & \nolinkurl{/auth/register}             & Rejestracja do serwisu           \\
+        \hline
+        POST            & \nolinkurl{/auth/login}                & Logowanie użytkownika            \\
+        \hline
+        POST            & \nolinkurl{/auth/refresh}              & Odświeżenie tokenu dostępu       \\
+        \hline
+        POST            & \nolinkurl{/auth/logout}               & Wylogowanie użytkownika          \\
+        \hline
+        POST            & \nolinkurl{/auth/verify-email/:code}   & Zweryfikowanie konta użytkownika \\
+        \hline
+        POST            & \nolinkurl{/auth/forgot-password}      & Wysłanie kodu resetującego hasło \\
+        \hline
+        POST            & \nolinkurl{/auth/reset-password/:code} & Reset hasła                      \\
+        \hline
+    \end{tabular}
+    \label{tab:authendpoints}
+\end{table}
+
+\subsection{Ogłoszenia}
+
+Punkty końcowe do obsługi ogłoszeń \tabref{tab:advertendpoints}:
+%
+\begin{table}[h]
+    \centering
+    \tabcaption{Dostępne punkty końcowe udostępniane przez serwer do obsługi ogłoszeń}{Opracowanie własne}
+    \begin{tabular}{|p{0.105\textwidth}|p{0.41\textwidth}|p{0.4\textwidth}|}
+        \hline
+        \textbf{Metoda} & \textbf{Adres URL}                    & \textbf{Zastosowanie}           \\
+        \hline
+        POST            & \nolinkurl{/advert}                   & Utworzenie ogłoszenia           \\
+        \hline
+        PATCH           & \nolinkurl{/advert/:id}               & Aktualizacja ogłoszenia         \\
+        \hline
+        GET             & \nolinkurl{/advert/:id}               & Pobranie szczegółów ogłoszenia  \\
+        \hline
+        GET             & \nolinkurl{/advert}                   & Wylistowanie otwartych ogłoszeń \\
+        \hline
+        GET             & \nolinkurl{/advert/from-user/:userId} & Pobranie ogłoszeń użytkownika   \\
+        \hline
+    \end{tabular}
+    \label{tab:advertendpoints}
+\end{table}
+
+\subsection{Komentarze i reakcje}
+
+Punkty końcowe do obsługi komentarzy i reakcji \tabref{tab:commentendpoints}:
+%
+\begin{table}[h]
+    \centering
+    \tabcaption{Dostępne punkty końcowe udostępniane przez serwer do obsługi komentarzy i reakcji}{Opracowanie własne}
+    \begin{tabular}{|p{0.105\textwidth}|p{0.41\textwidth}|p{0.4\textwidth}|}
+        \hline
+        \textbf{Metoda} & \textbf{Adres URL}                         & \textbf{Zastosowanie}          \\
+        \hline
+        POST            & \nolinkurl{/comment/:advertId}             & Utworzenie komentarza          \\
+        \hline
+        PATCH           & \nolinkurl{/comment/:id}                   & Aktualizacja komentarza        \\
+        \hline
+        DELETE          & \nolinkurl{/comment/:id}                   & Usunięcie komentarza           \\
+        \hline
+        GET             & \nolinkurl{/comment/:id}                   & Pobranie komentarza            \\
+        \hline
+        GET             & \nolinkurl{/comment/from-advert/:advertId} & Wylistowanie komentarzy        \\
+        \hline
+        PUT             & \nolinkurl{/comment/react/:id}             & Dodanie reakcji na komentarz   \\
+        \hline
+        DELETE          & \nolinkurl{/comment/react/:id}             & Usunięcie reakcji na komentarz \\
+        \hline
+        GET             & \nolinkurl{/comment/react/:id}             & Pobranie reakcji na komentarz  \\
+        \hline
+    \end{tabular}
+    \label{tab:commentendpoints}
+\end{table}
+
+\subsection{Zdjęcia}
+
+Punkty końcowe do obsługi zdjęć \tabref{tab:imageendpoints}:
+%
+\begin{table}[h]
+    \centering
+    \tabcaption{Dostępne punkty końcowe udostępniane przez serwer do obsługi zdjęć}{Opracowanie własne}
+    \begin{tabular}{|p{0.105\textwidth}|p{0.41\textwidth}|p{0.4\textwidth}|}
+        \hline
+        \textbf{Metoda} & \textbf{Adres URL}           & \textbf{Zastosowanie} \\
+        \hline
+        POST            & \nolinkurl{/image/:advertId} & Wstawienie zdjęcia    \\
+        \hline
+        GET             & \nolinkurl{/image/:id}       & Pobranie zdjęcia      \\
+        \hline
+        DELETE          & \nolinkurl{/image/:id}       & Usunięcie zdjęcia     \\
+        \hline
+    \end{tabular}
+    \label{tab:imageendpoints}
+\end{table}
+
+\subsection{Zgłoszenia}
+
+Punkty końcowe do obsługi zgłoszeń \tabref{tab:reportendpoints}:
+%
+\begin{table}[h]
+    \centering
+    \tabcaption{Dostępne punkty końcowe udostępniane przez serwer do obsługi zgłoszeń}{Opracowanie własne}
+    \begin{tabular}{|p{0.105\textwidth}|p{0.41\textwidth}|p{0.4\textwidth}|}
+        \hline
+        \textbf{Metoda} & \textbf{Adres URL}              & \textbf{Zastosowanie}           \\
+        \hline
+        GET             & \nolinkurl{/report}             & Wylistowanie aktywnych zgłoszeń \\
+        \hline
+        POST            & \nolinkurl{/report/advert/:id}  & Zgłoszenie ogłoszenia           \\
+        \hline
+        POST            & \nolinkurl{/report/comment/:id} & Zgłoszenie komentarza           \\
+        \hline
+    \end{tabular}
+    \label{tab:reportendpoints}
+\end{table}
+
+\subsection{Informacje o pojazdach}
+
+Punkty końcowe do pobierania informacji o pojazdach \tabref{tab:infoendpoints}:
+%
+\begin{table}[h]
+    \centering
+    \tabcaption{Dostępne punkty końcowe udostępniane przez serwer do pobierania informacji o pojazdach}{Opracowanie własne}
+    \begin{tabular}{|p{0.105\textwidth}|p{0.41\textwidth}|p{0.4\textwidth}|}
+        \hline
+        \textbf{Metoda} & \textbf{Adres URL}    & \textbf{Zastosowanie}      \\
+        \hline
+        GET             & \nolinkurl{/info}     & Pobranie dostępnych marek  \\
+        \hline
+        GET             & \nolinkurl{/info/:id} & Pobranie dostępnych modeli \\
+        \hline
+    \end{tabular}
+    \label{tab:infoendpoints}
+\end{table}
+
+\subsection{Profile użytkowników}
+
+Punkty końcowe do pobierania profili użytkowników \tabref{tab:userendpoints}:
+%
+\begin{table}[h]
+    \centering
+    \tabcaption{Dostępne punkty końcowe udostępniane przez serwer do pobierania profili użytkowników}{Opracowanie własne}
+    \begin{tabular}{|p{0.105\textwidth}|p{0.41\textwidth}|p{0.4\textwidth}|}
+        \hline
+        \textbf{Metoda} & \textbf{Adres URL}    & \textbf{Zastosowanie}       \\
+        \hline
+        GET             & \nolinkurl{/user}     & Pobranie aktualnego profilu \\
+        \hline
+        GET             & \nolinkurl{/user/:id} & Pobranie profilu            \\
+        \hline
+    \end{tabular}
+    \label{tab:userendpoints}
+\end{table}
