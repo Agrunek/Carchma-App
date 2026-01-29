@@ -176,7 +176,23 @@ Każdy z tych elementów znacząco się przykłada do pozytywnego doświadczenia
 
 \subsection{Komunikacja klient-serwer}
 
-Axios, JWT Token, Multer, Tanstack Query...
+Prawidłowa komunikacja z serwerem odbywa się za pośrednictwem wykorzystania w przeglądarce klienta HTTP \emph{Axios}.
+Jest to lekka biblioteka umożliwiająca wykonywanie żądań HTTP w oparciu o asynchroniczne wykonywanie kodu JavaScript, co sprawia, że kod aplikacji jest bardziej czytelny oraz ułatwia obsługę błędów.
+Biblioteka udostępnia zestaw funkcji realizujących wybrane metody HTTP, które wymagają podania adresu URL oraz opcjonalnej treści zapytania.
+Klient posiada również mechanizm interceptorów, czyli przechwytywania żądań, umożliwiający dopisywanie nagłówków lub transformację danych.
+Proste i efektywne działanie biblioteki znacząco ułatwia tworzenie zapytań w aplikacjach o większej skali \autocite{axios_intro}.
+
+Dane przesyłane na serwer nie zawsze występują w formacie JSON, ponieważ aplikacja obsługuje również przesyłanie plików jakimi są zdjęcia.
+Do realizacji tego zadania wykorzystano bibliotekę \emph{multer}, będącą rozszerzeniem dla Express, umożliwiającym obsługę żądań typu \emph{multipart/form-data}.
+Biblioteka ta działa jako funkcja pośrednicząca w procesie obsługi żądań HTTP i w przypadku wykrycia plików dołącza je do obiektu żądania, udostępniając je w polach \emph{files}.
+Zastosowanie biblioteki upraszcza proces obsługi plików po stronie serwera oraz zapewnia wydajne przetwarzanie przesyłanych danych \autocite{multer_redame}.
+
+Pozyskiwanie danych po stronie frontendu wiąże się z licznymi wyzwaniami, takimi jak ich pobieranie, przechowywanie oraz synchronizacja danych z serwerem.
+W celu usprawnienia tego procesu wykorzystano bibliotekę \emph{Tanstack Query}, służącą do zarządzania danymi pozyskiwanymi z operacji asynchronicznych.
+Obsługa żądań typu GET polega na wykorzystaniu specjalnego hooka, któremu podaje się operację asynchroniczną taką jak żądanie danych do serwera poprzez funkcję Axios.
+Hook udostępnia mapę stanów pozwalająca zmieniać widok użytkownika zgodnie ze stanem pobieranych danych.
+Wyniki zapytań biblioteka przechowuje w pamięci podręcznej, aby były one dostępne w całej aplikacji przez określony czas.
+Pozwala to na ograniczenie ilości zbędnych zapytań i jest w pełni konfigurowalne zarówno globalnie jak i osobno dla każdej operacji \autocite{tanstack_queryoverview}.
 
 \subsection{Walidacja formularzy i bezpieczeństwo danych}
 
