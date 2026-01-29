@@ -18,7 +18,7 @@ Ponadto, przekazywanie zapytań pomiędzy kolejnymi warstwami przyczynia się do
 
 Aplikacja kliencka wysyła do serwera żądanie składające się z adresu URL oraz typu operacji.
 W zależności od zasobu dostępne operacje obejmują utworzenie, modyfikację, usunięcie lub pobranie danych.
-Do żądania mogą zostać dołączone parametry w adresie zapytania, a także dane zapisane w formacie JSON\footnote{JavaScript Object Notation -- tekstowy format zapisu danych, który jest zarówno czytelny dla człowieka jak i maszyny.}.
+Do żądania mogą zostać dołączone parametry w adresie zapytania, a także dane zapisane w formacie JSON.
 Serwer zwraca wynik operacji, podając odpowiedni kod statusu HTTP \autocite{iana_httpcodes} oraz treść odpowiedzi w formacie JSON w przypadku powodzenia lub w formacie określonym przez typ błędu w przypadku niepowodzenia.
 
 \section{Walidacja danych}
@@ -36,14 +36,14 @@ Token dostępu służy do identyfikacji użytkownika i posiada krótki czas życ
 Natomiast token odświeżający jest ważny 30 dni i służy do odnowienia dostępu, kiedy poprzedni token wygaśnie \autocite{rfc7519}.
 
 Serwer zwraca tokeny w \emph{plikach cookie}, czyli zestawie danych przetrzymywanych w pamięci przeglądarki i dołączanych do każdego zapytania.
-W ramach bezpieczeństwa, pliki te są niedostępne z poziomu skryptów oraz przesyłane jedynie z wykorzystaniem protokołu \emph{HTTPS}, czyli zaszyfrowanej wersji HTTP.
+W ramach bezpieczeństwa, pliki te są niedostępne z poziomu skryptów oraz przesyłane jedynie z wykorzystaniem protokołu \emph{HTTPS}, czyli zaszyfrowanej wersji protokołu HTTP.
 Sesja użytkownika zapisywana jest jako dokument w bazie danych i weryfikowana w przypadku jej odświeżenia.
 
 \section{Rozsyłanie maili}
 
 W ramach weryfikacji lub dodatkowej formy interakcji z użytkownikiem, serwis posiada możliwość wysyłania wiadomości na adres poczty elektronicznej, podany podczas rejestracji.
 Przykładowo, operacja zmiany hasła opiera się na przesłaniu wiadomości zawierającej specjalny odnośnik z wygenerowanym losowo kluczem, zapewniając właścicielowi konta bezpieczny dostęp do dedykowanego formularza modyfikującego dotychczasowe hasło.
-Treść wiadomości generowana jest na podstawie predefiniowanych szablonów HTML\footnote{HyperText Markup Language -- język znaczników używany do tworzenia dokumentów generujących strony internetowe.}, które są następnie uzupełniane o dane kontekstowe, takie jak nazwa użytkownika.
+Treść wiadomości generowana jest na podstawie predefiniowanych szablonów HTML, które są następnie uzupełniane o dane kontekstowe, takie jak nazwa użytkownika.
 Do wysłania wiadomości, serwer wykorzystuje zewnętrzną platformę mailingową, której przekazuje tytuł, treść wiadomości oraz informacje o adresacie.
 
 \section{Przeliczanie reputacji sprzedawcy}
