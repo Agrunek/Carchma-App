@@ -162,4 +162,41 @@ Szczególną uwagę przywiązano do prawidłowej obsługi aplikacji na smartfona
 
 \section{Spis ekranów}
 
-Lorem ipusm
+Aplikacja kliencka jest podzielona na wydzielone widoki, z których każdy pełni określoną rolę \tabref{tab:screens}:
+%
+\begin{table}[h]
+    \centering
+    \tabcaption{Dostępne ekrany w aplikacji klienckiej}{Opracowanie własne}
+    \begin{tabular}{|c|l|p{0.35\textwidth}|}
+        \hline
+        \textit{\textbf{Ekran}} & \textbf{Ścieżka}                       & \textbf{Funkcjonalność}                                     \\
+        \hline
+        \textit{Index}          & \nolinkurl{/}                          & Ekran główny aplikacji                                      \\
+        \hline
+        \textit{Search}         & \nolinkurl{/search}                    & Wyszukiwarka                                                \\
+        \hline
+        \textit{Advert}         & \nolinkurl{/advert/:id}                & Widok ogłoszenia oraz opinii pod nim zamieszczonych         \\
+        \hline
+        \textit{Wizard}         & \nolinkurl{/advert/wizard}             & Kreator ogłoszenia                                          \\
+        \hline
+        \textit{Profile}        & \nolinkurl{/user/:id}                  & Profil użytkownika (aktualnie zalogowany: \textit{id = me}) \\
+        \hline
+        \textit{Report}         & \nolinkurl{/admin/report}              & Panel aktualnych zgłoszeń                                   \\
+        \hline
+        \textit{Login}          & \nolinkurl{/auth/login}                & Logowanie                                                   \\
+        \hline
+        \textit{Register}       & \nolinkurl{/auth/register}             & Rejestracja                                                 \\
+        \hline
+        \textit{ForgotPassword} & \nolinkurl{/auth/forgot-password}      & Przypomnienie hasła                                         \\
+        \hline
+        \textit{ResetPassword}  & \nolinkurl{/auth/reset-password/:code} & Reset hasła                                                 \\
+        \hline
+        \textit{EmailVerified}  & \nolinkurl{/auth/verify-email/:code}   & Weryfikacja adresu poczty elektronicznej                    \\
+        \hline
+        \textit{NotFound}       & \textit{Nie dotyczy}                   & Nie znaleziono strony                                       \\
+        \hline
+        \textit{Error}          & \textit{Nie dotyczy}                   & Wystąpił błąd w działaniu aplikacji                         \\
+        \hline
+    \end{tabular}
+    \label{tab:screens}
+\end{table}
