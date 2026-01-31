@@ -21,9 +21,9 @@ Zasoby są identyfikowane jako unikalne adresy URL\footnote{Uniform Resource Loc
 \section{Role i uprawnienia}
 
 Projekt wymagał stworzenia systemu ról i uprawnień, który byłby wykorzystywany zarówno przez część kliencką w celu odpowiedniego dostosowywania widoków i~nawigacji, jak i również przez serwer do udostępniania swoich punktów końcowych.
-W zależności od statusu autentykacji użytkownika oraz przypisanych do niego ról, można wyróżnić kilka poziomów dostępów, w którym ilość dostępnych uprawnień jest odpowiednio zwiększana.
+W zależności od statusu autentykacji użytkownika oraz przypisanych do niego ról, można wyróżnić kilka poziomów dostępów, w którym liczba dostępnych uprawnień jest odpowiednio zwiększana.
 
-Użytkownik \emph{niezalogowany} posiada najmniejszą ilość uprawnień i ma status osoby przeglądającej istniejące treści.
+Użytkownik \emph{niezalogowany} posiada najmniejszą liczbą uprawnień i ma status osoby przeglądającej istniejące treści.
 Wynika to z faktu, że serwis nie jest w stanie go rozpoznać i przeprowadzić poprawnie większości operacji.
 Do czynności, które taki użytkownik może wykonać zalicza się:
 %
@@ -33,7 +33,7 @@ Do czynności, które taki użytkownik może wykonać zalicza się:
     \item sprawdzanie profili sprzedawców, wraz z archiwum ich ogłoszeń.
 \end{itemize}
 
-Po poprawnym przejściu przez proces autentykacji, użytkownik jest identyfikowany przez serwis i ma dostęp do większej ilości funkcjonalności.
+Po poprawnym przejściu przez proces autentykacji, użytkownik jest identyfikowany przez serwis i ma dostęp do większej liczby funkcjonalności.
 Każdy zalogowany użytkownik jest w systemie określany jako \emph{standardowy}.
 Taki użytkownik może podejmować akcje dozwolone dla niezalogowanych klientów oraz:
 %
@@ -193,7 +193,7 @@ W celu usprawnienia tego procesu wykorzystano bibliotekę \emph{Tanstack Query},
 Obsługa żądań typu GET polega na wykorzystaniu specjalnego hooka, któremu podaje się operację asynchroniczną taką jak żądanie danych od serwera poprzez funkcję Axios.
 Hook udostępnia mapę stanów pozwalająca zmieniać widok użytkownika zgodnie ze stanem pobieranych danych.
 Wyniki zapytań biblioteka przechowuje w pamięci podręcznej, aby były one dostępne w całej aplikacji przez określony czas.
-Pozwala to na ograniczenie ilości zbędnych zapytań i jest w pełni konfigurowalne, zarówno globalnie jak i osobno dla każdej operacji \autocite{tanstack_queryoverview}.
+Pozwala to na ograniczenie liczby zbędnych zapytań i jest w pełni konfigurowalne, zarówno globalnie jak i osobno dla każdej operacji \autocite{tanstack_queryoverview}.
 
 \subsection{Walidacja formularzy i bezpieczeństwo danych}
 

@@ -282,7 +282,7 @@ Kolekcja odpowiedzialna za przechowywanie sesji użytkownika.
 \textit{\textbf{Relacje}}:
 %
 \begin{itemize}
-    \item \textbf{userId} -- identyfikator użytkownika, do którego jest przypisana sesja.
+    \item \textbf{userId} -- identyfikator użytkownika, do którego sesja jest przypisana.
 \end{itemize}
 
 \vspace*{1ex}
@@ -291,7 +291,7 @@ Kolekcja odpowiedzialna za przechowywanie sesji użytkownika.
 \textbf{Verifications}
 
 \noindent
-Kolekcja odpowiedzialna za przechowywanie kodów dla weryfikacji adresu poczty elektronicznej oraz operacji zmiany hasła.
+Kolekcja odpowiedzialna za przechowywanie kodów dla procesu weryfikacji adresu poczty elektronicznej oraz operacji zmiany hasła.
 
 \vspace*{0.5ex}
 
@@ -317,8 +317,8 @@ Kolekcja odpowiedzialna za przechowywanie kodów dla weryfikacji adresu poczty e
 
 \noindent
 Kolekcja odpowiedzialna za przechowywanie informacji o ogłoszeniu.
-Informacje obejmują specyfikację pojazdu oraz treść ogłoszenia, czyli tytuł, opis oraz cena.
-Ponadto, zawarte są metadane obejmujące status oraz ocenę reputacji ogłoszenia.
+Informacje obejmują specyfikację pojazdu oraz treść ogłoszenia: tytuł, opis i cenę.
+Ponadto, zawarte są metadane obejmujące status publikacji oraz wartość reputacji ogłoszenia.
 
 \vspace*{0.5ex}
 
@@ -336,7 +336,7 @@ Ponadto, zawarte są metadane obejmujące status oraz ocenę reputacji ogłoszen
 
 \noindent
 Kolekcja odpowiedzialna za przechowywanie treści komentarzy tworzonych przez użytkowników pod ogłoszeniami.
-Dodatkowo, przechowywane są tam informacje o~ilości poszczególnych reakcji na komentarz.
+Dodatkowo, w dokumentach przechowywane są informacje o liczbie poszczególnych reakcji na komentarz.
 
 \vspace*{0.5ex}
 
@@ -420,7 +420,7 @@ Kolekcja odpowiedzialna za przechowywanie sfragmentaryzowanej zawartości zdję�
 \textit{\textbf{Relacje}}:
 %
 \begin{itemize}
-    \item \textbf{files\_id} -- identyfikator zdjęcia, pod którego fragment przynależy.
+    \item \textbf{files\_id} -- identyfikator zdjęcia, pod które fragment przynależy.
 \end{itemize}
 
 \section{Walidacja danych}
@@ -483,7 +483,7 @@ Do wysłania wiadomości, serwer wykorzystuje zewnętrzną platformę mailingow�
 \section{Zarządzanie zdjęciami}
 
 System umożliwia wykonywanie operacji zapisu, usunięcia lub odczytu zdjęć, analogicznie jak w przypadku innych zasobów.
-Przesłane pliki są walidowane względem ich typu, metadanych oraz ilości, a następnie przekazane do sterownika bazy danych.
+Przesłane pliki są walidowane względem ich typu, metadanych oraz liczbie, a następnie przekazane do sterownika bazy danych.
 Pierwszym krokiem jest wyciągnięcie wszystkich metadanych i~zapisanie ich w kolekcji zdjęć.
 Następnie binarna zawartość pliku jest dzielona na małe fragmenty i wszystkie są umieszczone w osobnej kolekcji z odnośnikiem do dokumentu z metadanymi \autocite{mongo_gridfs}.
 W celu pobrania zdjęcia, wyciągany jest z bazy rekord z metadanymi, a następnie łączone są wszystkie fragmenty z nim powiązane.
