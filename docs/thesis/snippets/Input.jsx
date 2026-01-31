@@ -7,6 +7,3 @@ const Button = ({ children, isValid }) => {
   // Wykorzystanie props do zmiany wyglądu komponentu
   return <button className={style}>{children}</button>;
 };
-
-// Udostępnienie komponentu do dalszego wykorzystania
-export default Button;
