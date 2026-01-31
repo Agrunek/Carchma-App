@@ -13,14 +13,14 @@ Projekt został zrealizowany na podstawie modelu \emph{klient-serwer} \figref{fi
 \end{figure}
 
 Komponenty komunikują się poprzez sieć za pomocą protokołu HTTP\footnote{Hypertext Transfer Protocol -- protokół komunikacyjny wykorzystywany przez przeglądarki.}.
-Dostęp do zasobów serwera odbywa się poprzez interfejs programowania aplikacji zgodny z architekturą REST\footnote{Representational State Transfer -- styl architektoniczny identyfikujący elementy systemu jako zasoby.}.
+Dostęp do zasobów serwera odbywa się poprzez interfejs programowania aplikacji zgodny z~architekturą REST\footnote{Representational State Transfer -- styl architektoniczny identyfikujący elementy systemu jako zasoby.}.
 Komunikacja odbywa się w sposób \emph{bezstanowy}, czyli serwer nie zapisuje kontekstu komunikacji po swojej stronie.
 Wszystkie informacje dotyczące sesji muszą zostać przekazane łącznie z samym zapytaniem przez aplikację kliencką.
 Zasoby są identyfikowane jako unikalne adresy URL\footnote{Uniform Resource Locator -- adres zasobu dostępnego w sieci komputerowej.}, a operacje na nich są zdefiniowane jako podstawowe metody protokołu HTTP: GET, POST, PUT, PATCH, DELETE \autocite{rest_tutorial}.
 
 \section{Role i uprawnienia}
 
-Projekt wymagał stworzenia systemu ról i uprawnień, który byłby wykorzystywany zarówno przez część kliencką w celu odpowiedniego dostosowywania widoków i nawigacji, jak i również przez serwer do udostępniania swoich punktów końcowych.
+Projekt wymagał stworzenia systemu ról i uprawnień, który byłby wykorzystywany zarówno przez część kliencką w celu odpowiedniego dostosowywania widoków i~nawigacji, jak i również przez serwer do udostępniania swoich punktów końcowych.
 W zależności od statusu autentykacji użytkownika oraz przypisanych do niego ról, można wyróżnić kilka poziomów dostępów, w którym ilość dostępnych uprawnień jest odpowiednio zwiększana.
 
 Użytkownik \emph{niezalogowany} posiada najmniejszą ilość uprawnień i ma status osoby przeglądającej istniejące treści.
@@ -38,33 +38,33 @@ Każdy zalogowany użytkownik jest w systemie określany jako \emph{standardowy}
 Taki użytkownik może podejmować akcje dozwolone dla niezalogowanych klientów oraz:
 %
 \begin{itemize}
-    \item wystawianie nowych ogłoszeń oraz ich edycja,
+    \item wystawianie nowych ogłoszeń i ich edycja,
     \item zamieszczanie opinii pod istniejącymi ofertami,
     \item zostawianie reakcji pod komentarzami innych klientów,
-    \item korzystanie z serwisu zgłoszeń dla ofert oraz opinii,
-    \item zarządzanie własnym profilem dostępnym dla innych użytkowników.
+    \item korzystanie z serwisu zgłoszeń dla ofert i opinii,
+    \item zarządzanie własnym profilem, dostępnym dla innych użytkowników.
 \end{itemize}
 
 Niektórzy użytkownicy posiadają uprawnienia, które pozwalają im moderować zamieszczane w serwisie treści i posiadają rolę \emph{recenzenta}.
-Oprócz uprawnień należących do dwóch poprzednich ról, recenzenci są odpowiedzialni za:
+Oprócz uprawnień należących do dwóch poprzednich statusów, recenzenci są odpowiedzialni za:
 %
 \begin{itemize}
     \item przeglądanie zgłoszeń od użytkowników w postaci listy,
     \item sprawdzanie szczegółów zgłoszenia wliczając to dane klienta, który je poczynił,
-    \item podejmować działania względem zgłoszonych treści takich jak ich usunięcie.
+    \item podejmowanie działań względem zgłoszonych treści, takich jak ich usunięcie.
 \end{itemize}
 
 \section{Wykorzystane technologie}
 
 Realizacja założeń projektowych, obejmująca zaprojektowanie oraz implementację serwera i aplikacji klienckiej, wymagała zastosowania szeregu różnorodnych technologii.
-Dobór narzędzi oparty został o kryteria stabilności i sprawdzenia w praktyce, przy jednoczesnym uwzględnieniu nowoczesnych i aktualnie rozwijanych rozwiązań.
+Dobór narzędzi oparty został o kryteria stabilności i sprawdzenia w~praktyce, przy jednoczesnym uwzględnieniu nowoczesnych i aktualnie rozwijanych rozwiązań.
 Wykorzystane technologie są powszechnie dostępne, posiadają rozbudowaną dokumentację techniczną oraz mają charakter open source\footnote{Open source -- model wytwarzania oprogramowania, którego kod źródłowy jest publicznie dostępny.}.
-W niniejszym rozdziale technologie te zostały skategoryzowane według kontekstu ich zastosowania w procesie tworzenia funkcjonalnego rozwiązania.
+W~niniejszym rozdziale technologie te zostały skategoryzowane według kontekstu ich zastosowania w procesie tworzenia funkcjonalnego rozwiązania.
 
 \subsection{Język i środowisko uruchomieniowe}
 
 Zarówno warstwa frontendowa, jak i backendowa aplikacji zostały zaimplementowane z wykorzystaniem języka programowania \emph{JavaScript}.
-Zakres dostępnych funkcjonalności języka różni się w zależności od środowiska uruchomieniowego, w którym jest on wykorzystywany.
+Zakres dostępnych funkcjonalności języka różni się w zależności od środowiska uruchomieniowego, w~którym jest on wykorzystywany.
 W kontekście przeglądarek internetowych JavaScript umożliwia tworzenie dynamicznych i interaktywnych stron internetowych, na przykład poprzez interfejsy pozwalające na modyfikację generowanej treści.
 Niezależnie od środowiska, podstawowy zakres języka opiera się na standardzie ECMA-262 \autocite{ecma262}, który definiuje rdzeń jego funkcjonalności.
 JavaScript jako język programowania jest \autocite{mdn_javascript}:
@@ -75,13 +75,14 @@ JavaScript jako język programowania jest \autocite{mdn_javascript}:
     \item \textbf{dynamiczny} -- typy zmiennych są określane w czasie działania programu,
     \item \textbf{oparty na prototypach} -- obiekty mogą dziedziczyć właściwości bezpośrednio od innych obiektów, bez potrzeby definiowania nowej klasy,
     \item \textbf{z automatycznym zarządzaniem pamięcią} -- silnik samodzielnie zajmuje się obsługą pamięci, usuwając z niej zmienne, które nie są używane,
-    \item \textbf{wieloparadygmatowy} -- spełnia założenia języków: imperatywnych (program jest wykonywany sekwencyjnie), funkcyjnych (oparty o funkcje) i obiektowych (pozwala na tworzenie obiektów, przechowujących dane oraz metody).
+    \item \textbf{wieloparadygmatowy} -- spełnia założenia języków: imperatywnych (program jest wykonywany sekwencyjnie, zgodnie z kolejnością instrukcji), funkcyjnych (oparty jest o~funkcje) i obiektowych (pozwala na tworzenie obiektów, przechowujących dane oraz metody).
 \end{itemize}
 
 Dynamiczne typowanie w języku JavaScript znacząco przyspiesza proces tworzenia oprogramowania oraz umożliwia elastyczne modyfikowanie struktur danych w trakcie działania programu.
 Jednocześnie takie podejście może prowadzić do zwiększonego ryzyka występowania błędów trudnych do zlokalizowania, wynikających z ograniczonej możliwości śledzenia wszystkich potencjalnych scenariuszy wykonania aplikacji.
 Dodatkowo kod źródłowy bywa mniej czytelny bez odpowiednio przygotowanej dokumentacji, której tworzenie jest czasochłonne, a jej jakość zależy od doświadczenia oraz staranności programisty.
 Problemy te nasilają się wraz ze wzrostem rozmiaru oraz stopnia złożoności projektu.
+
 Jednym z rozwiązań dla tych zagrożeń jest \emph{TypeScript}, czyli nadzbiór języka JavaScript, który wprowadza statyczne typowanie oraz mechanizmy jego weryfikacji na etapie kompilacji.
 Dodanie definicji typów nie powoduje istotnego zwiększenia objętości kodu źródłowego, ponieważ TypeScript wykorzystuje mechanizm inferencji typów, pozwalający na automatyczne wnioskowanie o typach zmiennych na podstawie ich kontekstu.
 W przypadku deklarowania obiektów lub parametrów funkcji możliwe jest jawne określenie typów, których zgodność jest sprawdzana przy każdym wywołaniu kompilacji \lstref{lst:tstheme}.
@@ -97,9 +98,9 @@ Zastosowanie tej technologii umożliwia wykrycie znacznej części potencjalnych
 
 Przeglądarki internetowe posiadają wbudowane silniki umożliwiające wykonywanie kodu JavaScript po stronie klienta, bez konieczności stosowania dodatkowych narzędzi.
 W warstwie serwerowej projektu wykorzystano środowisko uruchomieniowe \emph{Node.js}, które charakteryzuje się asynchronicznym modelem przetwarzania opartym na pętli zdarzeń.
-Node.js jest wykorzystywany do tworzenia aplikacji sieciowych i umożliwia definiowanie punktów końcowych serwera oraz przypisywanie im funkcji obsługujących przychodzące żądania.
+Node.js jest wykorzystywany do tworzenia aplikacji sieciowych, ponieważ umożliwia definiowanie punktów końcowych serwera oraz przypisywanie im funkcji obsługujących przychodzące żądania.
 Zaletą tego środowiska jest efektywne zarządzanie zasobami systemowymi, wynikające z nieblokującego modelu wejścia-wyjścia oraz braku konieczności tworzenia osobnego wątku dla każdego połączenia.
-Komunikacja z klientem odbywa się za pomocą protokołu HTTP, natomiast przesyłanie większych ilości danych, takich jak pliki, realizowane jest przy użyciu mechanizmu strumieni \autocite{node_about}.
+Komunikacja z klientem odbywa się za pomocą protokołu HTTP, natomiast przesyłanie większych ilości danych, takich jak pliki, realizowane jest przy wykorzystaniu mechanizmu strumieni \autocite{node_about}.
 
 Tworzenie części klienckiej projektu zostało oparte na narzędziu \emph{Vite}, służącym do budowania aplikacji frontendowych.
 Jego główną zaletą jest szybkie uruchamianie się środowiska deweloperskiego, osiągane dzięki priorytetyzacji ładowania wymaganych modułów oraz przeniesieniu części pracy do przeglądarki.
@@ -113,7 +114,7 @@ Biblioteka ta umożliwia mapowanie punktów końcowych serwera na funkcje obsłu
 Mapowanie realizowane jest poprzez definiowanie tras na podstawie typu żądania HTTP oraz adresu URL, co pozwala na modułowe podejście do tworzenia aplikacji.
 Adresy tras mogą zawierać parametry, które są automatycznie przekształcane przez Express w zmienne dostępne w funkcjach obsługujących żądania.
 Funkcje pośredniczące są wykonywane sekwencyjnie, zgodnie z kolejnością ich definicji, przed wywołaniem właściwej funkcji przetwarzającej żądanie.
-Dostępnych jest wiele predefiniowanych funkcji w postaci bibliotek, przykładowo akceptująca tylko te zapytania, które przesyłają dane w formacie JSON\footnote{JavaScript Object Notation -- tekstowy format zapisu danych, który jest zarówno czytelny dla człowieka jak i maszyny.}, lub parsująca dane zawarte w plikach cookie do łatwo dostępnych zmiennych \autocite{express_readme}.
+Dostępnych jest wiele predefiniowanych funkcji w postaci bibliotek, przykładowo akceptująca tylko te zapytania, które przesyłają dane w formacie JSON\footnote{JavaScript Object Notation -- tekstowy format zapisu danych, który jest zarówno czytelny dla człowieka jak i maszyny.}, lub parsująca dane zawarte w~plikach cookie do łatwo dostępnych zmiennych \autocite{express_readme}.
 %
 \lstinputlisting[
     language=JavaScript,
@@ -121,11 +122,11 @@ Dostępnych jest wiele predefiniowanych funkcji w postaci bibliotek, przykładow
     label={lst:jsadvert},
 ]{advert.js}
 
-Frontend aplikacji został zrealizowany przy użyciu \emph{React}, przeznaczonego do budowy interfejsów użytkownika w oparciu o komponenty.
+Frontend aplikacji został zrealizowany przy użyciu biblioteki \emph{React}, przeznaczonej do budowy interfejsów użytkownika w oparciu o komponenty.
 React jest deklaratywny, to znaczy wyłączający skutki uboczne z procesu generowania strony.
 Widok stanowi wynik działania funkcji, której argumentem jest aktualny zestaw stanów.
-Programista nie manipuluje bezpośrednio interfejsem użytkownika, lecz zarządza dostępnymi stanami, a React odpowiada za aktualizację widoku.
-Skutki uboczne, takie jak sprawdzenie wygenerowanego HTML\footnote{HyperText Markup Language -- język znaczników używany do tworzenia dokumentów generujących strony internetowe.} lub wywołanie operacji asynchronicznej, mogą być na skutek zmiany stanu, a ich wynikiem może być nowy stan \figref{fig:reactlifecycle}:
+Programista nie manipuluje bezpośrednio interfejsem użytkownika, lecz zarządza dostępnymi stanami, a React odpowiada za aktualizację widoku na ich podstawie.
+Skutki uboczne, takie jak sprawdzenie wygenerowanego HTML\footnote{HyperText Markup Language -- język znaczników używany do tworzenia dokumentów generujących strony internetowe.} lub wywołanie operacji asynchronicznej, mogą być wykonane na skutek zmiany stanu aplikacji, a ich wynikiem może być nowy stan \figref{fig:reactlifecycle}:
 %
 \begin{figure}[h]
     \centering
@@ -136,16 +137,16 @@ Skutki uboczne, takie jak sprawdzenie wygenerowanego HTML\footnote{HyperText Mar
 
 Widok w React jest budowany z komponentów, czyli wydzielonych fragmentów interfejsu użytkownika z własną logiką oraz wyglądem.
 Komponenty są modyfikowane poprzez zmianę ich wewnętrznego stanu lub przekazanie go w argumencie \emph{props}.
-Wynikiem działania komponentu jest wygenerowanie kodu HTML, dlatego React wykorzystuje specjalną składnię JSX\footnote{JSX -- nakładka na kod JavaScript, wykorzystująca czytelne tagi HTML do opisywania elementów i komponentów, ukrywająca tym samym modyfikacje drzewa poprzez natywne funkcje.}.
-W celu tworzenia większych struktur z komponentów, wystarczy zagnieździć jeden we wnętrzu drugiego i przekazać wymagane argumenty props, wtedy będzie dostępny z poziomu pola \emph{children} \lstref{lst:jsxcomponent}:
+Wynikiem działania komponentu jest wygenerowanie kodu HTML, dlatego React wykorzystuje specjalną składnię JSX\footnote{JSX -- nakładka na kod JavaScript, wykorzystująca czytelne tagi HTML do opisywania elementów i komponentów, ukrywająca tym samym modyfikacje drzewa poprzez natywne funkcje.}, która upraszcza jego definicję.
+W celu tworzenia większych struktur z komponentów, wystarczy zagnieździć jeden we wnętrzu drugiego i przekazać wymagane argumenty props, wtedy będzie on dostępny z poziomu pola \emph{children} \lstref{lst:jsxcomponent}:
 %
 \lstinputlisting[
     language=JavaScript,
     caption={[Prosty komponent przyjmujący argument props, w którego skład wchodzi pole children]\lstcaption{Prosty komponent przyjmujący argument props, w którego skład wchodzi pole children}{Opracowanie własne}},
     label={lst:jsxcomponent},
-]{Input.jsx}
+]{Button.jsx}
 
-Komponenty mogą być modyfikowane poprzez \emph{hooks}, czyli funkcjom rozszerzania logiki komponentów, umieszczanym na początku definicji komponentu, a najważniejsze z nich to:
+Komponenty mogą być modyfikowane poprzez \emph{hooki}, czyli funkcje rozszerzania logiki komponentów, umieszczane na początku definicji komponentu. Najważniejsze z~nich to:
 %
 \begin{itemize}
     \item \textbf{useState} -- zwraca aktualną wartość stanu oraz funkcję wywołującą jego zmianę,
@@ -154,7 +155,7 @@ Komponenty mogą być modyfikowane poprzez \emph{hooks}, czyli funkcjom rozszerz
     \item \textbf{useRef} -- zwraca obiekt służący do obserwowania elementów niewykorzystywanych w budowaniu interfejsu użytkownika.
 \end{itemize}
 %
-Istnieje również możliwość tworzenia własnych hooks w celu stworzenia modułu poszerzającego logikę komponentów, natomiast muszą one opierać swoje działanie o te podstawowe \lstref{lst:jshook}.
+Istnieje również możliwość tworzenia własnych hooków w celu stworzenia modułu poszerzającego logikę komponentów, natomiast muszą one opierać swoje działanie o~te podstawowe \lstref{lst:jshook}.
 Silnik React przy każdej zmianie stanu tworzy odzwierciedlenie prawdziwego drzewa HTML w JavaScript nazywany \emph{Virtual DOM}.
 Drzewo to jest następnie porównywane z wygenerowanym faktycznym drzewem HTML i na podstawie różnic, są wymieniane tylko te fragmenty, które uległy zmianie.
 Taki proces jest znacznie bardziej wydajny niż podmiana całego drzewa na stronie \autocite{react_doc}.
@@ -168,31 +169,31 @@ Taki proces jest znacznie bardziej wydajny niż podmiana całego drzewa na stron
 Aplikacja kliencka jest jednostronicowa, co oznacza, że nawigacja nie odbywa się poprzez wysyłanie zapytań HTTP o nowy dokument HTML.
 Narzędziem wykorzystanym w projekcie w ramach obsługi nawigacji jest \emph{Tanstack Router}.
 Biblioteka ta oferuje pełne wsparcie TypeScript, dzięki czemu definicje tras, parametrów i wyszukiwania są zgodne w interfejsie nawigacyjnym na całym projekcie.
-Wraz z tworzeniem aplikacji, działa skrypt przeszukujący pliki podstron w folderze \emph{rotues} i na podstawie ich ścieżek, generuje ich definicje w środowisku.
-Komponenty tras są automatycznie oddzielane od ich definicji i są ładowane dynamicznie, kiedy istnieje taka potrzeba, dzięki czemu zmniejsza się rozmiar pierwszego pliku JavaScript.
-Parametry wyszukiwania są parsowane jako JSON, przez co dostęp do ich wartości i ich walidacja odbywa się bez nieprzewidzianych błędów.
-Można definiować warunki ładowania tras oraz korzystać z opcji przechowywania ich w pamięci podręcznej, co skutkuje szybszym działaniem aplikacji.
-Każdy z tych elementów znacząco się przykłada do pozytywnego doświadczenia dewelopera pracującego z narzędziem i co za tym idzie skuteczniejszego tworzenia kodu źródłowego \autocite{tanstack_routeroverview}.
+Wraz z tworzeniem aplikacji, w tle działa skrypt przeszukujący pliki z definicjami poszczególnych podstron w folderze \emph{rotues} i na podstawie ich ścieżek, generuje ich definicje w środowisku.
+Komponenty tras są automatycznie oddzielane od ich definicji i są ładowane dynamicznie, kiedy istnieje taka potrzeba, dzięki czemu zmniejsza się rozmiar pliku JavaScript uruchamianego wraz z początkiem działania aplikacji.
+Parametry wyszukiwania są parsowane jako JSON, przez co dostęp do ich wartości i~ich walidacja odbywa się bez nieprzewidzianych błędów.
+Można definiować warunki i~funkcje ładowania tras oraz korzystać z opcji przechowywania ich w pamięci podręcznej, co skutkuje szybszym działaniem aplikacji w czasie nawigacji.
+Każdy z~tych elementów znacząco się przykłada do pozytywnego doświadczenia dewelopera pracującego z narzędziem i co za tym idzie skuteczniejszego tworzenia kodu źródłowego \autocite{tanstack_routeroverview}.
 
 \subsection{Komunikacja klient-serwer}
 
-Prawidłowa komunikacja z serwerem odbywa się za pośrednictwem wykorzystania w przeglądarce klienta HTTP \emph{Axios}.
-Jest to lekka biblioteka umożliwiająca wykonywanie żądań HTTP w oparciu o asynchroniczne wykonywanie kodu JavaScript, co sprawia, że kod aplikacji jest bardziej czytelny oraz ułatwia obsługę błędów.
+Prawidłowa komunikacja z serwerem odbywa się za pośrednictwem wykorzystania w~przeglądarce klienta HTTP \emph{Axios}.
+Jest to lekka biblioteka umożliwiająca wykonywanie żądań HTTP w oparciu o asynchroniczne funkcje JavaScript, co sprawia, że kod aplikacji jest bardziej czytelny oraz ułatwia obsługę błędów.
 Biblioteka udostępnia zestaw funkcji realizujących wybrane metody HTTP, które wymagają podania adresu URL oraz opcjonalnej treści zapytania.
 Klient posiada również mechanizm interceptorów, czyli przechwytywania żądań, umożliwiający dopisywanie nagłówków lub transformację danych.
 Proste i efektywne działanie biblioteki znacząco ułatwia tworzenie zapytań w aplikacjach o większej skali \autocite{axios_intro}.
 
 Dane przesyłane na serwer nie zawsze występują w formacie JSON, ponieważ aplikacja obsługuje również przesyłanie plików jakimi są zdjęcia.
 Do realizacji tego zadania wykorzystano bibliotekę \emph{multer}, będącą rozszerzeniem dla Express, umożliwiającym obsługę żądań typu \emph{multipart/form-data}.
-Biblioteka ta działa jako funkcja pośrednicząca w procesie obsługi żądań HTTP i w przypadku wykrycia plików dołącza je do obiektu żądania, udostępniając je w polach \emph{files}.
+Biblioteka ta działa jako funkcja pośrednicząca w procesie obsługi żądań HTTP i w przypadku wykrycia plików dołącza je do obiektu żądania, udostępniając je w polu \emph{files}.
 Zastosowanie biblioteki upraszcza proces obsługi plików po stronie serwera oraz zapewnia wydajne przetwarzanie przesyłanych danych \autocite{multer_redame}.
 
 Pozyskiwanie danych po stronie frontendu wiąże się z licznymi wyzwaniami, takimi jak ich pobieranie, przechowywanie oraz synchronizacja danych z serwerem.
 W celu usprawnienia tego procesu wykorzystano bibliotekę \emph{Tanstack Query}, służącą do zarządzania danymi pozyskiwanymi z operacji asynchronicznych.
-Obsługa żądań typu GET polega na wykorzystaniu specjalnego hooka, któremu podaje się operację asynchroniczną taką jak żądanie danych do serwera poprzez funkcję Axios.
+Obsługa żądań typu GET polega na wykorzystaniu specjalnego hooka, któremu podaje się operację asynchroniczną taką jak żądanie danych od serwera poprzez funkcję Axios.
 Hook udostępnia mapę stanów pozwalająca zmieniać widok użytkownika zgodnie ze stanem pobieranych danych.
 Wyniki zapytań biblioteka przechowuje w pamięci podręcznej, aby były one dostępne w całej aplikacji przez określony czas.
-Pozwala to na ograniczenie ilości zbędnych zapytań i jest w pełni konfigurowalne zarówno globalnie jak i osobno dla każdej operacji \autocite{tanstack_queryoverview}.
+Pozwala to na ograniczenie ilości zbędnych zapytań i jest w pełni konfigurowalne, zarówno globalnie jak i osobno dla każdej operacji \autocite{tanstack_queryoverview}.
 
 \subsection{Walidacja formularzy i bezpieczeństwo danych}
 
@@ -219,19 +220,19 @@ Biblioteka dobrze integruje się z zod co pozwala na łatwe stworzenie zaawansow
 Budowanie odpowiedniego interfejsu użytkownika opiera się nie tylko na warstwie wizualnej, lecz również na zapewnieniu zgodności z wymaganiami dotyczącymi dostępności.
 W tym celu wykorzystano bibliotekę \emph{Headless UI}, której główną zaletą są w pełni nieostylowane komponenty, skupione na dostępności oraz poprawnej obsłudze interakcji.
 Biblioteka nie narzuca wyglądu komponentów, co umożliwia ich łatwe dostosowanie do docelowej aplikacji, przy jednoczesnym wykorzystaniu udostępnianych przez nią stanów komponentów.
-Headless UI udostępnia również komponent \emph{Transition}, pozwalający na implementację prostych animacji związanych z pojawianiem się oraz ukrywaniem elementów w interfejsie użytkownika.
+Headless UI udostępnia również komponent \emph{Transition}, pozwalający na implementację prostych animacji związanych z~pojawianiem się oraz ukrywaniem elementów w interfejsie użytkownika.
 W celu nadania warstwy wizualnej zastosowano bibliotekę \emph{Tailwind CSS}, która umożliwia stylowanie komponentów bez konieczności korzystania z tradycyjnych arkuszy stylów.
-Wykorzystywany jest mechanizm nadawania atomowych klas bezpośrednio w poziomu kodu komponentów oraz łączenia ich ze sobą.
+Wykorzystywany jest mechanizm nadawania atomowych klas bezpośrednio z~poziomu kodu komponentów oraz łączenia ich ze sobą.
 Ponadto biblioteka posiada wbudowaną obsługę responsywności poprzez system prefiksów, a rozmiar generowanego arkusza stylów sprawnie skaluje się wraz z rozmiarem projektu \autocite{tailwind_doc}.
 
 \subsection{Przechowywanie danych i integracje zewnętrzne}
 
-Do przechowywania danych aplikacji zostało \emph{MongoDB}, czyli bazę danych opartą o dokumenty, zapisywane w binarnej odmianie formatu JSON.
-Jest to baza o wysokiej elastyczności struktury danych, wydajności oraz skalowalności, co wspiera tworzenie projektu w fazie prototypowania oraz utrzymanie go w warunkach produkcyjnych.
+Do przechowywania danych aplikacji zostało \emph{MongoDB}, czyli bazę danych opartą o~dokumenty, zapisywane w binarnej odmianie formatu JSON.
+Jest to baza o~wysokiej elastyczności struktury danych, wydajności oraz skalowalności, co wspiera tworzenie projektu w fazie prototypowania oraz utrzymanie go w warunkach produkcyjnych.
 Dokumenty przechowują dane w formacie \emph{klucz-wartość}, co dobrze tłumaczy je na dane odbierane oraz wysyłane do aplikacji klienckiej.
 Silnik umożliwia tworzenie zaawansowanych funkcji agregujących, co pozwala przetwarzać dane wyjściowe jeszcze zanim zostaną zwrócone przez bazę.
-W projekcie wykorzystano chmurową wersję \emph{MongoDB Atlas}, czyli ekosystem hostujący instancję MongoDB z dostępem przez sieć internetową.
-Rozwiązanie to odejmuje wszelkich problemów związanych z administrowaniem bazy danych, zapewniając wysoki poziom dostępności i bezpieczeństwa przechowywanych danych \autocite{mongo_atlas}.
+W projekcie wykorzystano chmurową wersję \emph{MongoDB Atlas}, czyli ekosystem hostujący instancje MongoDB z~dostępem przez sieć internetową.
+Rozwiązanie to odejmuje wszelkich problemów związanych z administrowaniem bazy danych, zapewniając równocześnie wysoki poziom dostępności i bezpieczeństwa przechowywanych danych \autocite{mongo_atlas}.
 
 W celu integracji serwisu z systemem obsługi poczty elektronicznej wykorzystano serwis \emph{Resend}.
 Wykorzystująca go biblioteka udostępnia wiele interfejsów programowania, z których korzysta się poprzez wykorzystanie architektury REST.

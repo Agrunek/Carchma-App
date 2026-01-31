@@ -3,10 +3,8 @@ type Theme = "light" | "dark" | "system";
 export const setTheme = (theme: Theme) => {
   switch (theme) {
     case "light":
-      localStorage.theme = "light";
-      break;
     case "dark":
-      localStorage.theme = "dark";
+      localStorage.theme = theme;
       break;
     case "system":
       localStorage.removeItem("theme");
