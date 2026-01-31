@@ -222,7 +222,7 @@ Użytkownicy posiadają w serwisie własne profile, które można dowolnie przeg
 W projekcie wykorzystano nierelacyjną bazę danych, w której informacje przechowywane są w postaci dokumentów o elastycznej strukturze.
 Dokumenty pełnią rolę rekordów i porządkują dane w formie par klucz-wartość.
 Do grupowania powiązanych ze sobą dokumentów wykorzystywane są \emph{kolekcje}, które nie wymagają jednolitej struktury danych pomiędzy swoimi elementami.
-Zastosowane rozwiązanie charakteryzuje się prostotą w implementacyji oraz wysoką odpornością na zmiany w~sposobie zapisu danych.
+Zastosowane rozwiązanie charakteryzuje się prostotą w implementacji oraz wysoką odpornością na zmiany w~sposobie zapisu danych.
 Skalowanie bazy danych polega na zwiększaniu liczby jej instancji, co ułatwia dalszy rozwój aplikacji \autocite{mongo_documentdb}.
 Kolekcje umożliwiają definiowanie indeksów na wybranych polach, co pozwala na optymalizację operacji wyszukiwania \autocite{mongo_index}.
 Dodatkowo istnieje możliwość tworzenia unikalnych kluczy złożonych oraz definiowania sygnatur czasowych, po których rekordy są automatycznie usuwane z kolekcji \autocite{mongo_ttl}.
