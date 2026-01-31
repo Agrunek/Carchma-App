@@ -1,18 +1,19 @@
-\section{Warstwowy system}
+Działanie serwisu jest oparte na zcentralizowanym systemie, z którym wszystkie instancje aplikacji klienckich się komunikują, zwanym dalej \emph{serwerem}.
+Jest on odpowiedzialny za przechowywanie danych, wykonywanie obliczeń związanych z~systemem reputacji oraz na tworzeniu odpowiedzi dla żądań użytkowników.
 
 Architektura serwera została zaprojektowana w oparciu o wyraźnie rozdzielone warstwy, z których każda pełni ściśle określoną rolę:
 %
 \begin{itemize}
     \item \textbf{routes} -- definiuje punkty końcowe serwera oraz przekierowuje żądania do odpowiednich kontrolerów,
     \item \textbf{controllers} -- przetwarza metadane żądania, przekazuje je do kolejnych warstw oraz tworzy odpowiedź dla klienta,
-    \item \textbf{schemas} -- waliduje dane przekazane w zapytaniu poprzez porównanie ich z predefiniowanymi schematami,
-    \item \textbf{services} -- obsługuje logikę biznesową oraz w razie potrzeby komunikuje się z zewnętrznymi usługami,
+    \item \textbf{schemas} -- waliduje dane przekazane w zapytaniu poprzez porównanie ich z~predefiniowanymi schematami,
+    \item \textbf{services} -- obsługuje logikę biznesową oraz w razie potrzeby komunikuje się z~zewnętrznymi usługami,
     \item \textbf{models} -- odpowiada za komunikację z bazą danych, udostępniając zestaw atomowych funkcji do przeprowadzania operacji na niej.
 \end{itemize}
 %
 Takie podejście zapewnia wysoką czytelność kodu, umożliwiając sprawne lokalizowanie źródeł błędów oraz wprowadzanie modyfikacji bez wpływania na pozostałe elementy systemu.
 Rozwiązanie naturalnie się skaluje, ponieważ pozwala na rozszerzanie funkcjonalności poprzez dodawanie nowych modułów.
-Ponadto, przekazywanie zapytań pomiędzy kolejnymi warstwami przyczynia się do znacznego podniesienia bezpieczeństwa całego systemu.
+Ponadto przekazywanie zapytań pomiędzy kolejnymi warstwami przyczynia się do znacznego podniesienia bezpieczeństwa całego systemu.
 
 \section{Obsługa żądań}
 
@@ -20,6 +21,407 @@ Aplikacja kliencka wysyła do serwera żądanie składające się z adresu URL o
 W zależności od zasobu dostępne operacje obejmują utworzenie, modyfikację, usunięcie lub pobranie danych.
 Do żądania mogą zostać dołączone parametry w adresie zapytania, a także dane zapisane w formacie JSON.
 Serwer zwraca wynik operacji, podając odpowiedni kod statusu HTTP \autocite{iana_httpcodes} oraz treść odpowiedzi w formacie JSON w przypadku powodzenia lub w formacie określonym przez typ błędu w przypadku niepowodzenia.
+
+\section{Punkty końcowe}
+
+Serwer udostępnia łącznie 30 punktów końcowych, które pozwalają aplikacji klienckiej na komunikacje z nim.
+Wszystkie zostały opisane w tabelach poniżej, skategoryzowane na podstawie ich adresu bazowego.
+Parametry podawane w treści zapytania oraz po adresie URL zostały celowo pominięte dla czytelności.
+
+\vspace*{1em}
+
+\noindent
+\textbf{Autentykacja}
+
+\noindent
+Użytkownicy mogą wykonać szereg operacji związanych z procesem autentykacji konta oraz tworzeniem i odnawianiem tokenu uwierzytelniającego.
+Ponadto udostępnione zostały dodatkowe funkcje do zarządzania kontem, czyli odpowiadające za weryfikację poczty elektronicznej oraz reset hasła \tabref{tab:authendpoints}:
+%
+\begin{table}[h]
+    \centering
+    \tabcaption{Dostępne punkty końcowe udostępniane przez serwer do obsługi autentykacji}{Opracowanie własne}
+    \begin{tabular}{|p{0.105\textwidth}|p{0.41\textwidth}|p{0.4\textwidth}|}
+        \hline
+        \textbf{Metoda} & \textbf{Adres URL}                     & \textbf{Zastosowanie}            \\
+        \hline
+        POST            & \nolinkurl{/auth/register}             & Rejestracja do serwisu           \\
+        \hline
+        POST            & \nolinkurl{/auth/login}                & Logowanie użytkownika            \\
+        \hline
+        POST            & \nolinkurl{/auth/refresh}              & Odświeżenie tokenu dostępu       \\
+        \hline
+        POST            & \nolinkurl{/auth/logout}               & Wylogowanie użytkownika          \\
+        \hline
+        POST            & \nolinkurl{/auth/verify-email/:code}   & Zweryfikowanie konta użytkownika \\
+        \hline
+        POST            & \nolinkurl{/auth/forgot-password}      & Wysłanie kodu resetującego hasło \\
+        \hline
+        POST            & \nolinkurl{/auth/reset-password/:code} & Reset hasła                      \\
+        \hline
+    \end{tabular}
+    \label{tab:authendpoints}
+\end{table}
+
+\noindent
+\textbf{Ogłoszenia}
+
+\noindent
+Udostępnione funkcje związane z ogłoszeniami, pozwalają na ich tworzenie, edycję oraz pobieranie informacji w nich zawartych.
+Wśród operacji uwzględniona jest wyszukiwarka, wykorzystująca algorytm reputacji, paginację wyników oraz filtrowanie.
+Dodatkowo istnieje możliwość wylistowania ogłoszeń sprzedawcy, wliczając te zamknięte \tabref{tab:advertendpoints}:
+%
+\begin{table}[h]
+    \centering
+    \tabcaption{Dostępne punkty końcowe udostępniane przez serwer do obsługi ogłoszeń}{Opracowanie własne}
+    \begin{tabular}{|p{0.105\textwidth}|p{0.41\textwidth}|p{0.4\textwidth}|}
+        \hline
+        \textbf{Metoda} & \textbf{Adres URL}                    & \textbf{Zastosowanie}           \\
+        \hline
+        POST            & \nolinkurl{/advert}                   & Utworzenie ogłoszenia           \\
+        \hline
+        PATCH           & \nolinkurl{/advert/:id}               & Aktualizacja ogłoszenia         \\
+        \hline
+        GET             & \nolinkurl{/advert/:id}               & Pobranie szczegółów ogłoszenia  \\
+        \hline
+        GET             & \nolinkurl{/advert}                   & Wylistowanie otwartych ogłoszeń \\
+        \hline
+        GET             & \nolinkurl{/advert/from-user/:userId} & Pobranie ogłoszeń użytkownika   \\
+        \hline
+    \end{tabular}
+    \label{tab:advertendpoints}
+\end{table}
+
+\noindent
+\textbf{Komentarze i reakcje}
+
+\noindent
+Największa liczba punktów końcowych jest powiązana z opiniami użytkowników.
+Wliczone jest w to zamieszczanie komentarzy, ich edycja, usuwanie oraz listowanie pod danym ogłoszeniem.
+W tej kategorii są również uwzględnione reakcje na komentarze \tabref{tab:commentendpoints}:
+%
+\begin{table}[h]
+    \centering
+    \tabcaption{Dostępne punkty końcowe udostępniane przez serwer do obsługi komentarzy i reakcji}{Opracowanie własne}
+    \begin{tabular}{|p{0.105\textwidth}|p{0.41\textwidth}|p{0.4\textwidth}|}
+        \hline
+        \textbf{Metoda} & \textbf{Adres URL}                         & \textbf{Zastosowanie}          \\
+        \hline
+        POST            & \nolinkurl{/comment/:advertId}             & Utworzenie komentarza          \\
+        \hline
+        PATCH           & \nolinkurl{/comment/:id}                   & Aktualizacja komentarza        \\
+        \hline
+        DELETE          & \nolinkurl{/comment/:id}                   & Usunięcie komentarza           \\
+        \hline
+        GET             & \nolinkurl{/comment/:id}                   & Pobranie komentarza            \\
+        \hline
+        GET             & \nolinkurl{/comment/from-advert/:advertId} & Wylistowanie komentarzy        \\
+        \hline
+        PUT             & \nolinkurl{/comment/react/:id}             & Dodanie reakcji na komentarz   \\
+        \hline
+        DELETE          & \nolinkurl{/comment/react/:id}             & Usunięcie reakcji na komentarz \\
+        \hline
+        GET             & \nolinkurl{/comment/react/:id}             & Pobranie reakcji na komentarz  \\
+        \hline
+    \end{tabular}
+    \label{tab:commentendpoints}
+\end{table}
+
+\noindent
+\textbf{Zdjęcia}
+
+\noindent
+Punkty końcowe dla obsługi zdjęć pozwalają na ich zamieszczanie w ogłoszeniu, pobieranie oraz usunięcie.
+W porównaniu do innych kategorii, w komunikacji są wykorzystywane tutaj strumienie dla przesyłania plików \tabref{tab:imageendpoints}:
+%
+\begin{table}[h]
+    \centering
+    \tabcaption{Dostępne punkty końcowe udostępniane przez serwer do obsługi zdjęć}{Opracowanie własne}
+    \begin{tabular}{|p{0.105\textwidth}|p{0.41\textwidth}|p{0.4\textwidth}|}
+        \hline
+        \textbf{Metoda} & \textbf{Adres URL}           & \textbf{Zastosowanie} \\
+        \hline
+        POST            & \nolinkurl{/image/:advertId} & Wstawienie zdjęcia    \\
+        \hline
+        GET             & \nolinkurl{/image/:id}       & Pobranie zdjęcia      \\
+        \hline
+        DELETE          & \nolinkurl{/image/:id}       & Usunięcie zdjęcia     \\
+        \hline
+    \end{tabular}
+    \label{tab:imageendpoints}
+\end{table}
+
+\noindent
+\textbf{Informacje o pojazdach}
+
+\noindent
+Dane zawarte w filtrach aplikacji znajdują się po stronie serwera \tabref{tab:infoendpoints}:
+%
+\begin{table}[h]
+    \centering
+    \tabcaption{Dostępne punkty końcowe udostępniane przez serwer do pobierania informacji o~pojazdach}{Opracowanie własne}
+    \begin{tabular}{|p{0.105\textwidth}|p{0.41\textwidth}|p{0.4\textwidth}|}
+        \hline
+        \textbf{Metoda} & \textbf{Adres URL}    & \textbf{Zastosowanie}      \\
+        \hline
+        GET             & \nolinkurl{/info}     & Pobranie dostępnych marek  \\
+        \hline
+        GET             & \nolinkurl{/info/:id} & Pobranie dostępnych modeli \\
+        \hline
+    \end{tabular}
+    \label{tab:infoendpoints}
+\end{table}
+
+\noindent
+\textbf{Zgłoszenia}
+
+\noindent
+W aplikacji można zgłaszać treści naruszające politykę serwisu.
+Do treści zaliczane są zarówno oferty jak i komentarze.
+Recenzenci przeglądają zgłoszenia poprzez ich wylistowanie \tabref{tab:reportendpoints}:
+%
+\begin{table}[h]
+    \centering
+    \tabcaption{Dostępne punkty końcowe udostępniane przez serwer do obsługi zgłoszeń}{Opracowanie własne}
+    \begin{tabular}{|p{0.105\textwidth}|p{0.41\textwidth}|p{0.4\textwidth}|}
+        \hline
+        \textbf{Metoda} & \textbf{Adres URL}              & \textbf{Zastosowanie}           \\
+        \hline
+        GET             & \nolinkurl{/report}             & Wylistowanie aktywnych zgłoszeń \\
+        \hline
+        POST            & \nolinkurl{/report/advert/:id}  & Zgłoszenie ogłoszenia           \\
+        \hline
+        POST            & \nolinkurl{/report/comment/:id} & Zgłoszenie komentarza           \\
+        \hline
+    \end{tabular}
+    \label{tab:reportendpoints}
+\end{table}
+
+\noindent
+\textbf{Profile użytkowników}
+
+\noindent
+Użytkownicy posiadają w serwisie własne profile, które można dowolnie przeglądać \tabref{tab:userendpoints}:
+%
+\begin{table}[h]
+    \centering
+    \tabcaption{Dostępne punkty końcowe udostępniane przez serwer do pobierania profili użytkowników}{Opracowanie własne}
+    \begin{tabular}{|p{0.105\textwidth}|p{0.41\textwidth}|p{0.4\textwidth}|}
+        \hline
+        \textbf{Metoda} & \textbf{Adres URL}    & \textbf{Zastosowanie}       \\
+        \hline
+        GET             & \nolinkurl{/user}     & Pobranie aktualnego profilu \\
+        \hline
+        GET             & \nolinkurl{/user/:id} & Pobranie profilu            \\
+        \hline
+    \end{tabular}
+    \label{tab:userendpoints}
+\end{table}
+
+\section{Baza danych NoSQL}
+
+W projekcie wykorzystano nierelacyjną bazę danych, w której informacje przechowywane są w postaci dokumentów o elastycznej strukturze.
+Dokumenty pełnią rolę rekordów i porządkują dane w formie par klucz-wartość.
+Do grupowania powiązanych ze sobą dokumentów wykorzystywane są \emph{kolekcje}, które nie wymagają jednolitej struktury danych pomiędzy swoimi elementami.
+Zastosowane rozwiązanie charakteryzuje się prostotą w implementacyji oraz wysoką odpornością na zmiany w~sposobie zapisu danych.
+Skalowanie bazy danych polega na zwiększaniu liczby jej instancji, co ułatwia dalszy rozwój aplikacji \autocite{mongo_documentdb}.
+Kolekcje umożliwiają definiowanie indeksów na wybranych polach, co pozwala na optymalizację operacji wyszukiwania \autocite{mongo_index}.
+Dodatkowo istnieje możliwość tworzenia unikalnych kluczy złożonych oraz definiowania sygnatur czasowych, po których rekordy są automatycznie usuwane z kolekcji \autocite{mongo_ttl}.
+Warstwa modeli udostępnia zestaw dedykowanych funkcji umożliwiających wykonywanie atomowych operacji na danych, takich jak wyszukiwanie rekordów spełniających określony predykat.
+
+Pomimo faktu, że nierelacyjne bazy danych nie wymagają ściśle określonego schematu, modele wykorzystywane w projekcie w większości przypadków posiadają jasno zdefiniowane pola, przechowujące dane tych samych typów.
+Relacje pomiędzy kolekcjami zostały odwzorowane poprzez przechowywanie w dokumentach pól zawierających identyfikatory powiązanych dokumentów, co stanowi formę relacji realizowanych na poziomie samego serwera.
+Poniższy diagram przedstawia wszystkie kolekcje przechowywane w bazie danych oraz relacje występujące pomiędzy nimi \figref{fig:dbdiagram}:
+%
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\textwidth]{db_diagram}
+    \figcaption{Wygenerowany diagram na podstawie wykorzystanej bazy danych}{Opracowanie własne}
+    \label{fig:dbdiagram}
+\end{figure}
+
+Każda z kolekcji pełni określoną rolę w działaniu aplikacji.
+Charakterystyka ich funkcjonalności, opis indeksów i relacji każdej z nich zostały zawarte poniżej.
+Opisy poszczególnych pól oraz kluczy głównych zostały celowo pominięte dla czytelności.
+
+\vspace*{1em}
+
+\noindent
+\textbf{Users}
+
+\noindent
+Kolekcja odpowiedzialna za przechowywanie danych konta oraz informacji wymaganych do poprawnego przeprowadzania procesu autentykacji.
+Ponadto dokumenty zawierają informacje o rolach przypisanych do danego użytkownika.
+
+\vspace*{0.5ex}
+
+\noindent
+\textit{\textbf{Indeksy}}:
+%
+\begin{itemize}
+    \item \textbf{email\_1} -- zapewnia unikalność adresów poczty elektronicznej.
+\end{itemize}
+
+\vspace*{1ex}
+
+\noindent
+\textbf{Sessions}
+
+\noindent
+Kolekcja odpowiedzialna za przechowywanie sesji użytkownika.
+
+\vspace*{0.5ex}
+
+\noindent
+\textit{\textbf{Indeksy}}:
+%
+\begin{itemize}
+    \item \textbf{expiresAt\_1} -- sygnatura czasowa, po której sesja jest usuwana z bazy danych.
+\end{itemize}
+
+\noindent
+\textit{\textbf{Relacje}}:
+%
+\begin{itemize}
+    \item \textbf{userId} -- identyfikator użytkownika, do którego jest przypisana sesja.
+\end{itemize}
+
+\vspace*{1ex}
+
+\noindent
+\textbf{Verifications}
+
+\noindent
+Kolekcja odpowiedzialna za przechowywanie kodów dla weryfikacji adresu poczty elektronicznej oraz operacji zmiany hasła.
+
+\vspace*{0.5ex}
+
+\noindent
+\textit{\textbf{Indeksy}}:
+%
+\begin{itemize}
+    \item \textbf{signature\_1} -- zapewnia unikalność kodów weryfikacyjnych,
+    \item \textbf{expiresAt\_1} -- sygnatura czasowa, po której kod weryfikacyjny jest usuwany z~bazy danych.
+\end{itemize}
+
+\noindent
+\textit{\textbf{Relacje}}:
+%
+\begin{itemize}
+    \item \textbf{userId} -- identyfikator właściciela kodu weryfikacyjnego.
+\end{itemize}
+
+\vspace*{1ex}
+
+\noindent
+\textbf{Adverts}
+
+\noindent
+Kolekcja odpowiedzialna za przechowywanie informacji o ogłoszeniu.
+Informacje obejmują specyfikację pojazdu oraz treść ogłoszenia, czyli tytuł, opis oraz cena.
+Ponadto, zawarte są metadane obejmujące status oraz ocenę reputacji ogłoszenia.
+
+\vspace*{0.5ex}
+
+\noindent
+\textit{\textbf{Relacje}}:
+%
+\begin{itemize}
+    \item \textbf{userId} -- identyfikator właściciela ogłoszenia.
+\end{itemize}
+
+\vspace*{1ex}
+
+\noindent
+\textbf{Comments}
+
+\noindent
+Kolekcja odpowiedzialna za przechowywanie treści komentarzy tworzonych przez użytkowników pod ogłoszeniami.
+Dodatkowo, przechowywane są tam informacje o~ilości poszczególnych reakcji na komentarz.
+
+\vspace*{0.5ex}
+
+\noindent
+\textit{\textbf{Relacje}}:
+%
+\begin{itemize}
+    \item \textbf{advertId} -- identyfikator ogłoszenia, pod którym został zamieszczony komentarz,
+    \item \textbf{userId} -- identyfikator właściciela komentarza.
+\end{itemize}
+
+\vspace*{1ex}
+
+\noindent
+\textbf{Interactions}
+
+\noindent
+Kolekcja odpowiedzialna za przechowywanie interakcji z wybranymi elementami systemu przez użytkowników.
+Interakcje obejmują reakcje na komentarze, zgłoszenia ofert oraz komentarzy.
+
+\vspace*{0.5ex}
+
+\noindent
+\textit{\textbf{Indeksy}}:
+%
+\begin{itemize}
+    \item \textbf{userId\_1\_targetId\_1\_action\_1} -- zapewnia unikalność interakcji.
+\end{itemize}
+
+\noindent
+\textit{\textbf{Relacje}}:
+%
+\begin{itemize}
+    \item \textbf{targetId} -- identyfikator dokumentu, który został uwzględniony w interakcji,
+    \item \textbf{userId} -- identyfikator użytkownika, który dokonał interakcji.
+\end{itemize}
+
+\vspace*{1ex}
+
+\noindent
+\textbf{Files}
+
+\noindent
+Kolekcja odpowiedzialna za przechowywanie metadanych zdjęć, takich jak ich nazwa, data wstawienia oraz rozmiar.
+
+\vspace*{0.5ex}
+
+\noindent
+\textit{\textbf{Indeksy}}:
+%
+\begin{itemize}
+    \item \textbf{filename\_1\_uploadDate\_1} -- przyspiesza przeszukiwanie wstawionych plików.
+\end{itemize}
+
+\noindent
+\textit{\textbf{Relacje}}:
+%
+\begin{itemize}
+    \item \textbf{advertId} -- identyfikator ogłoszenia, pod które zdjęcie przynależy,
+    \item \textbf{userId} -- identyfikator właściciela pliku.
+\end{itemize}
+
+\vspace*{1ex}
+
+\noindent
+\textbf{Chunks}
+
+\noindent
+Kolekcja odpowiedzialna za przechowywanie sfragmentaryzowanej zawartości zdjęć w~formacie binarnym.
+
+\vspace*{0.5ex}
+
+\noindent
+\textit{\textbf{Indeksy}}:
+%
+\begin{itemize}
+    \item \textbf{files\_id\_1\_n\_1} -- zapewnia unikalność przechowywanych fragmentów zdjęć.
+\end{itemize}
+
+\noindent
+\textit{\textbf{Relacje}}:
+%
+\begin{itemize}
+    \item \textbf{files\_id} -- identyfikator zdjęcia, pod którego fragment przynależy.
+\end{itemize}
 
 \section{Walidacja danych}
 
@@ -29,6 +431,38 @@ Każde pole obiektu musi się zgadzać z jego odpowiednikiem w schemacie.
 W przypadku wartości liczbowych mogą być określone ograniczenia dotyczące zakresu, dla tekstów minimalna długość, a dla typów wyliczeniowych czy znajdują się one w liście dopuszczalnych wartości.
 Tak dokładna weryfikacja minimalizuje ryzyko wystąpienia nieprzewidzianych błędów, wynikających z niepoprawnego działania kolejnych etapów przetwarzania danych.
 
+
+\section{Obsługa błędów}
+
+Punkty końcowe serwera są objęte modułem \emph{errorHandler}, który jest aktywowany za każdym razem, kiedy obsługa żądania klienta napotka na błąd.
+Zapewnia to kontrolowane reagowanie na błędy i zwrot klarownego komunikatu do aplikacji klienckiej, dlaczego działanie zostało przerwane.
+Format odpowiedzi jest tworzony na podstawie jednej z dostępnych klas błędów \tabref{tab:errorclass}:
+%
+\begin{table}[h]
+    \centering
+    \tabcaption{Porównanie dostępnych klas błędów serwera}{Opracowanie własne}
+    \begin{tabular}{|c|p{0.4\textwidth}|c|p{0.25\textwidth}|}
+        \hline
+        \textit{\textbf{Klasa błędu}} & \textbf{Źródło błędu}                                        & \textbf{Kod} & \textbf{Format komunikatu} \\
+        \hline
+        \textit{AppError}             & Problem z procesowaniem żądania przez warstwę serwisową      & 4xx          & \{ [message], [type] \}    \\
+        \hline
+        \textit{ZodError}             & Niezgodność przesłanych danych z odpowiadającym im schematem & 400          & \{ [message], [errors] \}  \\
+        \hline
+        \textit{MulterError}          & Nieprawidłowy format plików przesłanych na serwer            & 400          & \{ [message], [type] \}    \\
+        \hline
+        \textit{MongoError}           & Krytyczny błąd w działaniu sterownika bazy danych            & 418          & \{ [message], [type] \}    \\
+        \hline
+        \textit{Error}                & Nierozpoznany błąd                                           & 500          & 'Internal server error'    \\
+        \hline
+    \end{tabular}
+    \label{tab:errorclass}
+\end{table}
+
+Wszystkie zdefiniowane błędy zawierają pole tekstowe \emph{message}, które aplikacja wyświetla użytkownikowi jako komunikat oraz rozpoznaje na jego podstawie z jakim błędem ma do czynienia.
+W przypadku pola tekstowego \emph{type} aplikacja rozpoznaje dokładną przyczynę błędu, na przykład nieważny token dostępu.
+Natomiast pole \emph{errors} jest tablicą obiektów, zawierającą informacje o nieprawidłowościach w~wypełnionym formularzu, czyli treść błędu i identyfikator pola.
+
 \section{Autentykacja za pośrednictwem ciasteczek}
 
 Po zalogowaniu, serwer generuje dwa tokeny JWT\footnote{JSON Web Token -- format zapisu zaszyfrowanych danych JSON.}: dostępu oraz odświeżający.
@@ -37,14 +471,23 @@ Natomiast token odświeżający jest ważny 30 dni i służy do odnowienia dost�
 
 Serwer zwraca tokeny w \emph{plikach cookie}, czyli zestawie danych przetrzymywanych w pamięci przeglądarki i dołączanych do każdego zapytania.
 W ramach bezpieczeństwa, pliki te są niedostępne z poziomu skryptów oraz przesyłane jedynie z wykorzystaniem protokołu \emph{HTTPS}, czyli zaszyfrowanej wersji protokołu HTTP.
-Sesja użytkownika zapisywana jest jako dokument w bazie danych i weryfikowana w przypadku jej odświeżenia.
+Sesja użytkownika zapisywana jest jako dokument w bazie danych i weryfikowana w~przypadku jej odświeżenia.
 
 \section{Rozsyłanie maili}
 
 W ramach weryfikacji lub dodatkowej formy interakcji z użytkownikiem, serwis posiada możliwość wysyłania wiadomości na adres poczty elektronicznej, podany podczas rejestracji.
 Przykładowo, operacja zmiany hasła opiera się na przesłaniu wiadomości zawierającej specjalny odnośnik z wygenerowanym losowo kluczem, zapewniając właścicielowi konta bezpieczny dostęp do dedykowanego formularza modyfikującego dotychczasowe hasło.
-Treść wiadomości generowana jest na podstawie predefiniowanych szablonów HTML, które są następnie uzupełniane o dane kontekstowe, takie jak nazwa użytkownika.
+Treść wiadomości generowana jest na podstawie predefiniowanych szablonów HTML, które są następnie uzupełniane o~dane kontekstowe, takie jak nazwa użytkownika.
 Do wysłania wiadomości, serwer wykorzystuje zewnętrzną platformę mailingową, której przekazuje tytuł, treść wiadomości oraz informacje o adresacie.
+
+\section{Zarządzanie zdjęciami}
+
+System umożliwia wykonywanie operacji zapisu, usunięcia lub odczytu zdjęć, analogicznie jak w przypadku innych zasobów.
+Przesłane pliki są walidowane względem ich typu, metadanych oraz ilości, a następnie przekazane do sterownika bazy danych.
+Pierwszym krokiem jest wyciągnięcie wszystkich metadanych i~zapisanie ich w kolekcji zdjęć.
+Następnie binarna zawartość pliku jest dzielona na małe fragmenty i wszystkie są umieszczone w osobnej kolekcji z odnośnikiem do dokumentu z metadanymi \autocite{mongo_gridfs}.
+W celu pobrania zdjęcia, wyciągany jest z bazy rekord z metadanymi, a następnie łączone są wszystkie fragmenty z nim powiązane.
+Rozwiązanie pozwala na łatwe i wydajne powiązanie plików relacjami z~innymi dokumentami w bazie, na przykład ogłoszeń ze zdjęciami.
 
 \section{Przeliczanie reputacji sprzedawcy}
 
@@ -85,259 +528,3 @@ gdzie:
 %
 Na podstawie wartości wskaźnika reputacji oraz daty wystawienia ogłoszenia, algorytm sortujący decyduje o pozycjonowaniu oferty w wynikach wyszukiwania.
 Zaimplementowany system promuje sprzedawców o wysokim poziomie zaufania, jednocześnie umożliwiając widoczność ofert użytkowników rozpoczynających użytkowanie serwisu.
-
-\section{Obsługa błędów}
-
-Punkty końcowe serwera są objęte modułem \emph{errorHandler}, który jest aktywowany za każdym razem, kiedy obsługa żądania klienta napotka na błąd.
-Zapewnia to kontrolowane reagowanie na błędy i zwrot klarownego komunikatu do aplikacji klienckiej, dlaczego działanie zostało przerwane.
-Format odpowiedzi jest tworzony na podstawie jednej z dostępnych klas błędów \tabref{tab:errorclass}:
-%
-\begin{table}[h]
-    \centering
-    \tabcaption{Porównanie dostępnych klas błędów serwera}{Opracowanie własne}
-    \begin{tabular}{|c|p{0.4\textwidth}|c|p{0.25\textwidth}|}
-        \hline
-        \textit{\textbf{Klasa błędu}} & \textbf{Źródło błędu}                                        & \textbf{Kod} & \textbf{Format komunikatu} \\
-        \hline
-        \textit{AppError}             & Problem z procesowaniem żądania przez warstwę serwisową      & 4xx          & \{ [message], [type] \}    \\
-        \hline
-        \textit{ZodError}             & Niezgodność przesłanych danych z odpowiadającym im schematem & 400          & \{ [message], [errors] \}  \\
-        \hline
-        \textit{MulterError}          & Nieprawidłowy format plików przesłanych na serwer            & 400          & \{ [message], [type] \}    \\
-        \hline
-        \textit{MongoError}           & Krytyczny błąd w działaniu sterownika bazy danych            & 418          & \{ [message], [type] \}    \\
-        \hline
-        \textit{Error}                & Nierozpoznany błąd                                           & 500          & 'Internal server error'    \\
-        \hline
-    \end{tabular}
-    \label{tab:errorclass}
-\end{table}
-
-Wszystkie zdefiniowane błędy zawierają pole tekstowe \emph{message}, które aplikacja wyświetla użytkownikowi jako komunikat oraz rozpoznaje na jego podstawie z jakim błędem ma do czynienia.
-W przypadku pola tekstowego \emph{type} aplikacja rozpoznaje dokładną przyczynę błędu, na przykład nieważny token dostępu.
-Natomiast pole \emph{errors} jest tablicą obiektów, zawierającą informacje o nieprawidłowościach w wypełnionym formularzu, czyli treść błędu i identyfikator pola.
-
-\section{Baza danych NoSQL}
-
-W projekcie wykorzystano nierelacyjną bazę danych, przechowującą informacje w dokumentach o niezdefiniowanej strukturze.
-Dokumenty pełnią rolę rekordów i uporządkowują dane w postaci par klucz-wartość.
-Do podzielenia dokumentów na powiązane ze sobą grupy wykorzystują \emph{kolekcje}, które jednak nie wymagają zgodnej struktury pomiędzy nimi.
-Rozwiązanie jest proste w implementacji oraz dobrze radzi sobie z wprowadzanymi zmianami w sposobie zapisywania dokumentów.
-Ponadto skalowanie bazy polega na zwiększaniu ilości jej instancji co przyspiesza dalszy rozwój aplikacji \autocite{mongo_documentdb}.
-
-\section{Zarządzanie zdjęciami}
-
-System umożliwia wykonywanie operacji zapisu, usunięcia lub odczytu zdjęć, analogicznie jak w przypadku innych zasobów.
-Przesłane pliki są walidowane względem ich typu, metadanych oraz ilości, a następnie przekazane do sterownika bazy danych.
-Pierwszym krokiem jest wyciągnięcie wszystkich metadanych i zapisanie ich w kolekcji zdjęć.
-Następnie binarna zawartość pliku jest dzielona na małe fragmenty i wszystkie są umieszczone w osobnej kolekcji z odnośnikiem do dokumentu z metadanymi \autocite{mongo_gridfs}.
-W celu pobrania zdjęcia, wyciągany jest z bazy rekord z metadanymi, a następnie łączone są wszystkie fragmenty z nim powiązane.
-Rozwiązanie pozwala na łatwe i wydajne powiązanie plików relacjami z innymi dokumentami w bazie, na przykład ogłoszeń ze zdjęciami.
-
-\section{Opis użytych modeli danych}
-
-Wykorzystane w rozwiązaniu modele są bezpośrednio powiązane z kolekcjami w bazie danych i stanowią warstwę abstrakcji pomiędzy warstwą serwisową a sterownikiem bazy danych.
-Modele udostępniają zestaw dedykowanych funkcji do wykonywania atomowych operacji na kolekcjach, takich jak znajdowanie rekordów spełniających predykat.
-Kolekcje umożliwiają definiowanie indeksów na wybranych polach, co pozwala na optymalizację przeszukiwania dokumentów \autocite{mongo_index}.
-Ponadto, istnieje możliwość tworzenia unikalnych kluczy na zestawach pól oraz definiowania sygnatur czasowych, po których dany rekord będzie automatycznie usunięty z kolekcji \autocite{mongo_ttl}.
-W oparciu o te założenia zostały utworzone następujące modele danych:
-%
-\begin{itemize}
-    \item \textbf{advert} -- zarządzanie ogłoszeniami oraz odpowiedzialność za logikę wyszukiwarki,
-    \item \textbf{comment} -- obsługa komentarzy oraz zamieszczanie pod nimi reakcji przez użytkowników,
-    \item \textbf{image} -- dodawanie, usuwanie i pobieranie zdjęć za pomocą dedykowanego strumienia danych,
-    \item \textbf{interaction} -- podstawowe operacje na generycznych interakcjach z określonym typem, na przykład zgłoszeniach,
-    \item \textbf{session} -- zarządzanie sesją użytkownika, która jest odnawiana lub automatycznie usuwana po określonym czasie,
-    \item \textbf{user} -- przeprowadzanie operacji na kontach użytkowników, w tym weryfikacja adresu poczty elektronicznej i zmiana hasła,
-    \item \textbf{verificationCode} -- zarządzanie kodami weryfikacyjnymi przesyłanych drogą mailową z sygnaturami czasowymi, po których następuje ich wygaśnięcie.
-\end{itemize}
-
-\section{Diagram bazy danych}
-
-Poniższy diagram przedstawia wszystkie kolekcje przechowywane w bazie danych oraz relacje między nimi \figref{fig:dbdiagram}:
-%
-\begin{figure}[h]
-    \centering
-    \includegraphics[width=0.95\textwidth]{db_diagram}
-    \figcaption{Wygenerowany diagram na podstawie wykorzystanej bazy danych}{Opracowanie własne}
-    \label{fig:dbdiagram}
-\end{figure}
-
-Większość modeli jest bezpośrednio związane z poszczególnymi kolekcjami, poza jednym.
-Wyjątkiem są zdjęcia, które przechowywane są w dwóch kolekcjach:
-%
-\begin{itemize}
-    \item \textbf{fs.files} -- nazwa pliku, jego rozmiar oraz inne metadane,
-    \item \textbf{fs.chunks} -- sfragmentaryzowana zawartość w formacie binarnym.
-\end{itemize}
-
-\section{Spis punktów końcowych}
-
-Utworzony w ramach projektu serwer udostępnia łącznie 30 punktów końcowych, które pozwalają aplikacji klienckiej na komunikacje z nim.
-Wszystkie zostały opisane w tabelach poniżej, skategoryzowane na podstawie ich adresu bazowego.
-Parametry podawane w treści zapytania oraz po adresie URL zostały celowo pominięte dla czytelności.
-
-\subsection{Autentykacja}
-
-Punkty końcowe do obsługi autentykacji \tabref{tab:authendpoints}:
-%
-\begin{table}[h]
-    \centering
-    \tabcaption{Dostępne punkty końcowe udostępniane przez serwer do obsługi autentykacji}{Opracowanie własne}
-    \begin{tabular}{|p{0.105\textwidth}|p{0.41\textwidth}|p{0.4\textwidth}|}
-        \hline
-        \textbf{Metoda} & \textbf{Adres URL}                     & \textbf{Zastosowanie}            \\
-        \hline
-        POST            & \nolinkurl{/auth/register}             & Rejestracja do serwisu           \\
-        \hline
-        POST            & \nolinkurl{/auth/login}                & Logowanie użytkownika            \\
-        \hline
-        POST            & \nolinkurl{/auth/refresh}              & Odświeżenie tokenu dostępu       \\
-        \hline
-        POST            & \nolinkurl{/auth/logout}               & Wylogowanie użytkownika          \\
-        \hline
-        POST            & \nolinkurl{/auth/verify-email/:code}   & Zweryfikowanie konta użytkownika \\
-        \hline
-        POST            & \nolinkurl{/auth/forgot-password}      & Wysłanie kodu resetującego hasło \\
-        \hline
-        POST            & \nolinkurl{/auth/reset-password/:code} & Reset hasła                      \\
-        \hline
-    \end{tabular}
-    \label{tab:authendpoints}
-\end{table}
-
-\subsection{Ogłoszenia}
-
-Punkty końcowe do obsługi ogłoszeń \tabref{tab:advertendpoints}:
-%
-\begin{table}[h]
-    \centering
-    \tabcaption{Dostępne punkty końcowe udostępniane przez serwer do obsługi ogłoszeń}{Opracowanie własne}
-    \begin{tabular}{|p{0.105\textwidth}|p{0.41\textwidth}|p{0.4\textwidth}|}
-        \hline
-        \textbf{Metoda} & \textbf{Adres URL}                    & \textbf{Zastosowanie}           \\
-        \hline
-        POST            & \nolinkurl{/advert}                   & Utworzenie ogłoszenia           \\
-        \hline
-        PATCH           & \nolinkurl{/advert/:id}               & Aktualizacja ogłoszenia         \\
-        \hline
-        GET             & \nolinkurl{/advert/:id}               & Pobranie szczegółów ogłoszenia  \\
-        \hline
-        GET             & \nolinkurl{/advert}                   & Wylistowanie otwartych ogłoszeń \\
-        \hline
-        GET             & \nolinkurl{/advert/from-user/:userId} & Pobranie ogłoszeń użytkownika   \\
-        \hline
-    \end{tabular}
-    \label{tab:advertendpoints}
-\end{table}
-
-\subsection{Komentarze i reakcje}
-
-Punkty końcowe do obsługi komentarzy i reakcji \tabref{tab:commentendpoints}:
-%
-\begin{table}[h]
-    \centering
-    \tabcaption{Dostępne punkty końcowe udostępniane przez serwer do obsługi komentarzy i reakcji}{Opracowanie własne}
-    \begin{tabular}{|p{0.105\textwidth}|p{0.41\textwidth}|p{0.4\textwidth}|}
-        \hline
-        \textbf{Metoda} & \textbf{Adres URL}                         & \textbf{Zastosowanie}          \\
-        \hline
-        POST            & \nolinkurl{/comment/:advertId}             & Utworzenie komentarza          \\
-        \hline
-        PATCH           & \nolinkurl{/comment/:id}                   & Aktualizacja komentarza        \\
-        \hline
-        DELETE          & \nolinkurl{/comment/:id}                   & Usunięcie komentarza           \\
-        \hline
-        GET             & \nolinkurl{/comment/:id}                   & Pobranie komentarza            \\
-        \hline
-        GET             & \nolinkurl{/comment/from-advert/:advertId} & Wylistowanie komentarzy        \\
-        \hline
-        PUT             & \nolinkurl{/comment/react/:id}             & Dodanie reakcji na komentarz   \\
-        \hline
-        DELETE          & \nolinkurl{/comment/react/:id}             & Usunięcie reakcji na komentarz \\
-        \hline
-        GET             & \nolinkurl{/comment/react/:id}             & Pobranie reakcji na komentarz  \\
-        \hline
-    \end{tabular}
-    \label{tab:commentendpoints}
-\end{table}
-
-\subsection{Zdjęcia}
-
-Punkty końcowe do obsługi zdjęć \tabref{tab:imageendpoints}:
-%
-\begin{table}[h]
-    \centering
-    \tabcaption{Dostępne punkty końcowe udostępniane przez serwer do obsługi zdjęć}{Opracowanie własne}
-    \begin{tabular}{|p{0.105\textwidth}|p{0.41\textwidth}|p{0.4\textwidth}|}
-        \hline
-        \textbf{Metoda} & \textbf{Adres URL}           & \textbf{Zastosowanie} \\
-        \hline
-        POST            & \nolinkurl{/image/:advertId} & Wstawienie zdjęcia    \\
-        \hline
-        GET             & \nolinkurl{/image/:id}       & Pobranie zdjęcia      \\
-        \hline
-        DELETE          & \nolinkurl{/image/:id}       & Usunięcie zdjęcia     \\
-        \hline
-    \end{tabular}
-    \label{tab:imageendpoints}
-\end{table}
-
-\subsection{Zgłoszenia}
-
-Punkty końcowe do obsługi zgłoszeń \tabref{tab:reportendpoints}:
-%
-\begin{table}[h]
-    \centering
-    \tabcaption{Dostępne punkty końcowe udostępniane przez serwer do obsługi zgłoszeń}{Opracowanie własne}
-    \begin{tabular}{|p{0.105\textwidth}|p{0.41\textwidth}|p{0.4\textwidth}|}
-        \hline
-        \textbf{Metoda} & \textbf{Adres URL}              & \textbf{Zastosowanie}           \\
-        \hline
-        GET             & \nolinkurl{/report}             & Wylistowanie aktywnych zgłoszeń \\
-        \hline
-        POST            & \nolinkurl{/report/advert/:id}  & Zgłoszenie ogłoszenia           \\
-        \hline
-        POST            & \nolinkurl{/report/comment/:id} & Zgłoszenie komentarza           \\
-        \hline
-    \end{tabular}
-    \label{tab:reportendpoints}
-\end{table}
-
-\subsection{Informacje o pojazdach}
-
-Punkty końcowe do pobierania informacji o pojazdach \tabref{tab:infoendpoints}:
-%
-\begin{table}[h]
-    \centering
-    \tabcaption{Dostępne punkty końcowe udostępniane przez serwer do pobierania informacji o pojazdach}{Opracowanie własne}
-    \begin{tabular}{|p{0.105\textwidth}|p{0.41\textwidth}|p{0.4\textwidth}|}
-        \hline
-        \textbf{Metoda} & \textbf{Adres URL}    & \textbf{Zastosowanie}      \\
-        \hline
-        GET             & \nolinkurl{/info}     & Pobranie dostępnych marek  \\
-        \hline
-        GET             & \nolinkurl{/info/:id} & Pobranie dostępnych modeli \\
-        \hline
-    \end{tabular}
-    \label{tab:infoendpoints}
-\end{table}
-
-\subsection{Profile użytkowników}
-
-Punkty końcowe do pobierania profili użytkowników \tabref{tab:userendpoints}:
-%
-\begin{table}[h]
-    \centering
-    \tabcaption{Dostępne punkty końcowe udostępniane przez serwer do pobierania profili użytkowników}{Opracowanie własne}
-    \begin{tabular}{|p{0.105\textwidth}|p{0.41\textwidth}|p{0.4\textwidth}|}
-        \hline
-        \textbf{Metoda} & \textbf{Adres URL}    & \textbf{Zastosowanie}       \\
-        \hline
-        GET             & \nolinkurl{/user}     & Pobranie aktualnego profilu \\
-        \hline
-        GET             & \nolinkurl{/user/:id} & Pobranie profilu            \\
-        \hline
-    \end{tabular}
-    \label{tab:userendpoints}
-\end{table}
