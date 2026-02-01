@@ -7,29 +7,35 @@ import Button from '@/components/atoms/Button';
 import Text from '@/components/atoms/Text';
 import Link from '@/components/atoms/Link';
 import { defaultFormOptions } from '@/utils/form';
-import { login } from '@/middleware/api';
+import { register } from '@/middleware/api';
 import { AUTH_KEY } from '@/middleware/queryOptions';
 
-const loginSchema = z.object({
-  email: z.email('Niepoprawny adres email'),
-  password: z.string().min(8, 'Hasło musi mieć minimalnie 8 znaków'),
-});
+const registerSchema = z
+  .object({
+    name: z.string().min(1, 'Nazwa użytkownika nie może być pusta'),
+    email: z.email('Niepoprawny adres email'),
+    password: z.string().min(8, 'Hasło musi mieć minimalnie 8 znaków'),
+    confirm: z.string().min(8, 'Hasło musi mieć minimalnie 8 znaków'),
+  })
+  .refine((data) => data.password === data.confirm, { error: 'Hasła nie są takie same', path: ['confirm'] });
 
-const loginFormOptions = defaultFormOptions(loginSchema, {
+const registerFormOptions = defaultFormOptions(registerSchema, {
+  name: '',
   email: '',
   password: '',
+  confirm: '',
 });
 
-const Login = () => {
-  const { queryClient } = useRouteContext({ from: '/auth/login' });
+const Register = () => {
+  const { queryClient } = useRouteContext({ from: '/auth/register' });
 
   const { mutate, isPending, isSuccess } = useMutation({
-    mutationFn: login,
+    mutationFn: register,
     onSuccess: () => queryClient.invalidateQueries({ queryKey: [AUTH_KEY], exact: true }),
   });
 
   const { Field, Subscribe, handleSubmit } = useForm({
-    ...loginFormOptions,
+    ...registerFormOptions,
     onSubmit: ({ value }) => mutate(value),
   });
 
@@ -37,7 +43,7 @@ const Login = () => {
     <div className="flex min-h-screen items-center justify-center p-4">
       <div className="flex max-w-100 flex-1 flex-col gap-8 rounded-md border-2 border-white/70 bg-white/50 p-8 dark:border-black/70 dark:bg-black/50">
         <Text as="h1" variant="heading" className="text-center">
-          Miło Cię widzieć
+          Dołącz do nas
         </Text>
 
         <form
@@ -48,6 +54,28 @@ const Login = () => {
             handleSubmit();
           }}
         >
+          <Field
+            name="name"
+            children={({ name, state, handleBlur, handleChange }) => (
+              <div className="flex min-h-24 flex-col gap-1">
+                <Input
+                  label="Nazwa użytkownika"
+                  name={name}
+                  type="text"
+                  placeholder="Kowal87"
+                  value={state.value}
+                  loading={isPending || isSuccess}
+                  invalid={!state.meta.isValid && state.meta.isTouched}
+                  onBlur={handleBlur}
+                  onChange={(e) => handleChange(e.target.value)}
+                />
+                {!state.meta.isValid && state.meta.isTouched && (
+                  <Text className="text-rose-600! dark:text-rose-500!">{state.meta.errors[0]?.message}</Text>
+                )}
+              </div>
+            )}
+          />
+
           <Field
             name="email"
             children={({ name, state, handleBlur, handleChange }) => (
@@ -92,28 +120,44 @@ const Login = () => {
             )}
           />
 
+          <Field
+            name="confirm"
+            children={({ name, state, handleBlur, handleChange }) => (
+              <div className="flex min-h-24 flex-col gap-1">
+                <Input
+                  label="Potwierdź hasło"
+                  name={name}
+                  type="password"
+                  placeholder="********"
+                  value={state.value}
+                  loading={isPending || isSuccess}
+                  invalid={!state.meta.isValid && state.meta.isTouched}
+                  onBlur={handleBlur}
+                  onChange={(e) => handleChange(e.target.value)}
+                />
+                {!state.meta.isValid && state.meta.isTouched && (
+                  <Text className="text-rose-600! dark:text-rose-500!">{state.meta.errors[0]?.message}</Text>
+                )}
+              </div>
+            )}
+          />
+
           <Subscribe
             selector={(state) => state.canSubmit}
             children={(canSubmit) => (
               <Button type="submit" disabled={!canSubmit} loading={isPending || isSuccess}>
-                Zaloguj się
+                Załóż konto
               </Button>
             )}
           />
+
+          <Link to="/auth/login" className="text-center">
+            Posiadasz konto?
+          </Link>
         </form>
-
-        <Link to="/auth/forgot-password" className="text-center">
-          Nie pamiętasz hasła?
-        </Link>
-
-        <div className="h-px w-full bg-gray-900 dark:bg-gray-200" />
-
-        <Link to="/auth/register" className="text-center">
-          Dołącz do naszej społeczności
-        </Link>
       </div>
     </div>
   );
 };
 
-export default Login;
+export default Register;
