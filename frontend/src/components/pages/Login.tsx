@@ -8,6 +8,7 @@ import Text from '@/components/atoms/Text';
 import { defaultFormOptions } from '@/utils/form';
 import { login } from '@/middleware/api';
 import { AUTH_KEY } from '@/middleware/queryOptions';
+import Link from '@/components/atoms/Link';
 
 const loginSchema = z.object({
   email: z.email('Niepoprawny adres email'),
@@ -100,6 +101,16 @@ const Login = () => {
             )}
           />
         </form>
+
+        <Link to="/auth/forgot-password" className="text-center">
+          Nie pamiętasz hasła?
+        </Link>
+
+        <div className="h-px w-full bg-gray-900 dark:bg-gray-200" />
+
+        <Link to="/auth/register" className="text-center">
+          Dołącz do naszej społeczności
+        </Link>
       </div>
     </div>
   );
