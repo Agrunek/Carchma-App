@@ -7,25 +7,25 @@ interface ImageProps {
   imageSource: string;
 }
 
-const baseClassName = tw`relative bg-gray-200`;
+const baseClassName = tw`relative aspect-video bg-gray-200 text-gray-900 dark:bg-gray-900 dark:text-gray-200`;
 
 const Image = ({ className, imageSource }: ImageProps) => {
   const style = clsx(baseClassName, className);
 
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(false);
 
   return (
     <div className={style}>
       {isLoading && (
         <>
-          <div className="absolute size-full animate-pulse bg-gray-900 dark:bg-gray-200" />
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
             viewBox="0 0 24 24"
             strokeWidth={1.5}
             stroke="currentColor"
-            className="absolute inset-0 m-auto size-12 animate-spin text-gray-200 dark:text-gray-900"
+            className="absolute inset-0 m-auto size-12 animate-spin"
           >
             <path
               strokeLinecap="round"
@@ -36,12 +36,15 @@ const Image = ({ className, imageSource }: ImageProps) => {
           </svg>
         </>
       )}
-      <img
-        alt={`Źródło: ${imageSource}`}
-        src={imageSource}
-        onLoad={() => setIsLoading(false)}
-        className="size-full object-contain"
-      />
+      {!error && (
+        <img
+          alt={'Brak zdjęcia'}
+          src={imageSource}
+          onLoad={() => setIsLoading(false)}
+          onError={() => setError(true)}
+          className="size-full object-contain"
+        />
+      )}
     </div>
   );
 };
