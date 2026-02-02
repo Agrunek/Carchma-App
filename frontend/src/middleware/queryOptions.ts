@@ -54,6 +54,7 @@ export const getCommentQueryOptions = (...[id]: Parameters<typeof getComment>) =
   return queryOptions({
     queryKey: [COMMENT_KEY, id],
     queryFn: () => getComment(id),
+    enabled: !!id,
   });
 };
 

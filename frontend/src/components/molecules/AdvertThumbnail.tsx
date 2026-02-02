@@ -9,7 +9,7 @@ interface AdvertThumbnailProps {
 
 const AdvertThumbnail = ({ advert }: AdvertThumbnailProps) => {
   return (
-    <div className="flex flex-1 flex-col items-center overflow-hidden border-2 border-white/70 bg-white/50 md:flex-row md:rounded-md dark:border-black/70 dark:bg-black/50">
+    <div className="flex flex-1 flex-col items-center gap-4 overflow-hidden border-2 border-white/70 bg-white/50 md:flex-row md:rounded-md dark:border-black/70 dark:bg-black/50">
       <div className="h-50">
         <Image imageSource={`http://localhost:5050/image/${advert.images[0]}`} className="h-full" />
       </div>
