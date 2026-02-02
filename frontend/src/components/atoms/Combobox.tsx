@@ -72,7 +72,8 @@ const Combobox = <T extends ComboboxItem>({
           className={inputStyle}
           required={required}
           displayValue={(item) => item?.name || ''}
-          onChange={(event) => setQuery(event.target.value)}
+          onChange={(e) => setQuery(e.target.value)}
+          autoComplete="off"
           {...props}
         />
 
